@@ -1,0 +1,1826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>RampingUp — Employee Portal (Feed)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #ffffff;
+      color: #1a1a1a;
+      line-height: 1.5;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    a { color: inherit; text-decoration: none; }
+    button { border: none; background: none; cursor: pointer; font-family: inherit; }
+    input, select { font-family: inherit; font-size: inherit; }
+
+    /* ── App Shell ────────────────────────────────────────── */
+    .app {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      position: relative;
+      background: #ffffff;
+      box-shadow: 0 0 60px rgba(0,0,0,0.06);
+    }
+
+    /* ── Top Bar ──────────────────────────────────────────── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+    }
+    .topbar__title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .topbar__actions { display: flex; gap: 8px; align-items: center; }
+    .topbar__btn {
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 12px;
+      position: relative;
+      transition: background 0.15s;
+    }
+    .topbar__btn:active { background: #f0f0f0; }
+    .topbar__btn svg { width: 22px; height: 22px; }
+    .topbar__badge {
+      position: absolute; top: 6px; right: 6px;
+      width: 8px; height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      border: 2px solid #fff;
+    }
+
+    /* ── Pull to Refresh ──────────────────────────────────── */
+    .pull-hint {
+      text-align: center;
+      padding: 0;
+      height: 0;
+      overflow: hidden;
+      transition: height 0.3s, padding 0.3s;
+      color: #999;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .pull-hint.visible {
+      height: 48px;
+      padding: 12px 0;
+    }
+    .pull-hint svg {
+      width: 16px; height: 16px;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── Content Area ─────────────────────────────────────── */
+    .content-area {
+      padding: 0 16px 100px 16px;
+      min-height: calc(100dvh - 56px);
+    }
+
+    /* ── Page Transitions ─────────────────────────────────── */
+    .page { display: none; }
+    .page.active {
+      display: block;
+      animation: pageIn 0.3s ease-out;
+    }
+    .page.slide-left {
+      animation: slideLeft 0.3s ease-out;
+    }
+    .page.slide-right {
+      animation: slideRight 0.3s ease-out;
+    }
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideLeft {
+      from { opacity: 0; transform: translateX(40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideRight {
+      from { opacity: 0; transform: translateX(-40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ── Cards ────────────────────────────────────────────── */
+    .card {
+      background: #f5f5f5;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .card--white {
+      background: #ffffff;
+      border: 1px solid #f0f0f0;
+    }
+    .card__title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    /* ── Section Label ────────────────────────────────────── */
+    .section-label {
+      font-size: 17px;
+      font-weight: 700;
+      padding: 20px 0 12px;
+      letter-spacing: -0.2px;
+    }
+
+    /* ── Status Badges ────────────────────────────────────── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+    .badge--approved { background: #dcfce7; color: #166534; }
+    .badge--pending { background: #fef3c7; color: #92400e; }
+    .badge--rejected { background: #fce4ec; color: #b71c1c; }
+    .badge--draft { background: #f3f4f6; color: #6b7280; }
+    .badge--open { background: #dbeafe; color: #1e40af; }
+    .badge--closed { background: #e8e8e8; color: #666; }
+    .badge--submitted { background: #e0f2fe; color: #0369a1; }
+
+    /* ── Priority Dots ────────────────────────────────────── */
+    .priority-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .priority-dot--high { background: #ef4444; }
+    .priority-dot--medium { background: #f59e0b; }
+    .priority-dot--low { background: #22c55e; }
+
+    /* ── Bottom Tab Bar ───────────────────────────────────── */
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      height: 64px;
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-top: 1px solid rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      z-index: 200;
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      min-width: 56px;
+      min-height: 44px;
+      padding: 4px 0;
+      position: relative;
+      color: #aaa;
+      transition: color 0.2s;
+    }
+    .tab-item.active { color: #1a1a1a; }
+    .tab-item.active::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 3px;
+      background: #22c55e;
+      border-radius: 0 0 3px 3px;
+    }
+    .tab-item svg { width: 24px; height: 24px; }
+    .tab-item__label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── FAB ──────────────────────────────────────────────── */
+    .fab {
+      position: fixed;
+      bottom: 84px;
+      right: calc(50% - 240px + 20px);
+      width: 56px; height: 56px;
+      background: #22c55e;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px rgba(34,197,94,0.4);
+      z-index: 150;
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: fabPulse 3s ease-in-out infinite;
+    }
+    .fab:active { transform: scale(0.92); }
+    .fab.open {
+      transform: rotate(45deg);
+      animation: none;
+      box-shadow: 0 4px 24px rgba(34,197,94,0.5);
+    }
+    .fab svg { width: 24px; height: 24px; stroke: #fff; stroke-width: 2.5; }
+    @keyframes fabPulse {
+      0%, 100% { box-shadow: 0 4px 20px rgba(34,197,94,0.4); }
+      50% { box-shadow: 0 4px 32px rgba(34,197,94,0.6); }
+    }
+    @media (max-width: 520px) {
+      .fab { right: 20px; }
+    }
+
+    /* ── FAB Menu ─────────────────────────────────────────── */
+    .fab-menu {
+      position: fixed;
+      bottom: 152px;
+      right: calc(50% - 240px + 16px);
+      z-index: 149;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-end;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .fab-menu.open {
+      pointer-events: auto;
+      opacity: 1;
+    }
+    @media (max-width: 520px) {
+      .fab-menu { right: 16px; }
+    }
+    .fab-menu__item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      font-size: 14px;
+      font-weight: 600;
+      color: #1a1a1a;
+      white-space: nowrap;
+      transform: translateY(20px);
+      opacity: 0;
+      transition: transform 0.25s ease-out, opacity 0.2s;
+    }
+    .fab-menu.open .fab-menu__item {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .fab-menu.open .fab-menu__item:nth-child(1) { transition-delay: 0.05s; }
+    .fab-menu.open .fab-menu__item:nth-child(2) { transition-delay: 0.1s; }
+    .fab-menu.open .fab-menu__item:nth-child(3) { transition-delay: 0.15s; }
+    .fab-menu__item:active { background: #f5f5f5; }
+    .fab-menu__icon {
+      width: 32px; height: 32px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .fab-menu__icon svg { width: 16px; height: 16px; }
+    .fab-menu__icon--leave { background: #dcfce7; color: #166534; }
+    .fab-menu__icon--expense { background: #fef3c7; color: #92400e; }
+    .fab-menu__icon--ticket { background: #dbeafe; color: #1e40af; }
+
+    /* FAB backdrop overlay */
+    .fab-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.2);
+      z-index: 148;
+    }
+    .fab-overlay.open { display: block; }
+
+    /* ── HOME PAGE ────────────────────────────────────────── */
+
+    /* Greeting */
+    .greeting {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 20px 0 8px;
+    }
+    .greeting__avatar {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .greeting__text { flex: 1; }
+    .greeting__hello {
+      font-size: 14px;
+      color: #888;
+      font-weight: 500;
+    }
+    .greeting__name {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    /* Leave Balance Pills */
+    .balance-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 4px 0 8px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .balance-scroll::-webkit-scrollbar { display: none; }
+    .balance-pill {
+      flex-shrink: 0;
+      background: #f5f5f5;
+      border-radius: 14px;
+      padding: 14px 18px;
+      min-width: 140px;
+    }
+    .balance-pill__type {
+      font-size: 12px;
+      font-weight: 600;
+      color: #888;
+      margin-bottom: 6px;
+    }
+    .balance-pill__numbers {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .balance-pill__remaining {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .balance-pill__total {
+      font-size: 13px;
+      color: #aaa;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .balance-pill__bar {
+      height: 4px;
+      background: #e5e5e5;
+      border-radius: 2px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+    .balance-pill__bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.6s ease-out;
+    }
+
+    /* Pending Actions */
+    .action-card {
+      background: #f5f5f5;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .action-card__icon {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .action-card__icon--leave { background: #dcfce7; color: #166534; }
+    .action-card__icon--expense { background: #fef3c7; color: #92400e; }
+    .action-card__icon--ticket { background: #fee2e2; color: #991b1b; }
+    .action-card__icon svg { width: 18px; height: 18px; }
+    .action-card__body { flex: 1; min-width: 0; }
+    .action-card__title {
+      font-size: 14px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .action-card__sub {
+      font-size: 12px;
+      color: #999;
+      margin-top: 2px;
+    }
+    .action-card__badge { flex-shrink: 0; }
+
+    /* Activity Timeline */
+    .timeline { padding: 4px 0 0 0; }
+    .timeline__item {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .timeline__item:last-child { border-bottom: none; }
+    .timeline__dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #d4d4d4;
+      flex-shrink: 0;
+      margin-top: 7px;
+    }
+    .timeline__content { flex: 1; }
+    .timeline__text {
+      font-size: 14px;
+      color: #333;
+      line-height: 1.45;
+    }
+    .timeline__time {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 2px;
+    }
+
+    /* Salary Summary Card */
+    .salary-hero {
+      text-align: center;
+      padding: 8px 0;
+    }
+    .salary-hero__label {
+      font-size: 13px;
+      color: #888;
+      font-weight: 500;
+    }
+    .salary-hero__amount {
+      font-size: 36px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: -2px;
+      margin: 4px 0;
+    }
+    .salary-hero__sub {
+      font-size: 12px;
+      color: #aaa;
+    }
+    .salary-hero__row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #e5e5e5;
+    }
+    .salary-hero__col { text-align: center; flex: 1; }
+    .salary-hero__col-label { font-size: 12px; color: #999; }
+    .salary-hero__col-value {
+      font-size: 16px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 2px;
+    }
+
+    /* ── LEAVE PAGE ───────────────────────────────────────── */
+    .filter-pills {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 12px 0;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .filter-pills::-webkit-scrollbar { display: none; }
+    .filter-pill {
+      flex-shrink: 0;
+      padding: 8px 16px;
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 600;
+      background: #f5f5f5;
+      color: #888;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+    .filter-pill.active {
+      background: #1a1a1a;
+      color: #fff;
+    }
+    .filter-pill:active { transform: scale(0.96); }
+
+    .leave-card {
+      background: #f5f5f5;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 12px;
+    }
+    .leave-card__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    .leave-card__type {
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .leave-card__dates {
+      font-size: 13px;
+      color: #888;
+      margin-top: 2px;
+    }
+    .leave-card__footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #e5e5e5;
+    }
+    .leave-card__days {
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .leave-card__approver {
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    /* ── MONEY PAGE ───────────────────────────────────────── */
+    .money-tabs {
+      display: flex;
+      background: #f5f5f5;
+      border-radius: 14px;
+      padding: 4px;
+      margin: 12px 0;
+    }
+    .money-tab {
+      flex: 1;
+      padding: 10px 0;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 11px;
+      color: #888;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-height: 44px;
+    }
+    .money-tab.active {
+      background: #ffffff;
+      color: #1a1a1a;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .money-tab:active { transform: scale(0.97); }
+
+    .money-section { display: none; }
+    .money-section.active { display: block; }
+
+    /* Salary cards */
+    .salary-card {
+      background: #f5f5f5;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .salary-card__month {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: #e8e8e8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .salary-card__month-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #888;
+      text-transform: uppercase;
+    }
+    .salary-card__month-year {
+      font-size: 11px;
+      font-weight: 600;
+      color: #aaa;
+    }
+    .salary-card__body { flex: 1; min-width: 0; }
+    .salary-card__period {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .salary-card__date {
+      font-size: 12px;
+      color: #999;
+      margin-top: 2px;
+    }
+    .salary-card__net {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .salary-card__net-amount {
+      font-size: 18px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: -0.5px;
+    }
+    .salary-card__net-label {
+      font-size: 11px;
+      color: #aaa;
+    }
+
+    /* Expense cards */
+    .expense-card {
+      background: #f5f5f5;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 12px;
+    }
+    .expense-card__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .expense-card__desc {
+      font-size: 14px;
+      font-weight: 600;
+      flex: 1;
+      margin-right: 12px;
+    }
+    .expense-card__amount {
+      font-size: 16px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      flex-shrink: 0;
+    }
+    .expense-card__footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .expense-card__meta {
+      font-size: 12px;
+      color: #999;
+    }
+    .expense-card__category {
+      font-size: 11px;
+      font-weight: 600;
+      color: #888;
+      background: #e8e8e8;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    /* Wallet */
+    .wallet-hero {
+      text-align: center;
+      padding: 24px 0 16px;
+    }
+    .wallet-hero__label {
+      font-size: 13px;
+      color: #888;
+      font-weight: 500;
+    }
+    .wallet-hero__amount {
+      font-size: 42px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: -2px;
+      margin: 8px 0;
+    }
+    .wallet-hero__sub {
+      font-size: 12px;
+      color: #22c55e;
+      font-weight: 600;
+    }
+    .tx-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .tx-item:last-child { border-bottom: none; }
+    .tx-item__icon {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 18px;
+    }
+    .tx-item__icon--in { background: #dcfce7; }
+    .tx-item__icon--out { background: #fef3c7; }
+    .tx-item__body { flex: 1; min-width: 0; }
+    .tx-item__title {
+      font-size: 14px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .tx-item__date {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 1px;
+    }
+    .tx-item__amount {
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      flex-shrink: 0;
+    }
+    .tx-item__amount--in { color: #22c55e; }
+    .tx-item__amount--out { color: #1a1a1a; }
+
+    /* ── TICKETS PAGE ─────────────────────────────────────── */
+    .ticket-card {
+      background: #f5f5f5;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 12px;
+    }
+    .ticket-card__header {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .ticket-card__subject {
+      font-size: 14px;
+      font-weight: 600;
+      flex: 1;
+      line-height: 1.4;
+    }
+    .ticket-card__footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+    }
+    .ticket-card__meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ticket-card__category {
+      font-size: 11px;
+      font-weight: 600;
+      color: #888;
+      background: #e8e8e8;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .ticket-card__date {
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    /* ── PROFILE PAGE ─────────────────────────────────────── */
+    .profile-header {
+      text-align: center;
+      padding: 32px 0 24px;
+    }
+    .profile-header__avatar {
+      width: 88px; height: 88px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+      color: #fff;
+      font-size: 32px;
+      font-weight: 800;
+    }
+    .profile-header__name {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .profile-header__role {
+      font-size: 14px;
+      color: #888;
+      margin-top: 4px;
+    }
+    .profile-header__id {
+      font-size: 13px;
+      color: #aaa;
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 6px;
+    }
+
+    .profile-section {
+      background: #f5f5f5;
+      border-radius: 16px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .profile-section__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      cursor: pointer;
+      min-height: 52px;
+      transition: background 0.15s;
+    }
+    .profile-section__header:active { background: #ebebeb; }
+    .profile-section__title {
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .profile-section__chevron {
+      width: 20px; height: 20px;
+      color: #ccc;
+      transition: transform 0.25s;
+    }
+    .profile-section.open .profile-section__chevron {
+      transform: rotate(180deg);
+    }
+    .profile-section__body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+    .profile-section.open .profile-section__body {
+      max-height: 500px;
+    }
+    .profile-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 11px 20px;
+      border-top: 1px solid #e8e8e8;
+    }
+    .profile-row__label {
+      font-size: 13px;
+      color: #888;
+    }
+    .profile-row__value {
+      font-size: 13px;
+      font-weight: 600;
+      text-align: right;
+      max-width: 60%;
+      word-break: break-all;
+    }
+
+    /* ── Animate In ───────────────────────────────────────── */
+    .anim-in {
+      opacity: 0;
+      transform: translateY(16px);
+      animation: animIn 0.4s ease-out forwards;
+    }
+    @keyframes animIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .anim-in:nth-child(1) { animation-delay: 0.02s; }
+    .anim-in:nth-child(2) { animation-delay: 0.06s; }
+    .anim-in:nth-child(3) { animation-delay: 0.10s; }
+    .anim-in:nth-child(4) { animation-delay: 0.14s; }
+    .anim-in:nth-child(5) { animation-delay: 0.18s; }
+    .anim-in:nth-child(6) { animation-delay: 0.22s; }
+    .anim-in:nth-child(7) { animation-delay: 0.26s; }
+    .anim-in:nth-child(8) { animation-delay: 0.30s; }
+
+    /* ── Utility ──────────────────────────────────────────── */
+    .text-muted { color: #888; }
+    .text-green { color: #22c55e; }
+    .text-right { text-align: right; }
+    .mt-8 { margin-top: 8px; }
+    .mt-16 { margin-top: 16px; }
+    .mb-8 { margin-bottom: 8px; }
+
+    /* ── Responsive: tighter on very small screens ────────── */
+    @media (max-width: 360px) {
+      .content-area { padding: 0 12px 100px 12px; }
+      .greeting__name { font-size: 20px; }
+      .balance-pill { min-width: 120px; padding: 12px 14px; }
+    }
+
+    /* ── Empty State ──────────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #ccc;
+    }
+    .empty-state__icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-state__text { font-size: 14px; color: #aaa; }
+
+    /* ── Approval Flow Timeline (light) ────────────────────── */
+    .af-flow { padding:8px 0; }
+    .af-title { font-size:14px; font-weight:700; color:#111; margin-bottom:14px; }
+    .af-steps { display:flex; flex-direction:column; }
+    .af-step { display:flex; gap:12px; position:relative; padding-bottom:18px; }
+    .af-step:last-child { padding-bottom:0; }
+    .af-step:not(:last-child)::before { content:''; position:absolute; left:13px; top:26px; bottom:0; width:2px; background:#eee; }
+    .af-step.done:not(:last-child)::before { background:#22c55e; }
+    .af-step.rejected:not(:last-child)::before { background:#ef4444; }
+    .af-dot { width:28px; height:28px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:12px; position:relative; z-index:1; }
+    .af-step.done .af-dot { background:rgba(34,197,94,0.1); color:#22c55e; border:2px solid #22c55e; }
+    .af-step.current .af-dot { background:rgba(245,158,11,0.1); color:#f59e0b; border:2px solid #f59e0b; animation:af-pulse 2s ease infinite; }
+    .af-step.waiting .af-dot { background:#f5f5f5; color:#ccc; border:2px solid #e5e5e5; }
+    .af-step.rejected .af-dot { background:rgba(239,68,68,0.1); color:#ef4444; border:2px solid #ef4444; }
+    @keyframes af-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0.25)} 50%{box-shadow:0 0 0 6px rgba(245,158,11,0)} }
+    .af-content { flex:1; padding-top:3px; }
+    .af-label { font-size:13px; font-weight:600; color:#111; }
+    .af-step.waiting .af-label { color:#ccc; }
+    .af-person { font-size:12px; color:#888; margin-top:1px; }
+    .af-meta { font-size:12px; color:#aaa; margin-top:1px; }
+    .dm-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #f0f0f0; font-size:13px; }
+    .dm-row:last-child { border-bottom:none; }
+    .dm-row-label { color:#999; }
+    .dm-row-value { color:#111; font-weight:500; }
+    .leave-card, .expense-card { cursor:pointer; }
+    .leave-card:active, .expense-card:active { transform:scale(0.98); }
+
+    /* ── Bottom Sheet ─────────────────────────────────────── */
+    .sheet-overlay { position:fixed; inset:0; z-index:300; background:rgba(0,0,0,0.4); animation:fadeIn .2s ease; }
+    .sheet { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px; max-height:85vh; background:#fff; border-radius:20px 20px 0 0; overflow:hidden; display:flex; flex-direction:column; animation:sheetUp .3s cubic-bezier(.34,1.56,.64,1); box-shadow:0 -4px 32px rgba(0,0,0,0.15); z-index:301; }
+    @keyframes sheetUp { from{transform:translateX(-50%) translateY(100%)} to{transform:translateX(-50%) translateY(0)} }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    .sheet-handle { width:36px; height:4px; background:#ddd; border-radius:2px; margin:10px auto; }
+    .sheet-header { display:flex; align-items:center; justify-content:space-between; padding:4px 20px 14px; }
+    .sheet-header h3 { font-size:1.1rem; font-weight:700; color:#111; }
+    .sheet-close { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#999; background:#f5f5f5; border:none; font-size:1.1rem; cursor:pointer; }
+    .sheet-body { padding:0 20px 20px; overflow-y:auto; flex:1; }
+    .sheet-footer { display:flex; gap:10px; padding:14px 20px; border-top:1px solid #f0f0f0; padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px)); }
+    .sheet-footer .btn { flex:1; padding:14px; border-radius:14px; font-size:.92rem; font-weight:600; border:none; cursor:pointer; }
+    .sheet-footer .btn-primary { background:#22c55e; color:#fff; }
+    .sheet-footer .btn-ghost { background:#f5f5f5; color:#666; }
+    .s-form-group { margin-bottom:14px; }
+    .s-form-label { display:block; font-size:.78rem; font-weight:600; color:#999; margin-bottom:5px; }
+    .s-form-input,.s-form-select,.s-form-textarea { width:100%; padding:12px 14px; background:#f9f9f9; border:1px solid #eee; border-radius:12px; color:#111; font-size:.95rem; font-family:inherit; outline:none; -webkit-appearance:none; }
+    .s-form-input:focus,.s-form-select:focus,.s-form-textarea:focus { border-color:#22c55e; box-shadow:0 0 0 3px rgba(34,197,94,.1); }
+    .s-form-textarea { min-height:80px; resize:none; }
+    .s-form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .s-upload { border:2px dashed #ddd; border-radius:12px; padding:20px; text-align:center; color:#aaa; font-size:.85rem; }
+    .s-upload:active { border-color:#22c55e; }
+    .s-expense-item { background:#f9f9f9; border:1px solid #eee; border-radius:12px; padding:14px; margin-bottom:10px; }
+    .s-expense-head { display:flex; justify-content:space-between; margin-bottom:10px; }
+    .s-expense-num { font-size:.78rem; font-weight:700; color:#22c55e; }
+    .s-expense-rm { background:none; border:none; color:#ccc; font-size:1rem; cursor:pointer; }
+    .s-add-btn { width:100%; padding:14px; border:2px dashed #ddd; border-radius:12px; background:none; color:#aaa; font-size:.88rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; font-weight:500; }
+    .s-add-btn:active { border-color:#22c55e; color:#22c55e; }
+
+    /* ── Edit Profile Button ──────────────────────────────── */
+    .profile-edit-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 12px;
+      padding: 8px 18px;
+      background: #f5f5f5;
+      border: none;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #666;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .profile-edit-btn:active { background: #e8e8e8; }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- Top Bar -->
+    <header class="topbar" id="topbar">
+      <div class="topbar__title" id="pageTitle">Home</div>
+      <div class="topbar__actions">
+        <button class="topbar__btn" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <span class="topbar__badge"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Pull to Refresh Hint -->
+    <div class="pull-hint" id="pullHint">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-6.219-8.56"/><polyline points="21 3 21 9 15 9"/></svg>
+      Refreshing...
+    </div>
+
+    <!-- Content -->
+    <div class="content-area" id="contentArea">
+      <div id="page-home" class="page active"></div>
+      <div id="page-leave" class="page"></div>
+      <div id="page-money" class="page"></div>
+      <div id="page-tickets" class="page"></div>
+      <div id="page-me" class="page"></div>
+    </div>
+
+    <!-- FAB -->
+    <button class="fab" id="fab" aria-label="Quick actions">
+      <svg viewBox="0 0 24 24" fill="none"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
+
+    <!-- FAB Menu -->
+    <div class="fab-overlay" id="fabOverlay"></div>
+    <div class="fab-menu" id="fabMenu">
+      <button class="fab-menu__item" data-action="leave">
+        <div class="fab-menu__icon fab-menu__icon--leave">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        </div>
+        Apply Leave
+      </button>
+      <button class="fab-menu__item" data-action="expense">
+        <div class="fab-menu__icon fab-menu__icon--expense">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 4H3v16h18V4z"/><path d="M21 10H3M7 15h4"/></svg>
+        </div>
+        Submit Expense
+      </button>
+      <button class="fab-menu__item" data-action="ticket">
+        <div class="fab-menu__icon fab-menu__icon--ticket">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 5H9l-1 8h8l-1-8zM9 5L7.6 2h8.8L15 5"/><path d="M8 13v4a3 3 0 003 3h2a3 3 0 003-3v-4"/></svg>
+        </div>
+        Create Ticket
+      </button>
+    </div>
+
+    <!-- Bottom Tab Bar -->
+    <nav class="tab-bar" id="tabBar">
+      <a href="#/home" class="tab-item active" data-tab="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span class="tab-item__label">Home</span>
+      </a>
+      <a href="#/leave" class="tab-item" data-tab="leave">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span class="tab-item__label">Leave</span>
+      </a>
+      <a href="#/money" class="tab-item" data-tab="money">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        <span class="tab-item__label">Money</span>
+      </a>
+      <a href="#/tickets" class="tab-item" data-tab="tickets">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 5H9l-1 8h8l-1-8zM9 5L7.6 2h8.8L15 5"/><path d="M8 13v4a3 3 0 003 3h2a3 3 0 003-3v-4"/></svg>
+        <span class="tab-item__label">Tickets</span>
+      </a>
+      <a href="#/me" class="tab-item" data-tab="me">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>
+        <span class="tab-item__label">Me</span>
+      </a>
+    </nav>
+  </div>
+
+  <script>
+  /* ═══════════════════════════════════════════════════════════
+     RampingUp Employee Portal — V7 Feed
+     ═══════════════════════════════════════════════════════════ */
+
+  // ── Mock Data ──────────────────────────────────────────
+  const EMPLOYEE = {
+    name: 'Zhang Rui',
+    initials: 'ZR',
+    role: 'Software Engineer',
+    department: 'Engineering',
+    employeeId: 'EMP-2024-0032',
+    email: 'zhang.rui@rampingup.com',
+    phone: '+86 138 8888 0032',
+    joinDate: '2024-03-15',
+    manager: 'Li Wei',
+    location: 'Shanghai, China',
+    contractType: 'Full-time',
+    gender: 'Male',
+    dob: '1995-06-20',
+    bankName: 'China Merchants Bank',
+    bankAccount: '**** **** **** 6789',
+  };
+
+  const LEAVE_TYPES = [
+    { type: 'Annual Leave', total: 15, used: 7, color: '#3b82f6' },
+    { type: 'Sick Leave', total: 10, used: 2, color: '#8b5cf6' },
+    { type: 'Personal Leave', total: 5, used: 1, color: '#06b6d4' },
+    { type: 'Compensatory', total: 3, used: 0, color: '#10b981' },
+  ];
+
+  const LEAVE_REQUESTS = [
+    { id: 'LV-2401', type: 'Annual Leave', from: '2025-03-10', to: '2025-03-14', days: 5, status: 'Approved', approver: 'Li Wei' },
+    { id: 'LV-2402', type: 'Sick Leave', from: '2025-02-20', to: '2025-02-21', days: 2, status: 'Approved', approver: 'Li Wei' },
+    { id: 'LV-2403', type: 'Annual Leave', from: '2025-04-05', to: '2025-04-06', days: 2, status: 'Pending', approver: 'Li Wei' },
+    { id: 'LV-2404', type: 'Personal Leave', from: '2025-01-15', to: '2025-01-15', days: 1, status: 'Approved', approver: 'Li Wei' },
+    { id: 'LV-2405', type: 'Annual Leave', from: '2025-05-01', to: '2025-05-02', days: 2, status: 'Draft', approver: '-' },
+    { id: 'LV-2406', type: 'Sick Leave', from: '2024-12-10', to: '2024-12-10', days: 1, status: 'Rejected', approver: 'Li Wei' },
+  ];
+
+  const SALARY_SLIPS = [
+    { id: 'SS-202503', period: 'March 2025', month: 'Mar', year: '2025', payDate: '2025-03-25', gross: 32000, deductions: 6820, net: 25180, status: 'Submitted' },
+    { id: 'SS-202502', period: 'February 2025', month: 'Feb', year: '2025', payDate: '2025-02-25', gross: 32000, deductions: 6820, net: 25180, status: 'Submitted' },
+    { id: 'SS-202501', period: 'January 2025', month: 'Jan', year: '2025', payDate: '2025-01-25', gross: 32000, deductions: 6820, net: 25180, status: 'Submitted' },
+    { id: 'SS-202412', period: 'December 2024', month: 'Dec', year: '2024', payDate: '2024-12-25', gross: 30000, deductions: 6380, net: 23620, status: 'Submitted' },
+    { id: 'SS-202411', period: 'November 2024', month: 'Nov', year: '2024', payDate: '2024-11-25', gross: 30000, deductions: 6380, net: 23620, status: 'Submitted' },
+    { id: 'SS-202410', period: 'October 2024', month: 'Oct', year: '2024', payDate: '2024-10-25', gross: 30000, deductions: 6380, net: 23620, status: 'Submitted' },
+  ];
+
+  const EXPENSES = [
+    { id: 'EC-2401', date: '2025-03-18', category: 'Travel', description: 'Business trip to Beijing', amount: 4580, currency: 'CNY', status: 'Pending', items: 3 },
+    { id: 'EC-2402', date: '2025-03-05', category: 'Equipment', description: 'External monitor purchase', amount: 2899, currency: 'CNY', status: 'Approved', items: 1 },
+    { id: 'EC-2403', date: '2025-02-20', category: 'Meals', description: 'Client dinner - Project Alpha', amount: 860, currency: 'CNY', status: 'Approved', items: 1 },
+    { id: 'EC-2404', date: '2025-02-10', category: 'Transportation', description: 'Monthly taxi reimbursement', amount: 1200, currency: 'CNY', status: 'Rejected', items: 5 },
+    { id: 'EC-2405', date: '2025-01-28', category: 'Communication', description: 'Annual phone plan', amount: 1680, currency: 'CNY', status: 'Approved', items: 1 },
+    { id: 'EC-2406', date: '2025-03-22', category: 'Travel', description: 'Shenzhen conference travel', amount: 3200, currency: 'CNY', status: 'Draft', items: 4 },
+  ];
+
+  const TICKETS = [
+    { id: 'TK-0089', subject: 'VPN access not working from home', category: 'IT Support', priority: 'High', status: 'Open', created: '2025-03-20', updated: '2025-03-21' },
+    { id: 'TK-0088', subject: 'Request for additional software license', category: 'IT Support', priority: 'Medium', status: 'Pending', created: '2025-03-18', updated: '2025-03-19' },
+    { id: 'TK-0085', subject: 'Office desk lamp replacement', category: 'Facilities', priority: 'Low', status: 'Closed', created: '2025-03-10', updated: '2025-03-15' },
+    { id: 'TK-0082', subject: 'Payslip discrepancy for February', category: 'HR', priority: 'High', status: 'Closed', created: '2025-03-02', updated: '2025-03-05' },
+    { id: 'TK-0079', subject: 'Meeting room booking system error', category: 'IT Support', priority: 'Medium', status: 'Open', created: '2025-02-28', updated: '2025-03-01' },
+  ];
+
+  const RECENT_ACTIVITY = [
+    { time: '2025-03-21 14:30', text: 'Leave request LV-2403 submitted for approval' },
+    { time: '2025-03-20 09:15', text: 'Ticket TK-0089 created: VPN access issue' },
+    { time: '2025-03-18 16:45', text: 'Expense claim EC-2401 submitted (¥4,580)' },
+    { time: '2025-03-15 10:00', text: 'March salary slip generated' },
+    { time: '2025-03-10 11:30', text: 'Leave request LV-2401 approved by Li Wei' },
+  ];
+
+  const WALLET = {
+    balance: 12680,
+    transactions: [
+      { id: 'W-001', title: 'Salary - March 2025', date: '2025-03-25', amount: 25180, type: 'in' },
+      { id: 'W-002', title: 'Expense Reimbursement', date: '2025-03-20', amount: 2899, type: 'in' },
+      { id: 'W-003', title: 'Withdrawal to Bank', date: '2025-03-18', amount: -18000, type: 'out' },
+      { id: 'W-004', title: 'Salary - February 2025', date: '2025-02-25', amount: 25180, type: 'in' },
+      { id: 'W-005', title: 'Expense Reimbursement', date: '2025-02-22', amount: 860, type: 'in' },
+      { id: 'W-006', title: 'Withdrawal to Bank', date: '2025-02-20', amount: -20000, type: 'out' },
+      { id: 'W-007', title: 'Bonus - Q4 2024', date: '2025-01-15', amount: 8000, type: 'in' },
+    ],
+  };
+
+  // ── Helpers ────────────────────────────────────────────
+  function fmt(n) {
+    return '\u00a5' + Math.abs(n).toLocaleString('zh-CN');
+  }
+
+  function statusCls(s) {
+    return ({
+      Approved: 'approved', Pending: 'pending', Rejected: 'rejected',
+      Draft: 'draft', Open: 'open', Closed: 'closed', Submitted: 'submitted',
+    })[s] || 'draft';
+  }
+
+  function formatDate(d) {
+    const dt = new Date(d);
+    const m = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${m[dt.getMonth()]} ${dt.getDate()}, ${dt.getFullYear()}`;
+  }
+
+  function shortDate(d) {
+    const dt = new Date(d);
+    const m = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${m[dt.getMonth()]} ${dt.getDate()}`;
+  }
+
+  function timeAgo(dateStr) {
+    const [datePart, timePart] = dateStr.split(' ');
+    return `${shortDate(datePart)}${timePart ? ' ' + timePart : ''}`;
+  }
+
+  // ── Tab State ──────────────────────────────────────────
+  const TAB_ORDER = ['home', 'leave', 'money', 'tickets', 'me'];
+  const TAB_TITLES = { home: 'Home', leave: 'Leave', money: 'Money', tickets: 'Tickets', me: 'Profile' };
+  let currentTab = 'home';
+  let moneySubTab = 'salary';
+
+  // ── Page Renderers ─────────────────────────────────────
+
+  function renderHome() {
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+    const latestSalary = SALARY_SLIPS[0];
+    const pendingLeaves = LEAVE_REQUESTS.filter(l => l.status === 'Pending');
+    const pendingExpenses = EXPENSES.filter(e => e.status === 'Pending');
+    const openTickets = TICKETS.filter(t => t.status === 'Open');
+
+    let pendingCards = '';
+    pendingLeaves.forEach(l => {
+      pendingCards += `
+        <div class="action-card anim-in">
+          <div class="action-card__icon action-card__icon--leave">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          </div>
+          <div class="action-card__body">
+            <div class="action-card__title">${l.type}</div>
+            <div class="action-card__sub">${shortDate(l.from)} - ${shortDate(l.to)} &middot; ${l.days}d</div>
+          </div>
+          <div class="action-card__badge"><span class="badge badge--pending">Pending</span></div>
+        </div>`;
+    });
+    pendingExpenses.forEach(e => {
+      pendingCards += `
+        <div class="action-card anim-in">
+          <div class="action-card__icon action-card__icon--expense">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 4H3v16h18V4z"/><path d="M21 10H3M7 15h4"/></svg>
+          </div>
+          <div class="action-card__body">
+            <div class="action-card__title">${e.description}</div>
+            <div class="action-card__sub"><span class="mono">${fmt(e.amount)}</span> &middot; ${e.category}</div>
+          </div>
+          <div class="action-card__badge"><span class="badge badge--pending">Pending</span></div>
+        </div>`;
+    });
+    openTickets.forEach(t => {
+      pendingCards += `
+        <div class="action-card anim-in">
+          <div class="action-card__icon action-card__icon--ticket">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 5H9l-1 8h8l-1-8zM9 5L7.6 2h8.8L15 5"/><path d="M8 13v4a3 3 0 003 3h2a3 3 0 003-3v-4"/></svg>
+          </div>
+          <div class="action-card__body">
+            <div class="action-card__title">${t.subject}</div>
+            <div class="action-card__sub">${t.id} &middot; ${t.category}</div>
+          </div>
+          <div class="action-card__badge"><span class="badge badge--open">Open</span></div>
+        </div>`;
+    });
+
+    return `
+      <!-- Greeting -->
+      <div class="greeting anim-in">
+        <div class="greeting__avatar">${EMPLOYEE.initials}</div>
+        <div class="greeting__text">
+          <div class="greeting__hello">${greeting},</div>
+          <div class="greeting__name">${EMPLOYEE.name}</div>
+        </div>
+      </div>
+
+      <!-- Leave Balance -->
+      <div class="section-label anim-in">Leave Balance</div>
+      <div class="balance-scroll anim-in">
+        ${LEAVE_TYPES.map(l => {
+          const remaining = l.total - l.used;
+          const pct = (remaining / l.total * 100);
+          return `
+            <div class="balance-pill">
+              <div class="balance-pill__type">${l.type}</div>
+              <div class="balance-pill__numbers">
+                <span class="balance-pill__remaining" style="color:${l.color}">${remaining}</span>
+                <span class="balance-pill__total">/ ${l.total}</span>
+              </div>
+              <div class="balance-pill__bar">
+                <div class="balance-pill__bar-fill" style="width:${pct}%;background:${l.color}"></div>
+              </div>
+            </div>`;
+        }).join('')}
+      </div>
+
+      <!-- Pending Items -->
+      ${pendingCards ? `
+        <div class="section-label anim-in">Pending</div>
+        ${pendingCards}
+      ` : ''}
+
+      <!-- Monthly Salary Summary -->
+      <div class="section-label anim-in">Latest Salary</div>
+      <div class="card anim-in">
+        <div class="salary-hero">
+          <div class="salary-hero__label">${latestSalary.period} &middot; Net Pay</div>
+          <div class="salary-hero__amount mono">${fmt(latestSalary.net)}</div>
+          <div class="salary-hero__sub">Paid ${formatDate(latestSalary.payDate)}</div>
+          <div class="salary-hero__row">
+            <div class="salary-hero__col">
+              <div class="salary-hero__col-label">Gross</div>
+              <div class="salary-hero__col-value">${fmt(latestSalary.gross)}</div>
+            </div>
+            <div class="salary-hero__col">
+              <div class="salary-hero__col-label">Deductions</div>
+              <div class="salary-hero__col-value">${fmt(latestSalary.deductions)}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="section-label anim-in">Recent Activity</div>
+      <div class="card anim-in">
+        <div class="timeline">
+          ${RECENT_ACTIVITY.map(a => `
+            <div class="timeline__item">
+              <div class="timeline__dot"></div>
+              <div class="timeline__content">
+                <div class="timeline__text">${a.text}</div>
+                <div class="timeline__time">${timeAgo(a.time)}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderLeave() {
+    const statuses = ['All', 'Pending', 'Approved', 'Rejected', 'Draft'];
+    let activeFilter = 'All';
+
+    const html = `
+      <!-- Balance Cards -->
+      <div class="balance-scroll" style="padding-top:12px;">
+        ${LEAVE_TYPES.map(l => {
+          const remaining = l.total - l.used;
+          const pct = (remaining / l.total * 100);
+          return `
+            <div class="balance-pill">
+              <div class="balance-pill__type">${l.type}</div>
+              <div class="balance-pill__numbers">
+                <span class="balance-pill__remaining" style="color:${l.color}">${remaining}</span>
+                <span class="balance-pill__total">/ ${l.total}</span>
+              </div>
+              <div class="balance-pill__bar">
+                <div class="balance-pill__bar-fill" style="width:${pct}%;background:${l.color}"></div>
+              </div>
+            </div>`;
+        }).join('')}
+      </div>
+
+      <!-- Filter Pills -->
+      <div class="filter-pills" id="leaveFilters">
+        ${statuses.map(s => `<button class="filter-pill${s === 'All' ? ' active' : ''}" data-filter="${s}">${s}</button>`).join('')}
+      </div>
+
+      <!-- Leave Cards -->
+      <div id="leaveCards">
+        ${renderLeaveCards('All')}
+      </div>
+    `;
+    return html;
+  }
+
+  function renderLeaveCards(filter) {
+    const filtered = filter === 'All' ? LEAVE_REQUESTS : LEAVE_REQUESTS.filter(l => l.status === filter);
+    if (!filtered.length) {
+      return '<div class="empty-state"><div class="empty-state__icon">📋</div><div class="empty-state__text">No leave requests found</div></div>';
+    }
+    return filtered.map(l => {
+      const idx = LEAVE_REQUESTS.indexOf(l);
+      return `
+      <div class="leave-card anim-in" onclick="viewLeaveDetail(${idx})">
+        <div class="leave-card__header">
+          <div>
+            <div class="leave-card__type">${l.type}</div>
+            <div class="leave-card__dates">${shortDate(l.from)} - ${shortDate(l.to)}</div>
+          </div>
+          <span class="badge badge--${statusCls(l.status)}">${l.status}</span>
+        </div>
+        <div class="leave-card__footer">
+          <div class="leave-card__days">${l.days} day${l.days > 1 ? 's' : ''}</div>
+          <div class="leave-card__approver">Approver: ${l.approver}</div>
+        </div>
+      </div>
+    `}).join('');
+  }
+
+  function renderMoney() {
+    return `
+      <!-- Tab Switcher -->
+      <div class="money-tabs" id="moneyTabs">
+        <button class="money-tab${moneySubTab === 'salary' ? ' active' : ''}" data-subtab="salary">Salary</button>
+        <button class="money-tab${moneySubTab === 'expenses' ? ' active' : ''}" data-subtab="expenses">Expenses</button>
+        <button class="money-tab${moneySubTab === 'wallet' ? ' active' : ''}" data-subtab="wallet">Wallet</button>
+      </div>
+
+      <!-- Salary Section -->
+      <div class="money-section${moneySubTab === 'salary' ? ' active' : ''}" id="moneySalary">
+        ${SALARY_SLIPS.map(s => `
+          <div class="salary-card anim-in">
+            <div class="salary-card__month">
+              <div class="salary-card__month-label">${s.month}</div>
+              <div class="salary-card__month-year">${s.year}</div>
+            </div>
+            <div class="salary-card__body">
+              <div class="salary-card__period">${s.period}</div>
+              <div class="salary-card__date">Paid ${formatDate(s.payDate)}</div>
+            </div>
+            <div class="salary-card__net">
+              <div class="salary-card__net-amount">${fmt(s.net)}</div>
+              <div class="salary-card__net-label">Net</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- Expenses Section -->
+      <div class="money-section${moneySubTab === 'expenses' ? ' active' : ''}" id="moneyExpenses">
+        ${EXPENSES.map((e, i) => `
+          <div class="expense-card anim-in" onclick="viewExpenseDetail(${i})">
+            <div class="expense-card__header">
+              <div class="expense-card__desc">${e.description}</div>
+              <div class="expense-card__amount">${fmt(e.amount)}</div>
+            </div>
+            <div class="expense-card__footer">
+              <div class="expense-card__meta">
+                <span class="expense-card__category">${e.category}</span>
+                <span style="color:#aaa;font-size:12px">${shortDate(e.date)}</span>
+              </div>
+              <span class="badge badge--${statusCls(e.status)}">${e.status}</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- Wallet Section -->
+      <div class="money-section${moneySubTab === 'wallet' ? ' active' : ''}" id="moneyWallet">
+        <div class="wallet-hero">
+          <div class="wallet-hero__label">Available Balance</div>
+          <div class="wallet-hero__amount">${fmt(WALLET.balance)}</div>
+          <div class="wallet-hero__sub">Updated today</div>
+        </div>
+        <div class="card__title">Transactions</div>
+        ${WALLET.transactions.map(tx => `
+          <div class="tx-item anim-in">
+            <div class="tx-item__icon tx-item__icon--${tx.type}">
+              ${tx.type === 'in' ? '↓' : '↑'}
+            </div>
+            <div class="tx-item__body">
+              <div class="tx-item__title">${tx.title}</div>
+              <div class="tx-item__date">${formatDate(tx.date)}</div>
+            </div>
+            <div class="tx-item__amount tx-item__amount--${tx.type} mono">
+              ${tx.type === 'in' ? '+' : '-'}${fmt(tx.amount)}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderTickets() {
+    return `
+      <div style="padding-top:12px">
+        ${TICKETS.map(t => `
+          <div class="ticket-card anim-in">
+            <div class="ticket-card__header">
+              <span class="priority-dot priority-dot--${t.priority.toLowerCase()}" title="${t.priority} priority"></span>
+              <div class="ticket-card__subject">${t.subject}</div>
+              <span class="badge badge--${statusCls(t.status)}">${t.status}</span>
+            </div>
+            <div class="ticket-card__footer">
+              <div class="ticket-card__meta">
+                <span class="ticket-card__category">${t.category}</span>
+                <span class="ticket-card__date">${shortDate(t.created)}</span>
+              </div>
+              <span style="font-size:12px;color:#aaa;font-family:'JetBrains Mono',monospace">${t.id}</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderMe() {
+    return `
+      <div class="profile-header anim-in">
+        <div class="profile-header__avatar">${EMPLOYEE.initials}</div>
+        <div class="profile-header__name">${EMPLOYEE.name}</div>
+        <div class="profile-header__role">${EMPLOYEE.role} &middot; ${EMPLOYEE.department}</div>
+        <div class="profile-header__id">${EMPLOYEE.employeeId}</div>
+        <button class="profile-edit-btn" onclick="openEditProfile()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+          Edit
+        </button>
+      </div>
+
+      <div class="profile-section open anim-in" data-section="personal">
+        <div class="profile-section__header">
+          <div class="profile-section__title">Personal Info</div>
+          <svg class="profile-section__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="profile-section__body">
+          <div class="profile-row"><span class="profile-row__label">Full Name</span><span class="profile-row__value">${EMPLOYEE.name}</span></div>
+          <div class="profile-row"><span class="profile-row__label">Gender</span><span class="profile-row__value">${EMPLOYEE.gender}</span></div>
+          <div class="profile-row"><span class="profile-row__label">Date of Birth</span><span class="profile-row__value">${formatDate(EMPLOYEE.dob)}</span></div>
+          <div class="profile-row"><span class="profile-row__label">Email</span><span class="profile-row__value">${EMPLOYEE.email}</span></div>
+          <div class="profile-row"><span class="profile-row__label">Phone</span><span class="profile-row__value">${EMPLOYEE.phone}</span></div>
+          <div class="profile-row"><span class="profile-row__label">Location</span><span class="profile-row__value">${EMPLOYEE.location}</span></div>
+        </div>
+      </div>
+
+      <div class="profile-section anim-in" data-section="company">
+        <div class="profile-section__header">
+          <div class="profile-section__title">Company Info</div>
+          <svg class="profile-section__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="profile-section__body">
+          <div class="profile-row"><span class="profile-row__label">Role</span><span class="profile-row__value">${EMPLOYEE.role}</span></div>
+          <div class="profile-row"><span class="profile-row__label">Department</span><span class="profile-row__value">${EMPLOYEE.department}</span></div>
+          <div class="profile-row"><span class="profile-row__label">Manager</span><span class="profile-row__value">${EMPLOYEE.manager}</span></div>
+          <div class="profile-row"><span class="profile-row__label">Join Date</span><span class="profile-row__value">${formatDate(EMPLOYEE.joinDate)}</span></div>
+          <div class="profile-row"><span class="profile-row__label">Contract Type</span><span class="profile-row__value">${EMPLOYEE.contractType}</span></div>
+        </div>
+      </div>
+
+      <div class="profile-section anim-in" data-section="bank">
+        <div class="profile-section__header">
+          <div class="profile-section__title">Bank Info</div>
+          <svg class="profile-section__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="profile-section__body">
+          <div class="profile-row"><span class="profile-row__label">Bank</span><span class="profile-row__value">${EMPLOYEE.bankName}</span></div>
+          <div class="profile-row"><span class="profile-row__label">Account</span><span class="profile-row__value mono">${EMPLOYEE.bankAccount}</span></div>
+        </div>
+      </div>
+
+      <div class="profile-section anim-in" data-section="contract">
+        <div class="profile-section__header">
+          <div class="profile-section__title">Contract Summary</div>
+          <svg class="profile-section__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="profile-section__body">
+          <div class="profile-row"><span class="profile-row__label">Type</span><span class="profile-row__value">${EMPLOYEE.contractType}</span></div>
+          <div class="profile-row"><span class="profile-row__label">Start Date</span><span class="profile-row__value">${formatDate(EMPLOYEE.joinDate)}</span></div>
+          <div class="profile-row"><span class="profile-row__label">Status</span><span class="profile-row__value" style="color:#22c55e;font-weight:700">Active</span></div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ── Routing ────────────────────────────────────────────
+
+  function navigate(tab, direction) {
+    if (tab === currentTab) return;
+
+    const prevIdx = TAB_ORDER.indexOf(currentTab);
+    const nextIdx = TAB_ORDER.indexOf(tab);
+    const dir = direction || (nextIdx > prevIdx ? 'left' : 'right');
+
+    // Hide current
+    const prevPage = document.getElementById('page-' + currentTab);
+    if (prevPage) {
+      prevPage.classList.remove('active', 'slide-left', 'slide-right');
+    }
+
+    currentTab = tab;
+
+    // Render content
+    const pageEl = document.getElementById('page-' + tab);
+    const renderers = { home: renderHome, leave: renderLeave, money: renderMoney, tickets: renderTickets, me: renderMe };
+    pageEl.innerHTML = renderers[tab]();
+
+    // Show with animation
+    pageEl.classList.add('active', dir === 'left' ? 'slide-left' : 'slide-right');
+
+    // Update topbar title
+    document.getElementById('pageTitle').textContent = TAB_TITLES[tab];
+
+    // Update tab bar
+    document.querySelectorAll('.tab-item').forEach(t => {
+      t.classList.toggle('active', t.dataset.tab === tab);
+    });
+
+    // Bind page-specific events
+    if (tab === 'leave') bindLeaveFilters();
+    if (tab === 'money') bindMoneyTabs();
+    if (tab === 'me') bindProfileSections();
+
+    // Close FAB if open
+    closeFab();
+  }
+
+  // ── Event Bindings ─────────────────────────────────────
+
+  function bindLeaveFilters() {
+    const container = document.getElementById('leaveFilters');
+    if (!container) return;
+    container.addEventListener('click', (e) => {
+      const pill = e.target.closest('.filter-pill');
+      if (!pill) return;
+      container.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      document.getElementById('leaveCards').innerHTML = renderLeaveCards(pill.dataset.filter);
+    });
+  }
+
+  function bindMoneyTabs() {
+    const container = document.getElementById('moneyTabs');
+    if (!container) return;
+    container.addEventListener('click', (e) => {
+      const tab = e.target.closest('.money-tab');
+      if (!tab) return;
+      const subtab = tab.dataset.subtab;
+      moneySubTab = subtab;
+      container.querySelectorAll('.money-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('.money-section').forEach(s => s.classList.remove('active'));
+      document.getElementById('money' + subtab.charAt(0).toUpperCase() + subtab.slice(1)).classList.add('active');
+    });
+  }
+
+  function bindProfileSections() {
+    document.querySelectorAll('.profile-section__header').forEach(header => {
+      header.addEventListener('click', () => {
+        const section = header.parentElement;
+        section.classList.toggle('open');
+      });
+    });
+  }
+
+  // ── Approval Flow ─────────────────────────────────────
+  function approvalSteps(status, approver, date) {
+    const s = status.toLowerCase ? status.toLowerCase() : status;
+    if (s === 'draft') return [
+      {l:'Draft Created',m:date,st:'done',i:'✎'},
+      {l:'Submit for Review',m:'Not yet submitted',st:'waiting',i:'→'},
+      {l:'Manager Review',p:approver,st:'waiting',i:'○'},
+      {l:'Completed',st:'waiting',i:'✓'}
+    ];
+    if (s === 'pending') return [
+      {l:'Submitted',m:date,st:'done',i:'✓'},
+      {l:'Manager Review',p:approver||'Li Wei',m:'Awaiting approval',st:'current',i:'◷'},
+      {l:'HR Confirmation',st:'waiting',i:'○'},
+      {l:'Completed',st:'waiting',i:'✓'}
+    ];
+    if (s === 'approved') return [
+      {l:'Submitted',m:date,st:'done',i:'✓'},
+      {l:'Manager Approved',p:approver||'Li Wei',m:'Approved',st:'done',i:'✓'},
+      {l:'HR Confirmed',m:'Confirmed',st:'done',i:'✓'},
+      {l:'Completed',m:'All approvals received',st:'done',i:'✓'}
+    ];
+    if (s === 'rejected') return [
+      {l:'Submitted',m:date,st:'done',i:'✓'},
+      {l:'Manager Rejected',p:approver||'Li Wei',m:'Request rejected',st:'rejected',i:'✕'},
+      {l:'HR Confirmation',m:'Skipped',st:'waiting',i:'○'},
+      {l:'Completed',st:'waiting',i:'✓'}
+    ];
+    return [{l:status,st:'done',i:'✓'}];
+  }
+
+  function approvalHTML(status, approver, date) {
+    const steps = approvalSteps(status, approver, date);
+    return `<div class="af-flow"><div class="af-title">Approval Progress</div><div class="af-steps">${steps.map(s=>`<div class="af-step ${s.st}"><div class="af-dot">${s.i}</div><div class="af-content"><div class="af-label">${s.l}</div>${s.p?`<div class="af-person">${s.p}</div>`:''}${s.m?`<div class="af-meta">${s.m}</div>`:''}</div></div>`).join('')}</div></div>`;
+  }
+
+  function viewLeaveDetail(idx) {
+    const l = LEAVE_REQUESTS[idx];
+    openSheet(`<div class="sheet-header"><h3>Leave Request</h3><button class="sheet-close" onclick="closeSheet()">✕</button></div><div class="sheet-body"><div style="margin-bottom:14px"><div class="dm-row"><span class="dm-row-label">Type</span><span class="dm-row-value">${l.type}</span></div><div class="dm-row"><span class="dm-row-label">Period</span><span class="dm-row-value">${shortDate(l.from)} - ${shortDate(l.to)}</span></div><div class="dm-row"><span class="dm-row-label">Days</span><span class="dm-row-value">${l.days}</span></div><div class="dm-row"><span class="dm-row-label">Status</span><span class="dm-row-value"><span class="badge badge--${statusCls(l.status)}">${l.status}</span></span></div><div class="dm-row"><span class="dm-row-label">Approver</span><span class="dm-row-value">${l.approver}</span></div></div>${approvalHTML(l.status, l.approver, l.from)}</div><div class="sheet-footer"><button class="btn-ghost btn" onclick="closeSheet()">Close</button></div>`);
+  }
+
+  function viewExpenseDetail(idx) {
+    const e = EXPENSES[idx];
+    openSheet(`<div class="sheet-header"><h3>Expense — ${e.id}</h3><button class="sheet-close" onclick="closeSheet()">✕</button></div><div class="sheet-body"><div style="margin-bottom:14px"><div class="dm-row"><span class="dm-row-label">Description</span><span class="dm-row-value">${e.description}</span></div><div class="dm-row"><span class="dm-row-label">Category</span><span class="dm-row-value">${e.category}</span></div><div class="dm-row"><span class="dm-row-label">Amount</span><span class="dm-row-value">${fmt(e.amount)}</span></div><div class="dm-row"><span class="dm-row-label">Date</span><span class="dm-row-value">${shortDate(e.date)}</span></div><div class="dm-row"><span class="dm-row-label">Status</span><span class="dm-row-value"><span class="badge badge--${statusCls(e.status)}">${e.status}</span></span></div></div>${approvalHTML(e.status, 'Li Wei', e.date)}</div><div class="sheet-footer"><button class="btn-ghost btn" onclick="closeSheet()">Close</button></div>`);
+  }
+
+  // ── Bottom Sheet ────────────────────────────────────────
+  function openSheet(html) { closeSheet(); const o=document.createElement('div'); o.className='sheet-overlay'; o.id='sheetOverlay'; o.onclick=function(e){if(e.target===o)closeSheet()}; document.body.appendChild(o); const s=document.createElement('div'); s.className='sheet'; s.id='appSheet'; s.innerHTML='<div class="sheet-handle"></div>'+html; document.body.appendChild(s); }
+  function closeSheet() { document.getElementById('sheetOverlay')?.remove(); document.getElementById('appSheet')?.remove(); }
+
+  function openLeaveForm() {
+    openSheet(`<div class="sheet-header"><h3>Apply for Leave</h3><button class="sheet-close" onclick="closeSheet()">✕</button></div><div class="sheet-body"><div class="s-form-group"><label class="s-form-label">Leave Type</label><select class="s-form-select"><option>Annual Leave</option><option>Sick Leave</option><option>Personal Leave</option><option>Compensatory</option></select></div><div class="s-form-row"><div class="s-form-group"><label class="s-form-label">From</label><input class="s-form-input" type="date"></div><div class="s-form-group"><label class="s-form-label">To</label><input class="s-form-input" type="date"></div></div><div class="s-form-group"><label class="s-form-label">Half Day</label><select class="s-form-select"><option>No</option><option>Forenoon</option><option>Afternoon</option></select></div><div class="s-form-group"><label class="s-form-label">Reason</label><textarea class="s-form-textarea" placeholder="Why do you need leave?"></textarea></div><div class="s-form-group"><label class="s-form-label">Attachment</label><div class="s-upload">Tap to upload (JPG, PNG, PDF)</div></div></div><div class="sheet-footer"><button class="btn-ghost btn" onclick="closeSheet()">Cancel</button><button class="btn-primary btn" onclick="closeSheet()">Submit</button></div>`);
+  }
+
+  let sExpItems=1;
+  function sExpItemsHTML(n){let h='';for(let i=1;i<=n;i++)h+=`<div class="s-expense-item"><div class="s-expense-head"><span class="s-expense-num">Item #${i}</span>${i>1?'<button class="s-expense-rm" onclick="this.closest(\'.s-expense-item\').remove();sExpItems--">✕</button>':''}</div><div class="s-form-row"><div class="s-form-group" style="margin:0"><label class="s-form-label">Date</label><input class="s-form-input" type="date"></div><div class="s-form-group" style="margin:0"><label class="s-form-label">Amount</label><input class="s-form-input" type="number" placeholder="0.00"></div></div><div class="s-form-row" style="margin-top:8px"><div class="s-form-group" style="margin:0"><label class="s-form-label">Category</label><select class="s-form-select"><option>Travel</option><option>Meals</option><option>Equipment</option><option>Transport</option><option>Other</option></select></div><div class="s-form-group" style="margin:0"><label class="s-form-label">Currency</label><select class="s-form-select"><option>CNY</option><option>USD</option><option>EUR</option></select></div></div></div>`;return h}
+  function openExpenseForm(){sExpItems=1;openSheet(`<div class="sheet-header"><h3>Submit Expense</h3><button class="sheet-close" onclick="closeSheet()">✕</button></div><div class="sheet-body"><div id="sExpWrap">${sExpItemsHTML(1)}</div><button class="s-add-btn" onclick="sExpItems++;document.getElementById('sExpWrap').innerHTML=sExpItemsHTML(sExpItems)">+ Add Item</button><div class="s-form-group" style="margin-top:12px"><label class="s-form-label">Receipts</label><div class="s-upload">Tap to upload receipts</div></div></div><div class="sheet-footer"><button class="btn-ghost btn" onclick="closeSheet()">Cancel</button><button class="btn-primary btn" onclick="closeSheet()">Submit</button></div>`)}
+
+  function openTicketForm(){openSheet(`<div class="sheet-header"><h3>Create Ticket</h3><button class="sheet-close" onclick="closeSheet()">✕</button></div><div class="sheet-body"><div class="s-form-group"><label class="s-form-label">Category</label><select class="s-form-select"><option>IT Support</option><option>HR</option><option>Facilities</option><option>Finance</option></select></div><div class="s-form-group"><label class="s-form-label">Priority</label><select class="s-form-select"><option>Low</option><option>Medium</option><option>High</option></select></div><div class="s-form-group"><label class="s-form-label">Subject</label><input class="s-form-input" placeholder="Brief summary"></div><div class="s-form-group"><label class="s-form-label">Description</label><textarea class="s-form-textarea" placeholder="Describe the issue..."></textarea></div><div class="s-form-group"><label class="s-form-label">Attachments</label><div class="s-upload">Tap to upload</div></div></div><div class="sheet-footer"><button class="btn-ghost btn" onclick="closeSheet()">Cancel</button><button class="btn-primary btn" onclick="closeSheet()">Create</button></div>`)}
+
+  function openEditProfile(){openSheet(`<div class="sheet-header"><h3>Edit Profile</h3><button class="sheet-close" onclick="closeSheet()">✕</button></div><div class="sheet-body"><div class="s-form-group"><label class="s-form-label">Full Name</label><input class="s-form-input" value="Zhang Rui"></div><div class="s-form-group"><label class="s-form-label">Email</label><input class="s-form-input" value="zhang.rui@rampingup.com"></div><div class="s-form-group"><label class="s-form-label">Phone</label><input class="s-form-input" value="+86 138 8888 0032"></div><div class="s-form-group"><label class="s-form-label">Address</label><input class="s-form-input" placeholder="Current address"></div></div><div class="sheet-footer"><button class="btn-ghost btn" onclick="closeSheet()">Cancel</button><button class="btn-primary btn" onclick="closeSheet()">Save</button></div>`)}
+
+  // ── FAB ────────────────────────────────────────────────
+  const fab = document.getElementById('fab');
+  const fabMenu = document.getElementById('fabMenu');
+  const fabOverlay = document.getElementById('fabOverlay');
+
+  function toggleFab() {
+    const open = fab.classList.toggle('open');
+    fabMenu.classList.toggle('open', open);
+    fabOverlay.classList.toggle('open', open);
+  }
+
+  function closeFab() {
+    fab.classList.remove('open');
+    fabMenu.classList.remove('open');
+    fabOverlay.classList.remove('open');
+  }
+
+  fab.addEventListener('click', toggleFab);
+  fabOverlay.addEventListener('click', closeFab);
+
+  fabMenu.addEventListener('click', (e) => {
+    const item = e.target.closest('.fab-menu__item');
+    if (!item) return;
+    const action = item.dataset.action;
+    closeFab();
+    if (action === 'leave') openLeaveForm();
+    else if (action === 'expense') openExpenseForm();
+    else if (action === 'ticket') openTicketForm();
+  });
+
+  // ── Pull to Refresh ────────────────────────────────────
+  let touchStartY = 0;
+  let pulling = false;
+  const pullHint = document.getElementById('pullHint');
+  const contentArea = document.getElementById('contentArea');
+
+  contentArea.addEventListener('touchstart', (e) => {
+    if (contentArea.scrollTop <= 0) {
+      touchStartY = e.touches[0].clientY;
+      pulling = true;
+    }
+  }, { passive: true });
+
+  contentArea.addEventListener('touchmove', (e) => {
+    if (!pulling) return;
+    const diff = e.touches[0].clientY - touchStartY;
+    if (diff > 60 && contentArea.scrollTop <= 0) {
+      pullHint.classList.add('visible');
+    }
+  }, { passive: true });
+
+  contentArea.addEventListener('touchend', () => {
+    if (pullHint.classList.contains('visible')) {
+      setTimeout(() => {
+        pullHint.classList.remove('visible');
+        // Re-render current page
+        const pageEl = document.getElementById('page-' + currentTab);
+        const renderers = { home: renderHome, leave: renderLeave, money: renderMoney, tickets: renderTickets, me: renderMe };
+        pageEl.innerHTML = renderers[currentTab]();
+        if (currentTab === 'leave') bindLeaveFilters();
+        if (currentTab === 'money') bindMoneyTabs();
+        if (currentTab === 'me') bindProfileSections();
+      }, 800);
+    }
+    pulling = false;
+  });
+
+  // ── Hash Routing ───────────────────────────────────────
+  function handleHash() {
+    const hash = location.hash.replace('#/', '') || 'home';
+    const tab = TAB_ORDER.includes(hash) ? hash : 'home';
+    navigate(tab);
+  }
+
+  window.addEventListener('hashchange', handleHash);
+
+  // ── Tab Bar click ──────────────────────────────────────
+  document.querySelectorAll('.tab-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      const tab = item.dataset.tab;
+      location.hash = '#/' + tab;
+    });
+  });
+
+  // ── Init ───────────────────────────────────────────────
+  (function init() {
+    // Render home immediately
+    const hash = location.hash.replace('#/', '') || 'home';
+    const tab = TAB_ORDER.includes(hash) ? hash : 'home';
+    currentTab = tab;
+    const pageEl = document.getElementById('page-' + tab);
+    const renderers = { home: renderHome, leave: renderLeave, money: renderMoney, tickets: renderTickets, me: renderMe };
+    pageEl.innerHTML = renderers[tab]();
+    pageEl.classList.add('active');
+    document.getElementById('pageTitle').textContent = TAB_TITLES[tab];
+    document.querySelectorAll('.tab-item').forEach(t => {
+      t.classList.toggle('active', t.dataset.tab === tab);
+    });
+    if (tab === 'leave') bindLeaveFilters();
+    if (tab === 'money') bindMoneyTabs();
+    if (tab === 'me') bindProfileSections();
+  })();
+  </script>
+</body>
+</html>

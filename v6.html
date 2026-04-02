@@ -1,0 +1,2538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Bento Dashboard — Employee Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    /* ============================
+       CSS RESET & VARIABLES
+       ============================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0c0c0c;
+      --card-bg: rgba(20,20,20,0.8);
+      --card-border: rgba(255,255,255,0.06);
+      --card-border-hover: rgba(255,255,255,0.12);
+      --green: #47FC22;
+      --green-dim: rgba(71,252,34,0.15);
+      --green-glow: rgba(71,252,34,0.25);
+      --amber: #FFB800;
+      --amber-dim: rgba(255,184,0,0.15);
+      --red: #FF4D4D;
+      --red-dim: rgba(255,77,77,0.15);
+      --gray: #666;
+      --gray-dim: rgba(102,102,102,0.2);
+      --text: #e0e0e0;
+      --text-secondary: #888;
+      --text-muted: #555;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --nav-height: 64px;
+    }
+
+    html {
+      font-size: 14px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Subtle background gradient */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 0%, rgba(71,252,34,0.03) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(71,252,34,0.02) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ============================
+       SCROLLBAR
+       ============================ */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+
+    /* ============================
+       TOP NAVIGATION
+       ============================ */
+    .topnav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: var(--nav-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      background: rgba(12,12,12,0.75);
+      backdrop-filter: blur(20px) saturate(1.2);
+      -webkit-backdrop-filter: blur(20px) saturate(1.2);
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .topnav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: -0.3px;
+      color: #fff;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .topnav-logo .logo-dot {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .topnav-logo .logo-dot svg { width: 20px; height: 20px; }
+
+    .topnav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .topnav-links a {
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .topnav-links a:hover {
+      color: var(--text);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .topnav-links a.active {
+      color: #000;
+      background: var(--green);
+      font-weight: 600;
+    }
+
+    .topnav-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .topnav-user .user-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .topnav-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), #2dd610);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #000;
+      cursor: pointer;
+    }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 1px;
+      transition: all 0.3s ease;
+    }
+
+    .hamburger.open span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+    /* Mobile nav overlay */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: var(--nav-height);
+      left: 0; right: 0; bottom: 0;
+      background: rgba(12,12,12,0.96);
+      backdrop-filter: blur(20px);
+      z-index: 99;
+      padding: 24px;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .mobile-nav.show { display: flex; }
+
+    .mobile-nav a {
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .mobile-nav a:hover,
+    .mobile-nav a.active {
+      color: #000;
+      background: var(--green);
+    }
+
+    /* ============================
+       MAIN CONTENT
+       ============================ */
+    .main-content {
+      position: relative;
+      z-index: 1;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* Page transitions */
+    .page {
+      display: none;
+      animation: pageIn 0.35s ease;
+    }
+
+    .page.active { display: block; }
+
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============================
+       BENTO CARD
+       ============================ */
+    .bento-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 24px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .bento-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--card-border-hover);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+
+    .bento-card .card-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .bento-card .card-value {
+      font-family: var(--font-mono);
+      font-size: 28px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .bento-card .card-sub {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* ============================
+       DASHBOARD BENTO GRID
+       ============================ */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-auto-rows: minmax(160px, auto);
+      gap: 16px;
+    }
+
+    .bento-grid .span-2 { grid-column: span 2; }
+    .bento-grid .span-3 { grid-column: span 3; }
+    .bento-grid .row-2 { grid-row: span 2; }
+
+    /* Welcome card */
+    .welcome-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -30%;
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(71,252,34,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .welcome-card .greeting {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .welcome-card .greeting span {
+      color: var(--green);
+    }
+
+    .welcome-card .date-line {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    .welcome-card .quick-stats {
+      display: flex;
+      gap: 24px;
+    }
+
+    .welcome-card .quick-stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .welcome-card .quick-stat-item .qs-value {
+      font-family: var(--font-mono);
+      font-size: 20px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .welcome-card .quick-stat-item .qs-label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Leave balance ring */
+    .leave-ring-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+
+    .ring-chart {
+      position: relative;
+      width: 130px;
+      height: 130px;
+    }
+
+    .ring-chart svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .ring-chart circle {
+      fill: none;
+      stroke-width: 8;
+      stroke-linecap: round;
+    }
+
+    .ring-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .ring-center .ring-value {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .ring-center .ring-label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .leave-legend {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 16px;
+      width: 100%;
+    }
+
+    .leave-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .leave-legend-item .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .leave-legend-item .legend-val {
+      font-family: var(--font-mono);
+      font-weight: 500;
+      color: var(--text);
+      margin-left: auto;
+    }
+
+    /* Salary overview card */
+    .salary-chart-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .salary-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      flex: 1;
+      padding-top: 16px;
+    }
+
+    .salary-bar-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .salary-bar {
+      width: 100%;
+      max-width: 36px;
+      border-radius: 6px 6px 2px 2px;
+      background: linear-gradient(180deg, var(--green), rgba(71,252,34,0.3));
+      transition: opacity 0.2s;
+      min-height: 8px;
+    }
+
+    .salary-bar-group:hover .salary-bar { opacity: 0.8; }
+
+    .salary-bar-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Recent activity timeline */
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .activity-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .activity-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-content .act-title {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .activity-content .act-time {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      height: 100%;
+    }
+
+    .stat-cell {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      gap: 6px;
+    }
+
+    .stat-cell .stat-num {
+      font-family: var(--font-mono);
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    .stat-cell .stat-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Quick actions card */
+    .quick-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .quick-action-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .quick-action-btn:hover {
+      background: var(--green-dim);
+      border-color: rgba(71,252,34,0.2);
+      color: var(--green);
+    }
+
+    .quick-action-btn .qa-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    /* Pending approvals */
+    .approval-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .approval-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--card-border);
+    }
+
+    .approval-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .approval-info .ap-type {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .approval-info .ap-date {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Upcoming events */
+    .event-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .event-item {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .event-date-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--green-dim);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .event-date-box .ed-day {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--green);
+      line-height: 1;
+    }
+
+    .event-date-box .ed-mon {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--green);
+      text-transform: uppercase;
+    }
+
+    .event-info .ev-title {
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .event-info .ev-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ============================
+       STATUS BADGES
+       ============================ */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-approved { background: var(--green-dim); color: var(--green); }
+    .badge-pending  { background: var(--amber-dim); color: var(--amber); }
+    .badge-rejected { background: var(--red-dim); color: var(--red); }
+    .badge-draft    { background: var(--gray-dim); color: var(--gray); }
+    .badge-open     { background: rgba(59,130,246,0.15); color: #3b82f6; }
+    .badge-closed   { background: var(--green-dim); color: var(--green); }
+    .badge-high     { background: var(--red-dim); color: var(--red); }
+    .badge-medium   { background: var(--amber-dim); color: var(--amber); }
+    .badge-low      { background: rgba(59,130,246,0.15); color: #3b82f6; }
+
+    /* ============================
+       PAGE HEADERS
+       ============================ */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.3px;
+    }
+
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ============================
+       BUTTONS
+       ============================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      background: #5dff3e;
+      box-shadow: 0 0 20px rgba(71,252,34,0.3);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--card-border);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--card-border-hover);
+      background: rgba(255,255,255,0.03);
+    }
+
+    /* ============================
+       FILTER CHIPS
+       ============================ */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-chip {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--card-border);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-chip:hover {
+      border-color: var(--card-border-hover);
+      color: var(--text);
+    }
+
+    .filter-chip.active {
+      background: var(--green-dim);
+      border-color: rgba(71,252,34,0.3);
+      color: var(--green);
+    }
+
+    /* ============================
+       TABLES
+       ============================ */
+    .data-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .data-table th {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--card-border);
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .data-table tbody tr {
+      transition: background 0.15s ease;
+    }
+
+    .data-table tbody tr:hover {
+      background: rgba(71,252,34,0.03);
+    }
+
+    .data-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* ============================
+       BALANCE CARDS ROW
+       ============================ */
+    .balance-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .balance-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 20px;
+      backdrop-filter: blur(12px);
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+
+    .balance-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--card-border-hover);
+    }
+
+    .balance-card .bc-type {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .balance-card .bc-value {
+      font-family: var(--font-mono);
+      font-size: 26px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .balance-card .bc-detail {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* ============================
+       STATS ROW (subpages)
+       ============================ */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stats-grid .bento-card {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 20px;
+    }
+
+    /* ============================
+       CONTRACT PAGE
+       ============================ */
+    .contract-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .contract-text {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 32px;
+      backdrop-filter: blur(12px);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--text-secondary);
+    }
+
+    .contract-text h3 {
+      font-family: var(--font-sans);
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin: 24px 0 12px;
+    }
+
+    .contract-text h3:first-child { margin-top: 0; }
+
+    /* ============================
+       WALLET PAGE
+       ============================ */
+    .wallet-balance-card {
+      background: linear-gradient(135deg, rgba(71,252,34,0.1), rgba(20,20,20,0.8));
+      border: 1px solid rgba(71,252,34,0.15);
+      border-radius: var(--radius);
+      padding: 40px;
+      text-align: center;
+      margin-bottom: 24px;
+      backdrop-filter: blur(12px);
+    }
+
+    .wallet-balance-card .wb-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .wallet-balance-card .wb-amount {
+      font-family: var(--font-mono);
+      font-size: 42px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .wallet-balance-card .wb-sub {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    .tx-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .tx-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      transition: background 0.15s ease;
+    }
+
+    .tx-item:first-child { border-radius: var(--radius) var(--radius) 0 0; }
+    .tx-item:last-child  { border-radius: 0 0 var(--radius) var(--radius); }
+
+    .tx-item:hover { background: rgba(71,252,34,0.03); }
+
+    .tx-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .tx-left .tx-desc {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .tx-left .tx-date {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .tx-amount {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .tx-amount.credit { color: var(--green); }
+    .tx-amount.debit  { color: var(--red); }
+
+    /* ============================
+       PROFILE PAGE
+       ============================ */
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), #2dd610);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 800;
+      color: #000;
+      flex-shrink: 0;
+    }
+
+    .profile-info .pi-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .profile-info .pi-role {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .profile-info .pi-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .profile-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 0;
+    }
+
+    .profile-tab {
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+      margin-bottom: -1px;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+    }
+
+    .profile-tab:hover { color: var(--text); }
+
+    .profile-tab.active {
+      color: var(--green);
+      border-bottom-color: var(--green);
+    }
+
+    .profile-section {
+      display: none;
+    }
+
+    .profile-section.active { display: block; }
+
+    .profile-fields {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .profile-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .profile-field .pf-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+    }
+
+    .profile-field .pf-value {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--text);
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+    }
+
+    /* ============================
+       EXPANDABLE ROW (Salary)
+       ============================ */
+    .expandable-row {
+      cursor: pointer;
+    }
+    .expandable-row td:last-child .expand-arrow {
+      display: inline-block;
+      transition: transform 0.2s ease;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+    .expandable-row.open td:last-child .expand-arrow {
+      transform: rotate(180deg);
+    }
+
+    .expand-detail {
+      display: none;
+    }
+
+    .expand-detail.show {
+      display: table-row;
+    }
+
+    .expand-detail td {
+      padding: 0;
+      background: rgba(255,255,255,0.015);
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    /* Payslip detail layout */
+    .payslip-detail {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    .payslip-section {
+      padding: 18px 20px;
+    }
+
+    .payslip-section:first-child {
+      border-right: 1px solid var(--card-border);
+    }
+
+    .payslip-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      font-family: var(--font-sans);
+    }
+
+    .payslip-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 5px 0;
+    }
+
+    .payslip-line-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+    }
+
+    .payslip-line-value {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    .payslip-line-value.deduction {
+      color: var(--red);
+    }
+
+    .payslip-divider {
+      height: 1px;
+      background: var(--card-border);
+      margin: 8px 0;
+    }
+
+    .payslip-line.total {
+      padding-top: 8px;
+    }
+
+    .payslip-line.total .payslip-line-label {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .payslip-line.total .payslip-line-value {
+      font-weight: 600;
+    }
+
+    .payslip-line.total .payslip-line-value.earnings-total {
+      color: var(--text);
+    }
+
+    .payslip-line.total .payslip-line-value.deduction-total {
+      color: var(--red);
+    }
+
+    .payslip-summary {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 24px;
+      padding: 12px 20px;
+      background: rgba(71,252,34,0.03);
+      border-top: 1px solid var(--card-border);
+    }
+
+    .payslip-summary-item {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .payslip-summary-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .payslip-summary-value {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    @media (max-width: 640px) {
+      .payslip-detail { grid-template-columns: 1fr; }
+      .payslip-section:first-child { border-right: none; border-bottom: 1px solid var(--card-border); }
+      .payslip-summary { flex-direction: column; align-items: flex-end; gap: 8px; }
+    }
+
+    /* ============================
+       MODAL
+       ============================ */
+    .modal-overlay { position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; animation:fadeIn .2s ease; }
+    .modal { width:560px; max-width:94vw; max-height:88vh; background:#141414; border:1px solid rgba(255,255,255,0.08); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; animation:slideUp .3s ease; }
+    .modal--lg { width:720px; }
+    @keyframes slideUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    .modal-header { display:flex; align-items:center; justify-content:space-between; padding:18px 24px; border-bottom:1px solid rgba(255,255,255,0.06); }
+    .modal-header h3 { font-size:1.05rem; font-weight:600; color:#fff; }
+    .modal-close { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#666; cursor:pointer; border:none; background:none; font-size:1.2rem; }
+    .modal-close:hover { background:rgba(255,255,255,0.05); color:#fff; }
+    .modal-body { padding:24px; overflow-y:auto; flex:1; }
+    .modal-footer { display:flex; justify-content:flex-end; gap:10px; padding:16px 24px; border-top:1px solid rgba(255,255,255,0.06); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .form-group { margin-bottom:14px; }
+    .form-label { display:block; font-size:.72rem; font-weight:600; color:#888; margin-bottom:5px; text-transform:uppercase; letter-spacing:.04em; }
+    .form-input,.form-select,.form-textarea { width:100%; padding:9px 12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; color:#e2e8f0; font-size:.88rem; font-family:inherit; outline:none; }
+    .form-input:focus,.form-select:focus,.form-textarea:focus { border-color:#47FC22; box-shadow:0 0 0 2px rgba(71,252,34,.1); }
+    .form-textarea { min-height:90px; resize:vertical; }
+    .form-select { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:32px; }
+    .upload-zone { border:2px dashed rgba(255,255,255,0.1); border-radius:8px; padding:20px; text-align:center; cursor:pointer; color:#666; font-size:.82rem; }
+    .upload-zone:hover { border-color:rgba(71,252,34,.3); color:#999; }
+    .expense-item { background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:8px; padding:14px; margin-bottom:10px; }
+    .expense-item-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+    .expense-item-num { font-size:.75rem; font-weight:600; color:#47FC22; font-family:'JetBrains Mono',monospace; }
+    .expense-item-remove { background:none; border:none; color:#666; cursor:pointer; font-size:1rem; }
+    .expense-item-remove:hover { color:#ef4444; }
+    .add-item-btn { width:100%; padding:10px; border:2px dashed rgba(255,255,255,0.08); border-radius:8px; background:none; color:#666; font-size:.82rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; }
+    .add-item-btn:hover { border-color:rgba(71,252,34,.3); color:#47FC22; }
+    .md-toolbar { display:flex; gap:2px; padding:5px 8px; background:rgba(255,255,255,0.03); border-bottom:1px solid rgba(255,255,255,0.06); border-radius:8px 8px 0 0; }
+    .md-toolbar button { width:28px; height:28px; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#666; font-weight:700; font-size:.82rem; cursor:pointer; background:none; border:none; }
+    .md-toolbar button:hover { background:rgba(255,255,255,0.05); color:#fff; }
+    .md-editor-wrap { border:1px solid rgba(255,255,255,0.08); border-radius:8px; overflow:hidden; }
+    .md-editor-wrap textarea { width:100%; min-height:120px; padding:10px; background:rgba(255,255,255,0.02); border:none; color:#47FC22; font-family:'JetBrains Mono',monospace; font-size:.82rem; line-height:1.5; resize:vertical; outline:none; }
+    .btn-view { padding:4px 12px; border-radius:6px; font-size:11px; font-weight:600; color:var(--text-secondary); background:transparent; border:1px solid var(--card-border); cursor:pointer; transition:all 0.2s ease; font-family:var(--font-sans); }
+    .btn-view:hover { border-color:var(--card-border-hover); color:var(--text); background:rgba(255,255,255,0.03); }
+
+    /* Approval Flow Timeline */
+    .af-flow { padding:8px 0; }
+    .af-title { font-size:13px; font-weight:600; color:#fff; margin-bottom:14px; }
+    .af-steps { display:flex; flex-direction:column; }
+    .af-step { display:flex; gap:12px; position:relative; padding-bottom:18px; }
+    .af-step:last-child { padding-bottom:0; }
+    .af-step:not(:last-child)::before { content:''; position:absolute; left:13px; top:26px; bottom:0; width:2px; background:rgba(255,255,255,0.06); }
+    .af-step.done:not(:last-child)::before { background:var(--green); }
+    .af-step.rejected:not(:last-child)::before { background:var(--red); }
+    .af-dot { width:28px; height:28px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:12px; position:relative; z-index:1; }
+    .af-step.done .af-dot { background:rgba(52,211,153,0.12); color:var(--green); border:2px solid var(--green); }
+    .af-step.current .af-dot { background:rgba(245,158,11,0.12); color:var(--amber); border:2px solid var(--amber); animation:af-pulse 2s ease infinite; }
+    .af-step.waiting .af-dot { background:rgba(255,255,255,0.03); color:var(--text-muted); border:2px solid rgba(255,255,255,0.08); }
+    .af-step.rejected .af-dot { background:rgba(239,68,68,0.12); color:var(--red); border:2px solid var(--red); }
+    @keyframes af-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0.3)} 50%{box-shadow:0 0 0 6px rgba(245,158,11,0)} }
+    .af-content { flex:1; padding-top:3px; }
+    .af-label { font-size:12px; font-weight:600; color:#fff; }
+    .af-step.waiting .af-label { color:var(--text-muted); }
+    .af-person { font-size:11px; color:var(--text-secondary); margin-top:1px; }
+    .af-meta { font-size:11px; color:var(--text-muted); margin-top:1px; }
+    .dm-row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:12px; }
+    .dm-row:last-child { border-bottom:none; }
+    .dm-row-label { color:var(--text-muted); }
+    .dm-row-value { color:#fff; font-weight:500; }
+
+    /* ============================
+       RESPONSIVE
+       ============================ */
+    @media (max-width: 900px) {
+      .topnav-links { display: none; }
+      .hamburger { display: flex; }
+      .topnav-user .user-name { display: none; }
+
+      .bento-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .bento-grid .span-2,
+      .bento-grid .span-3 {
+        grid-column: span 1;
+      }
+
+      .balance-row,
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .contract-meta-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-row {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .profile-fields {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .main-content { padding: 16px; }
+
+      .balance-row,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-bar {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== TOP NAV ========== -->
+  <nav class="topnav">
+    <a class="topnav-logo" href="#/dashboard">
+      <span class="logo-dot"><svg viewBox="86 70 70 32" fill="none"><path d="M110.39,71.82c.85,0,1.42.88,1.06,1.66l-4.55,9.9-.06.13-.67,1.46-6.4,13.93c-.19.42-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l5.95-12.96.67-1.46,5.06-11.01c.19-.41.61-.68,1.06-.68h10.58Z" fill="#fff"/><path d="M151.2,83.51h-10.58c-.46,0-.87-.27-1.06-.68l-4.3-9.35c-.36-.77.21-1.66,1.06-1.66h10.58c.46,0,.87.27,1.06.68l4.3,9.35c.36.77-.21,1.66-1.06,1.66Z" fill="#47fa22"/><path d="M126.07,73.48l-4.3,9.35c-.19.41-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l4.3-9.35c.19-.41.61-.68,1.06-.68h10.58c.85,0,1.42.88,1.06,1.66Z" fill="#fff"/><path d="M125.69,99.59h-10.59c-.46,0-.87-.27-1.06-.68l-5.64-12.28c-.36-.77.21-1.66,1.06-1.66h10.59c.46,0,.87.27,1.06.68l5.64,12.28c.36.77-.21,1.66-1.06,1.66Z" fill="#fff"/><path d="M152.93,86.63l-5.64,12.28c-.19.42-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l5.64-12.28c.19-.42.61-.68,1.06-.68h10.58c.85,0,1.42.88,1.06,1.66Z" fill="#47fa22"/></svg></span>
+      RampingUp
+    </a>
+
+    <ul class="topnav-links" id="navLinks">
+      <li><a href="#/dashboard" data-page="dashboard">Dashboard</a></li>
+      <li><a href="#/leave" data-page="leave">Leave</a></li>
+      <li><a href="#/salary" data-page="salary">Salary</a></li>
+      <li><a href="#/expenses" data-page="expenses">Expenses</a></li>
+      <li><a href="#/tickets" data-page="tickets">Tickets</a></li>
+      <li><a href="#/contract" data-page="contract">Contract</a></li>
+      <li><a href="#/wallet" data-page="wallet">Wallet</a></li>
+      <li><a href="#/profile" data-page="profile">Profile</a></li>
+    </ul>
+
+    <div class="topnav-user">
+      <span class="user-name">Zhang Wei</span>
+      <div class="topnav-avatar" onclick="navigateTo('profile')">ZW</div>
+    </div>
+
+    <button class="hamburger" id="hamburger" onclick="toggleMobileNav()">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile nav overlay -->
+  <div class="mobile-nav" id="mobileNav">
+    <a href="#/dashboard" data-page="dashboard" onclick="closeMobileNav()">Dashboard</a>
+    <a href="#/leave" data-page="leave" onclick="closeMobileNav()">Leave</a>
+    <a href="#/salary" data-page="salary" onclick="closeMobileNav()">Salary</a>
+    <a href="#/expenses" data-page="expenses" onclick="closeMobileNav()">Expenses</a>
+    <a href="#/tickets" data-page="tickets" onclick="closeMobileNav()">Tickets</a>
+    <a href="#/contract" data-page="contract" onclick="closeMobileNav()">Contract</a>
+    <a href="#/wallet" data-page="wallet" onclick="closeMobileNav()">Wallet</a>
+    <a href="#/profile" data-page="profile" onclick="closeMobileNav()">Profile</a>
+  </div>
+
+  <!-- ========== MAIN ========== -->
+  <div class="main-content">
+
+    <!-- ===== DASHBOARD ===== -->
+    <div class="page" id="page-dashboard">
+      <div class="bento-grid">
+
+        <!-- Welcome — 2 col -->
+        <div class="bento-card span-2 welcome-card">
+          <div class="card-label">Overview</div>
+          <div class="greeting">Good morning, <span>Wei</span></div>
+          <div class="date-line" id="todayDate"></div>
+          <div class="quick-stats">
+            <div class="quick-stat-item">
+              <span class="qs-value">18</span>
+              <span class="qs-label">Leave days left</span>
+            </div>
+            <div class="quick-stat-item">
+              <span class="qs-value">¥28,500</span>
+              <span class="qs-label">Last net pay</span>
+            </div>
+            <div class="quick-stat-item">
+              <span class="qs-value">2</span>
+              <span class="qs-label">Pending items</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leave Balance Ring -->
+        <div class="bento-card" id="leaveRingCard">
+          <div class="card-label">Leave Balance</div>
+          <div class="leave-ring-container">
+            <div class="ring-chart">
+              <svg viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="50" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
+                <circle cx="60" cy="60" r="50" stroke="#47FC22" stroke-width="8"
+                  stroke-dasharray="188 126" stroke-dashoffset="0" opacity="0.9"/>
+                <circle cx="60" cy="60" r="40" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
+                <circle cx="60" cy="60" r="40" stroke="#FFB800" stroke-width="8"
+                  stroke-dasharray="75 176" stroke-dashoffset="0" opacity="0.9"/>
+              </svg>
+              <div class="ring-center">
+                <div class="ring-value">18</div>
+                <div class="ring-label">days left</div>
+              </div>
+            </div>
+            <div class="leave-legend">
+              <div class="leave-legend-item">
+                <span class="dot" style="background:#47FC22"></span>
+                Annual
+                <span class="legend-val">10</span>
+              </div>
+              <div class="leave-legend-item">
+                <span class="dot" style="background:#FFB800"></span>
+                Sick
+                <span class="legend-val">3</span>
+              </div>
+              <div class="leave-legend-item">
+                <span class="dot" style="background:#3b82f6"></span>
+                Personal
+                <span class="legend-val">2</span>
+              </div>
+              <div class="leave-legend-item">
+                <span class="dot" style="background:#a855f7"></span>
+                Comp
+                <span class="legend-val">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Salary Chart -->
+        <div class="bento-card">
+          <div class="card-label">Salary (6 months)</div>
+          <div class="salary-chart-container">
+            <div class="salary-bars" id="salaryBars"></div>
+          </div>
+        </div>
+
+        <!-- Stats 2x1 -->
+        <div class="bento-card span-2">
+          <div class="stats-row">
+            <div class="stat-cell">
+              <span class="stat-num">156</span>
+              <span class="stat-desc">Days this year</span>
+            </div>
+            <div class="stat-cell">
+              <span class="stat-num">4.2</span>
+              <span class="stat-desc">Avg overtime hrs/wk</span>
+            </div>
+            <div class="stat-cell">
+              <span class="stat-num">98%</span>
+              <span class="stat-desc">Attendance rate</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bento-card row-2">
+          <div class="card-label">Recent Activity</div>
+          <div class="activity-list">
+            <div class="activity-item">
+              <span class="activity-dot"></span>
+              <div class="activity-content">
+                <div class="act-title">Leave request approved (Annual, Apr 15-16)</div>
+                <div class="act-time">2 hours ago</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <span class="activity-dot" style="background:var(--amber)"></span>
+              <div class="activity-content">
+                <div class="act-title">Expense claim submitted: Business Travel</div>
+                <div class="act-time">Yesterday, 16:30</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <span class="activity-dot"></span>
+              <div class="activity-content">
+                <div class="act-title">March salary slip available</div>
+                <div class="act-time">Mar 28, 2026</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <span class="activity-dot" style="background:var(--red)"></span>
+              <div class="activity-content">
+                <div class="act-title">Ticket #TK-1042 escalated to HR</div>
+                <div class="act-time">Mar 25, 2026</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <span class="activity-dot"></span>
+              <div class="activity-content">
+                <div class="act-title">Contract renewal signed</div>
+                <div class="act-time">Mar 20, 2026</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <span class="activity-dot"></span>
+              <div class="activity-content">
+                <div class="act-title">Wallet reimbursement: ¥3,200</div>
+                <div class="act-time">Mar 18, 2026</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bento-card">
+          <div class="card-label">Quick Actions</div>
+          <div class="quick-actions">
+            <a class="quick-action-btn" href="javascript:void(0)" onclick="openLeaveForm()">
+              <span class="qa-icon">&#x1F4C5;</span> Apply for Leave
+            </a>
+            <a class="quick-action-btn" href="javascript:void(0)" onclick="openExpenseForm()">
+              <span class="qa-icon">&#x1F4B3;</span> Submit Expense
+            </a>
+            <a class="quick-action-btn" href="javascript:void(0)" onclick="openTicketForm()">
+              <span class="qa-icon">&#x1F3AB;</span> Create Ticket
+            </a>
+            <a class="quick-action-btn" href="#/salary">
+              <span class="qa-icon">&#x1F4C4;</span> View Salary Slip
+            </a>
+          </div>
+        </div>
+
+        <!-- Pending Approvals -->
+        <div class="bento-card">
+          <div class="card-label">Pending Approvals</div>
+          <div class="approval-list">
+            <div class="approval-item">
+              <div class="approval-info">
+                <span class="ap-type">Annual Leave (Apr 15-16)</span>
+                <span class="ap-date">Submitted Mar 30</span>
+              </div>
+              <span class="badge badge-pending">Pending</span>
+            </div>
+            <div class="approval-item">
+              <div class="approval-info">
+                <span class="ap-type">Expense: Client Dinner</span>
+                <span class="ap-date">Submitted Mar 28</span>
+              </div>
+              <span class="badge badge-pending">Pending</span>
+            </div>
+            <div class="approval-item">
+              <div class="approval-info">
+                <span class="ap-type">OT Claim: 8 hrs</span>
+                <span class="ap-date">Submitted Mar 25</span>
+              </div>
+              <span class="badge badge-approved">Approved</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upcoming Events — spans full width -->
+        <div class="bento-card span-3">
+          <div class="card-label">Upcoming Events</div>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap:16px;">
+            <div class="event-item">
+              <div class="event-date-box">
+                <span class="ed-day">05</span>
+                <span class="ed-mon">Apr</span>
+              </div>
+              <div class="event-info">
+                <div class="ev-title">Qingming Festival</div>
+                <div class="ev-desc">Public Holiday</div>
+              </div>
+            </div>
+            <div class="event-item">
+              <div class="event-date-box">
+                <span class="ed-day">10</span>
+                <span class="ed-mon">Apr</span>
+              </div>
+              <div class="event-info">
+                <div class="ev-title">Quarterly Review</div>
+                <div class="ev-desc">All-hands meeting, 14:00</div>
+              </div>
+            </div>
+            <div class="event-item">
+              <div class="event-date-box">
+                <span class="ed-day">15</span>
+                <span class="ed-mon">Apr</span>
+              </div>
+              <div class="event-info">
+                <div class="ev-title">Annual Leave</div>
+                <div class="ev-desc">Apr 15-16, approved</div>
+              </div>
+            </div>
+            <div class="event-item">
+              <div class="event-date-box">
+                <span class="ed-day">01</span>
+                <span class="ed-mon">May</span>
+              </div>
+              <div class="event-info">
+                <div class="ev-title">Labor Day</div>
+                <div class="ev-desc">Public Holiday (May 1-5)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== LEAVE ===== -->
+    <div class="page" id="page-leave">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Leave</h1>
+          <p class="page-subtitle">Manage your time off</p>
+        </div>
+        <button class="btn btn-primary" onclick="openLeaveForm()">+ New Request</button>
+      </div>
+
+      <div class="balance-row" id="leaveBalances"></div>
+
+      <div class="filter-bar">
+        <span class="filter-chip active" onclick="setFilter(this)">All</span>
+        <span class="filter-chip" onclick="setFilter(this)">Approved</span>
+        <span class="filter-chip" onclick="setFilter(this)">Pending</span>
+        <span class="filter-chip" onclick="setFilter(this)">Rejected</span>
+      </div>
+
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>From</th>
+              <th>To</th>
+              <th>Days</th>
+              <th>Status</th>
+              <th>Applied</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="leaveTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== SALARY ===== -->
+    <div class="page" id="page-salary">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Salary</h1>
+          <p class="page-subtitle">Your compensation history</p>
+        </div>
+        <button class="btn btn-ghost">Download All</button>
+      </div>
+
+      <div class="stats-grid" id="salaryStats"></div>
+
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Period</th>
+              <th>Gross</th>
+              <th>Deductions</th>
+              <th>Net Pay</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="salaryTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== EXPENSES ===== -->
+    <div class="page" id="page-expenses">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Expenses</h1>
+          <p class="page-subtitle">Track claims and reimbursements</p>
+        </div>
+        <button class="btn btn-primary" onclick="openExpenseForm()">+ New Claim</button>
+      </div>
+
+      <div class="stats-grid" id="expenseStats"></div>
+
+      <div class="filter-bar">
+        <span class="filter-chip active" onclick="setFilter(this)">All</span>
+        <span class="filter-chip" onclick="setFilter(this)">Approved</span>
+        <span class="filter-chip" onclick="setFilter(this)">Pending</span>
+        <span class="filter-chip" onclick="setFilter(this)">Rejected</span>
+        <span class="filter-chip" onclick="setFilter(this)">Draft</span>
+      </div>
+
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Category</th>
+              <th>Description</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="expenseTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== TICKETS ===== -->
+    <div class="page" id="page-tickets">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Tickets</h1>
+          <p class="page-subtitle">Support requests and issues</p>
+        </div>
+        <button class="btn btn-primary" onclick="openTicketForm()">+ New Ticket</button>
+      </div>
+
+      <div class="filter-bar">
+        <span class="filter-chip active" onclick="setFilter(this)">All</span>
+        <span class="filter-chip" onclick="setFilter(this)">Open</span>
+        <span class="filter-chip" onclick="setFilter(this)">Closed</span>
+        <span class="filter-chip" onclick="setFilter(this)">High</span>
+        <span class="filter-chip" onclick="setFilter(this)">Medium</span>
+        <span class="filter-chip" onclick="setFilter(this)">Low</span>
+      </div>
+
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Subject</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Updated</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="ticketTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== CONTRACT ===== -->
+    <div class="page" id="page-contract">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Contract</h1>
+          <p class="page-subtitle">Your employment agreement</p>
+        </div>
+        <button class="btn btn-ghost">Download PDF</button>
+      </div>
+
+      <div class="contract-meta-grid" id="contractMeta"></div>
+
+      <div class="contract-text" id="contractText"></div>
+    </div>
+
+    <!-- ===== WALLET ===== -->
+    <div class="page" id="page-wallet">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Wallet</h1>
+          <p class="page-subtitle">Reimbursements and advances</p>
+        </div>
+        <button class="btn btn-ghost">Export</button>
+      </div>
+
+      <div class="wallet-balance-card">
+        <div class="wb-label">Available Balance</div>
+        <div class="wb-amount" id="walletBalance"></div>
+        <div class="wb-sub">Last updated: Apr 1, 2026</div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div class="card-label" style="margin-bottom:0">Transaction History</div>
+        <div class="filter-bar" style="margin-bottom:0">
+          <span class="filter-chip active" onclick="setFilter(this)">All</span>
+          <span class="filter-chip" onclick="setFilter(this)">Credit</span>
+          <span class="filter-chip" onclick="setFilter(this)">Debit</span>
+        </div>
+      </div>
+
+      <div class="tx-list" id="txList"></div>
+    </div>
+
+    <!-- ===== PROFILE ===== -->
+    <div class="page" id="page-profile">
+      <div class="profile-header">
+        <div class="profile-avatar">ZW</div>
+        <div class="profile-info">
+          <div class="pi-name">Zhang Wei</div>
+          <div class="pi-role">Senior Software Engineer &mdash; Engineering</div>
+          <div class="pi-id">EMP-2024-0087</div>
+        </div>
+        <button class="btn btn-ghost" style="margin-left:auto" onclick="openEditProfile()">Edit Profile</button>
+      </div>
+
+      <div class="profile-tabs">
+        <button class="profile-tab active" onclick="switchProfileTab(this, 'personal')">Personal</button>
+        <button class="profile-tab" onclick="switchProfileTab(this, 'company')">Company</button>
+        <button class="profile-tab" onclick="switchProfileTab(this, 'bank')">Bank</button>
+      </div>
+
+      <div class="bento-card" style="padding:28px;">
+        <div class="profile-section active" id="prof-personal">
+          <div class="profile-fields">
+            <div class="profile-field">
+              <span class="pf-label">Full Name</span>
+              <span class="pf-value">Zhang Wei</span>
+            </div>
+            <div class="profile-field">
+              <span class="pf-label">Email</span>
+              <span class="pf-value">zhang.wei@company.com</span>
+            </div>
+            <div class="profile-field">
+              <span class="pf-label">Phone</span>
+              <span class="pf-value">+86 138-0013-8000</span>
+            </div>
+            <div class="profile-field">
+              <span class="pf-label">Date of Birth</span>
+              <span class="pf-value">1992-06-15</span>
+            </div>
+            <div class="profile-field">
+              <span class="pf-label">Gender</span>
+              <span class="pf-value">Male</span>
+            </div>
+            <div class="profile-field">
+              <span class="pf-label">Nationality</span>
+              <span class="pf-value">Chinese</span>
+            </div>
+            <div class="profile-field">
+              <span class="pf-label">Address</span>
+              <span class="pf-value">Rm 1203, Bldg 8, Wangjing SOHO, Chaoyang, Beijing</span>
+            </div>
+            <div class="profile-field">
+              <span class="pf-label">Emergency Contact</span>
+              <span class="pf-value">Li Min (Spouse) +86 139-0013-9000</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-section" id="prof-company">
+          <div class="profile-fields">
+            <div class="profile-field">
+              <span class="pf-label">Employee ID</span>
+              <span class="pf-value">EMP-2024-0087</span>
+            </div>
+            <div class="profile-field">
+              <span class="pf-label">Department</span>
+              <span class="pf-value">Engineering</span>
+            </div>
+            <div class="profile-field">
+              <span class="pf-label">Designation</span>
+              <span class="pf-value">Senior Software Engineer</span>
+            </div>
+            <div class="profile-field">
+              <span class="pf-label">Reporting To</span>
+              <span class="pf-value">Liu Jing (Engineering Manager)</span>
+            </div>
+            <div class="profile-field">
+              <span class="pf-label">Join Date</span>
+              <span class="pf-value">2024-03-15</span>
+            </div>
+            <div class="profile-field">
+              <span class="pf-label">Work Location</span>
+              <span class="pf-value">Beijing Office</span>
+            </div>
+            <div class="profile-field">
+              <span class="pf-label">Employment Type</span>
+              <span class="pf-value">Full-time (EOR)</span>
+            </div>
+            <div class="profile-field">
+              <span class="pf-label">Probation Status</span>
+              <span class="pf-value">Completed</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-section" id="prof-bank">
+          <div class="profile-fields">
+            <div class="profile-field">
+              <span class="pf-label">Bank Name</span>
+              <span class="pf-value">China Merchants Bank</span>
+            </div>
+            <div class="profile-field">
+              <span class="pf-label">Account Number</span>
+              <span class="pf-value">**** **** **** 6789</span>
+            </div>
+            <div class="profile-field">
+              <span class="pf-label">Account Holder</span>
+              <span class="pf-value">Zhang Wei</span>
+            </div>
+            <div class="profile-field">
+              <span class="pf-label">Branch</span>
+              <span class="pf-value">Beijing Wangjing Branch</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-content -->
+
+  <script>
+    /* ============================================
+       MOCK DATA
+       ============================================ */
+    const employee = {
+      name: 'Zhang Wei',
+      initials: 'ZW',
+      id: 'EMP-2024-0087',
+      role: 'Senior Software Engineer',
+      dept: 'Engineering',
+    };
+
+    const leaveBalances = [
+      { type: 'Annual Leave', total: 15, used: 5, balance: 10, color: '#47FC22' },
+      { type: 'Sick Leave', total: 10, used: 7, balance: 3, color: '#FFB800' },
+      { type: 'Personal Leave', total: 5, used: 3, balance: 2, color: '#3b82f6' },
+      { type: 'Comp Off', total: 4, used: 1, balance: 3, color: '#a855f7' },
+    ];
+
+    const leaveRequests = [
+      { type: 'Annual Leave', from: '2026-04-15', to: '2026-04-16', days: 2, status: 'approved', applied: '2026-03-30' },
+      { type: 'Sick Leave', from: '2026-03-10', to: '2026-03-11', days: 2, status: 'approved', applied: '2026-03-10' },
+      { type: 'Personal Leave', from: '2026-02-20', to: '2026-02-20', days: 1, status: 'approved', applied: '2026-02-15' },
+      { type: 'Comp Off', from: '2026-02-05', to: '2026-02-05', days: 1, status: 'approved', applied: '2026-02-01' },
+      { type: 'Annual Leave', from: '2026-05-10', to: '2026-05-12', days: 3, status: 'pending', applied: '2026-03-28' },
+      { type: 'Sick Leave', from: '2026-01-15', to: '2026-01-15', days: 1, status: 'rejected', applied: '2026-01-15' },
+    ];
+
+    const salarySlips = [
+      { period: 'Mar 2026', gross: 42000, deductions: 13500, net: 28500, status: 'paid', basic: 30000, hra: 6000, transport: 2000, bonus: 4000, pf: 3600, tax: 7200, insurance: 1200, other: 1500 },
+      { period: 'Feb 2026', gross: 42000, deductions: 13500, net: 28500, status: 'paid', basic: 30000, hra: 6000, transport: 2000, bonus: 4000, pf: 3600, tax: 7200, insurance: 1200, other: 1500 },
+      { period: 'Jan 2026', gross: 42000, deductions: 13500, net: 28500, status: 'paid', basic: 30000, hra: 6000, transport: 2000, bonus: 4000, pf: 3600, tax: 7200, insurance: 1200, other: 1500 },
+      { period: 'Dec 2025', gross: 42000, deductions: 13500, net: 28500, status: 'paid', basic: 30000, hra: 6000, transport: 2000, bonus: 4000, pf: 3600, tax: 7200, insurance: 1200, other: 1500 },
+      { period: 'Nov 2025', gross: 40000, deductions: 12800, net: 27200, status: 'paid', basic: 28000, hra: 5600, transport: 2000, bonus: 4400, pf: 3360, tax: 6840, insurance: 1200, other: 1400 },
+      { period: 'Oct 2025', gross: 40000, deductions: 12800, net: 27200, status: 'paid', basic: 28000, hra: 5600, transport: 2000, bonus: 4400, pf: 3360, tax: 6840, insurance: 1200, other: 1400 },
+    ];
+
+    const expenses = [
+      { id: 'EXP-0061', category: 'Travel', desc: 'Shanghai business trip', amount: 4800, date: '2026-03-28', status: 'pending' },
+      { id: 'EXP-0058', category: 'Meals', desc: 'Client dinner - Acme Corp', amount: 1200, date: '2026-03-22', status: 'pending' },
+      { id: 'EXP-0055', category: 'Equipment', desc: 'USB-C hub adapter', amount: 380, date: '2026-03-15', status: 'approved' },
+      { id: 'EXP-0051', category: 'Travel', desc: 'Taxi to airport', amount: 260, date: '2026-03-10', status: 'approved' },
+      { id: 'EXP-0048', category: 'Meals', desc: 'Team lunch', amount: 680, date: '2026-02-28', status: 'approved' },
+      { id: 'EXP-0042', category: 'Software', desc: 'Figma subscription renewal', amount: 1500, date: '2026-02-15', status: 'rejected' },
+    ];
+
+    const tickets = [
+      { id: 'TK-1042', subject: 'Salary slip discrepancy - March', priority: 'high', status: 'open', created: '2026-03-25', updated: '2026-03-28' },
+      { id: 'TK-1038', subject: 'VPN access request for remote work', priority: 'medium', status: 'open', created: '2026-03-20', updated: '2026-03-22' },
+      { id: 'TK-1035', subject: 'Office parking pass renewal', priority: 'low', status: 'closed', created: '2026-03-15', updated: '2026-03-18' },
+      { id: 'TK-1029', subject: 'Update emergency contact info', priority: 'low', status: 'closed', created: '2026-03-10', updated: '2026-03-11' },
+      { id: 'TK-1022', subject: 'Insurance coverage question', priority: 'medium', status: 'closed', created: '2026-03-01', updated: '2026-03-05' },
+    ];
+
+    const contract = {
+      type: 'Full-time Employment (EOR)',
+      start: '2024-03-15',
+      end: '2027-03-14',
+      status: 'Active',
+      employer: 'Rampingup (EOR) on behalf of TechVenture Inc.',
+      location: 'Beijing, China',
+      salary: '¥42,000 / month (gross)',
+      noticePeriod: '30 days',
+      probation: '6 months (completed)',
+    };
+
+    const walletTransactions = [
+      { desc: 'Expense reimbursement: Travel', date: '2026-03-30', amount: 4800, type: 'credit' },
+      { desc: 'Expense reimbursement: Equipment', date: '2026-03-20', amount: 380, type: 'credit' },
+      { desc: 'Meal advance deduction', date: '2026-03-15', amount: 500, type: 'debit' },
+      { desc: 'Expense reimbursement: Taxi', date: '2026-03-12', amount: 260, type: 'credit' },
+      { desc: 'Expense reimbursement: Team lunch', date: '2026-03-05', amount: 680, type: 'credit' },
+      { desc: 'Advance payment', date: '2026-03-01', amount: 2000, type: 'debit' },
+      { desc: 'February reimbursement batch', date: '2026-02-28', amount: 3200, type: 'credit' },
+      { desc: 'Meal advance deduction', date: '2026-02-15', amount: 500, type: 'debit' },
+    ];
+
+    /* ============================================
+       UTILITY
+       ============================================ */
+    function fmt(n) {
+      return '¥' + Number(n).toLocaleString('zh-CN');
+    }
+
+    function badgeHTML(status) {
+      const s = status.toLowerCase();
+      return `<span class="badge badge-${s}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>`;
+    }
+
+    function setFilter(el) {
+      el.parentElement.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    /* ============================================
+       RENDER FUNCTIONS
+       ============================================ */
+
+    // -- Dashboard date --
+    function renderDashDate() {
+      const d = new Date();
+      const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('todayDate').textContent = d.toLocaleDateString('en-US', opts);
+    }
+
+    // -- Dashboard salary bars --
+    function renderSalaryBars() {
+      const c = document.getElementById('salaryBars');
+      const maxNet = Math.max(...salarySlips.map(s => s.net));
+      c.innerHTML = salarySlips.slice().reverse().map(s => {
+        const h = Math.round((s.net / maxNet) * 100);
+        return `<div class="salary-bar-group">
+          <div class="salary-bar" style="height:${h}px" title="${fmt(s.net)}"></div>
+          <span class="salary-bar-label">${s.period.split(' ')[0].substring(0,3)}</span>
+        </div>`;
+      }).join('');
+    }
+
+    // -- Leave balances --
+    function renderLeaveBalances() {
+      const c = document.getElementById('leaveBalances');
+      c.innerHTML = leaveBalances.map(b => `
+        <div class="balance-card">
+          <div class="bc-type">${b.type}</div>
+          <div class="bc-value" style="color:${b.color}">${b.balance}</div>
+          <div class="bc-detail">${b.used} used / ${b.total} total</div>
+        </div>
+      `).join('');
+    }
+
+    // -- Leave table --
+    function renderLeaveTable() {
+      const c = document.getElementById('leaveTable');
+      c.innerHTML = leaveRequests.map((r, i) => `
+        <tr>
+          <td style="font-family:var(--font-sans);font-weight:500">${r.type}</td>
+          <td>${r.from}</td>
+          <td>${r.to}</td>
+          <td>${r.days}</td>
+          <td>${badgeHTML(r.status)}</td>
+          <td>${r.applied}</td>
+          <td><button class="btn-view" onclick="viewLeaveDetail(${i})">View</button></td>
+        </tr>
+      `).join('');
+    }
+
+    // -- Salary stats --
+    function renderSalaryStats() {
+      const latest = salarySlips[0];
+      const totalGross = salarySlips.reduce((a, s) => a + s.gross, 0);
+      const totalNet = salarySlips.reduce((a, s) => a + s.net, 0);
+      const c = document.getElementById('salaryStats');
+      c.innerHTML = `
+        <div class="bento-card">
+          <div class="card-label">Latest Gross</div>
+          <div class="card-value">${fmt(latest.gross)}</div>
+        </div>
+        <div class="bento-card">
+          <div class="card-label">Latest Net</div>
+          <div class="card-value" style="color:var(--green)">${fmt(latest.net)}</div>
+        </div>
+        <div class="bento-card">
+          <div class="card-label">6-Mo Total Gross</div>
+          <div class="card-value">${fmt(totalGross)}</div>
+        </div>
+        <div class="bento-card">
+          <div class="card-label">6-Mo Total Net</div>
+          <div class="card-value" style="color:var(--green)">${fmt(totalNet)}</div>
+        </div>
+      `;
+    }
+
+    // -- Salary table with expand --
+    function renderSalaryTable() {
+      const c = document.getElementById('salaryTable');
+      c.innerHTML = salarySlips.map((s, i) => {
+        const totalEarnings = s.basic + s.hra + s.transport + s.bonus;
+        const totalDeductions = s.pf + s.tax + s.insurance + s.other;
+        return `
+        <tr class="expandable-row" id="salary-row-${i}" onclick="toggleSalaryDetail(${i})">
+          <td style="font-family:var(--font-sans);font-weight:500">${s.period}</td>
+          <td>${fmt(s.gross)}</td>
+          <td style="color:var(--red)">${fmt(s.deductions)}</td>
+          <td style="color:var(--green);font-weight:600">${fmt(s.net)}</td>
+          <td>${badgeHTML(s.status === 'paid' ? 'approved' : s.status)}</td>
+          <td><span class="expand-arrow">&#9660;</span></td>
+        </tr>
+        <tr class="expand-detail" id="salary-detail-${i}">
+          <td colspan="6">
+            <div class="payslip-detail">
+              <div class="payslip-section">
+                <div class="payslip-section-title">Earnings</div>
+                <div class="payslip-line">
+                  <span class="payslip-line-label">Basic Salary</span>
+                  <span class="payslip-line-value">${fmt(s.basic)}</span>
+                </div>
+                <div class="payslip-line">
+                  <span class="payslip-line-label">Housing Allowance (HRA)</span>
+                  <span class="payslip-line-value">${fmt(s.hra)}</span>
+                </div>
+                <div class="payslip-line">
+                  <span class="payslip-line-label">Transport Allowance</span>
+                  <span class="payslip-line-value">${fmt(s.transport)}</span>
+                </div>
+                <div class="payslip-line">
+                  <span class="payslip-line-label">Performance Bonus</span>
+                  <span class="payslip-line-value">${fmt(s.bonus)}</span>
+                </div>
+                <div class="payslip-divider"></div>
+                <div class="payslip-line total">
+                  <span class="payslip-line-label">Total Earnings</span>
+                  <span class="payslip-line-value earnings-total">${fmt(totalEarnings)}</span>
+                </div>
+              </div>
+              <div class="payslip-section">
+                <div class="payslip-section-title">Deductions</div>
+                <div class="payslip-line">
+                  <span class="payslip-line-label">Provident Fund</span>
+                  <span class="payslip-line-value deduction">-${fmt(s.pf)}</span>
+                </div>
+                <div class="payslip-line">
+                  <span class="payslip-line-label">Income Tax</span>
+                  <span class="payslip-line-value deduction">-${fmt(s.tax)}</span>
+                </div>
+                <div class="payslip-line">
+                  <span class="payslip-line-label">Insurance</span>
+                  <span class="payslip-line-value deduction">-${fmt(s.insurance)}</span>
+                </div>
+                <div class="payslip-line">
+                  <span class="payslip-line-label">Other Deductions</span>
+                  <span class="payslip-line-value deduction">-${fmt(s.other)}</span>
+                </div>
+                <div class="payslip-divider"></div>
+                <div class="payslip-line total">
+                  <span class="payslip-line-label">Total Deductions</span>
+                  <span class="payslip-line-value deduction-total">-${fmt(totalDeductions)}</span>
+                </div>
+              </div>
+              <div class="payslip-summary">
+                <div class="payslip-summary-item">
+                  <span class="payslip-summary-label">Net Pay</span>
+                  <span class="payslip-summary-value">${fmt(s.net)}</span>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    function toggleSalaryDetail(idx) {
+      const el = document.getElementById(`salary-detail-${idx}`);
+      const row = document.getElementById(`salary-row-${idx}`);
+      el.classList.toggle('show');
+      row.classList.toggle('open');
+    }
+
+    // -- Expense stats --
+    function renderExpenseStats() {
+      const total = expenses.reduce((a, e) => a + e.amount, 0);
+      const pending = expenses.filter(e => e.status === 'pending').reduce((a, e) => a + e.amount, 0);
+      const approved = expenses.filter(e => e.status === 'approved').reduce((a, e) => a + e.amount, 0);
+      const rejected = expenses.filter(e => e.status === 'rejected').reduce((a, e) => a + e.amount, 0);
+      const c = document.getElementById('expenseStats');
+      c.innerHTML = `
+        <div class="bento-card">
+          <div class="card-label">Total Claims</div>
+          <div class="card-value">${fmt(total)}</div>
+        </div>
+        <div class="bento-card">
+          <div class="card-label">Pending</div>
+          <div class="card-value" style="color:var(--amber)">${fmt(pending)}</div>
+        </div>
+        <div class="bento-card">
+          <div class="card-label">Approved</div>
+          <div class="card-value" style="color:var(--green)">${fmt(approved)}</div>
+        </div>
+        <div class="bento-card">
+          <div class="card-label">Rejected</div>
+          <div class="card-value" style="color:var(--red)">${fmt(rejected)}</div>
+        </div>
+      `;
+    }
+
+    // -- Expense table --
+    function renderExpenseTable() {
+      const c = document.getElementById('expenseTable');
+      c.innerHTML = expenses.map((e, i) => `
+        <tr>
+          <td style="color:var(--text-muted)">${e.id}</td>
+          <td style="font-family:var(--font-sans);font-weight:500">${e.category}</td>
+          <td style="font-family:var(--font-sans)">${e.desc}</td>
+          <td>${fmt(e.amount)}</td>
+          <td>${e.date}</td>
+          <td>${badgeHTML(e.status)}</td>
+          <td><button class="btn-view" onclick="viewExpenseDetail(${i})">View</button></td>
+        </tr>
+      `).join('');
+    }
+
+    // -- Ticket table --
+    function renderTicketTable() {
+      const c = document.getElementById('ticketTable');
+      c.innerHTML = tickets.map(t => `
+        <tr>
+          <td style="color:var(--text-muted)">${t.id}</td>
+          <td style="font-family:var(--font-sans);font-weight:500">${t.subject}</td>
+          <td>${badgeHTML(t.priority)}</td>
+          <td>${badgeHTML(t.status)}</td>
+          <td>${t.created}</td>
+          <td>${t.updated}</td>
+          <td><button class="btn-view">View</button></td>
+        </tr>
+      `).join('');
+    }
+
+    // -- Contract --
+    function renderContract() {
+      const c = document.getElementById('contractMeta');
+      const fields = [
+        ['Contract Type', contract.type],
+        ['Start Date', contract.start],
+        ['End Date', contract.end],
+        ['Status', contract.status],
+        ['Employer', contract.employer],
+        ['Work Location', contract.location],
+        ['Salary', contract.salary],
+        ['Notice Period', contract.noticePeriod],
+        ['Probation', contract.probation],
+      ];
+      c.innerHTML = fields.map(([label, val]) => `
+        <div class="bento-card" style="padding:18px;">
+          <div class="card-label">${label}</div>
+          <div style="font-family:var(--font-mono);font-size:14px;color:var(--text)">${val}</div>
+        </div>
+      `).join('');
+
+      document.getElementById('contractText').innerHTML = `
+        <h3>1. Parties</h3>
+        This Employment Agreement ("Agreement") is entered into between <strong>Rampingup PTE LTD</strong> ("Employer of Record") acting on behalf of <strong>TechVenture Inc.</strong> ("Client"), and <strong>Zhang Wei</strong> ("Employee"), collectively referred to as the "Parties."
+
+        <h3>2. Position and Duties</h3>
+        The Employee shall serve as <strong>Senior Software Engineer</strong> within the Engineering department, reporting to the Engineering Manager. The Employee shall perform duties as reasonably assigned and consistent with the role.
+
+        <h3>3. Compensation</h3>
+        Base salary: <strong>¥42,000 per month (gross)</strong>, payable on the 28th of each month via bank transfer. Salary is subject to applicable statutory deductions including social insurance, housing fund, and individual income tax.
+
+        <h3>4. Working Hours</h3>
+        Standard working hours: Monday to Friday, 09:00 - 18:00 (8 hours/day, 40 hours/week). Overtime shall be compensated in accordance with PRC labor law.
+
+        <h3>5. Leave Entitlement</h3>
+        Annual Leave: 15 days, Sick Leave: 10 days, Personal Leave: 5 days per annum. Additional statutory holidays per PRC government schedule.
+
+        <h3>6. Confidentiality</h3>
+        The Employee agrees to maintain strict confidentiality regarding proprietary information, trade secrets, and business operations of both the Employer and the Client during and after employment.
+
+        <h3>7. Termination</h3>
+        Either party may terminate this Agreement with 30 days written notice. Termination for cause does not require a notice period. Severance shall be calculated per PRC Labor Contract Law.
+
+        <h3>8. Governing Law</h3>
+        This Agreement shall be governed by the laws of the People's Republic of China. Any disputes shall be resolved through the Beijing Arbitration Commission.
+      `;
+    }
+
+    // -- Wallet --
+    function renderWallet() {
+      const balance = walletTransactions.reduce((acc, t) => {
+        return t.type === 'credit' ? acc + t.amount : acc - t.amount;
+      }, 0);
+      document.getElementById('walletBalance').textContent = fmt(balance);
+
+      const c = document.getElementById('txList');
+      c.innerHTML = walletTransactions.map(t => `
+        <div class="tx-item">
+          <div class="tx-left">
+            <span class="tx-desc">${t.desc}</span>
+            <span class="tx-date">${t.date}</span>
+          </div>
+          <span class="tx-amount ${t.type}">${t.type === 'credit' ? '+' : '-'}${fmt(t.amount)}</span>
+        </div>
+      `).join('');
+    }
+
+    /* ============================================
+       MODAL SYSTEM
+       ============================================ */
+
+    // ── Modal System ──
+    function openModal(html) { closeModal(); const o=document.createElement('div'); o.className='modal-overlay'; o.id='appModal'; o.innerHTML=html; o.addEventListener('click',e=>{if(e.target===o)closeModal()}); document.body.appendChild(o); }
+    function closeModal() { const m=document.getElementById('appModal'); if(m)m.remove(); }
+
+    // ── Approval Flow ──
+    function approvalSteps(status, approver, date) {
+      const s = status.toLowerCase();
+      if (s === 'draft') return [
+        {l:'Draft Created',m:date,st:'done',i:'✎'},
+        {l:'Submit for Review',m:'Not yet submitted',st:'waiting',i:'→'},
+        {l:'Manager Review',p:approver,m:'',st:'waiting',i:'○'},
+        {l:'Completed',m:'',st:'waiting',i:'✓'}
+      ];
+      if (s === 'pending') return [
+        {l:'Submitted',m:date,st:'done',i:'✓'},
+        {l:'Manager Review',p:approver||'Li Wei',m:'Awaiting approval',st:'current',i:'◷'},
+        {l:'HR Confirmation',m:'',st:'waiting',i:'○'},
+        {l:'Completed',m:'',st:'waiting',i:'✓'}
+      ];
+      if (s === 'approved') return [
+        {l:'Submitted',m:date,st:'done',i:'✓'},
+        {l:'Manager Approved',p:approver||'Li Wei',m:'Approved',st:'done',i:'✓'},
+        {l:'HR Confirmed',m:'Confirmed',st:'done',i:'✓'},
+        {l:'Completed',m:'All approvals received',st:'done',i:'✓'}
+      ];
+      if (s === 'rejected') return [
+        {l:'Submitted',m:date,st:'done',i:'✓'},
+        {l:'Manager Rejected',p:approver||'Li Wei',m:'Request rejected',st:'rejected',i:'✕'},
+        {l:'HR Confirmation',m:'Skipped',st:'waiting',i:'○'},
+        {l:'Completed',m:'',st:'waiting',i:'✓'}
+      ];
+      return [{l:status,m:'',st:'done',i:'✓'}];
+    }
+
+    function approvalHTML(status, approver, date) {
+      const steps = approvalSteps(status, approver, date);
+      return `<div class="af-flow"><div class="af-title">Approval Progress</div><div class="af-steps">${steps.map(s => `<div class="af-step ${s.st}"><div class="af-dot">${s.i}</div><div class="af-content"><div class="af-label">${s.l}</div>${s.p?`<div class="af-person">${s.p}</div>`:''}${s.m?`<div class="af-meta">${s.m}</div>`:''}</div></div>`).join('')}</div></div>`;
+    }
+
+    function viewLeaveDetail(idx) {
+      const r = leaveRequests[idx];
+      openModal(`<div class="modal"><div class="modal-header"><h3>Leave Request</h3><button class="modal-close" onclick="closeModal()">&times;</button></div><div class="modal-body"><div style="margin-bottom:16px"><div class="dm-row"><span class="dm-row-label">Type</span><span class="dm-row-value">${r.type}</span></div><div class="dm-row"><span class="dm-row-label">Period</span><span class="dm-row-value">${r.from} to ${r.to}</span></div><div class="dm-row"><span class="dm-row-label">Days</span><span class="dm-row-value">${r.days}</span></div><div class="dm-row"><span class="dm-row-label">Status</span><span class="dm-row-value">${badgeHTML(r.status)}</span></div><div class="dm-row"><span class="dm-row-label">Applied</span><span class="dm-row-value">${r.applied}</span></div></div>${approvalHTML(r.status, 'Li Wei', r.applied)}</div><div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">Close</button></div></div>`);
+    }
+
+    function viewExpenseDetail(idx) {
+      const e = expenses[idx];
+      openModal(`<div class="modal"><div class="modal-header"><h3>Expense Claim — ${e.id}</h3><button class="modal-close" onclick="closeModal()">&times;</button></div><div class="modal-body"><div style="margin-bottom:16px"><div class="dm-row"><span class="dm-row-label">Description</span><span class="dm-row-value">${e.desc}</span></div><div class="dm-row"><span class="dm-row-label">Category</span><span class="dm-row-value">${e.category}</span></div><div class="dm-row"><span class="dm-row-label">Amount</span><span class="dm-row-value">${fmt(e.amount)}</span></div><div class="dm-row"><span class="dm-row-label">Date</span><span class="dm-row-value">${e.date}</span></div><div class="dm-row"><span class="dm-row-label">Status</span><span class="dm-row-value">${badgeHTML(e.status)}</span></div></div>${approvalHTML(e.status, 'Li Wei', e.date)}</div><div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">Close</button></div></div>`);
+    }
+
+    // ── Leave Form ──
+    function openLeaveForm() {
+      openModal(`<div class="modal"><div class="modal-header"><h3>New Leave Request</h3><button class="modal-close" onclick="closeModal()">&times;</button></div><div class="modal-body"><div class="form-row"><div class="form-group"><label class="form-label">Leave Type *</label><select class="form-select"><option>Annual Leave</option><option>Sick Leave</option><option>Personal Leave</option><option>Compensatory</option></select></div><div class="form-group"><label class="form-label">Half Day</label><select class="form-select"><option>No</option><option>Forenoon</option><option>Afternoon</option></select></div></div><div class="form-row"><div class="form-group"><label class="form-label">From Date *</label><input class="form-input" type="date"></div><div class="form-group"><label class="form-label">To Date *</label><input class="form-input" type="date"></div></div><div class="form-group"><label class="form-label">Reason *</label><textarea class="form-textarea" placeholder="Describe your reason..."></textarea></div><div class="form-group"><label class="form-label">Attachment</label><div class="upload-zone">Click or drag to upload (JPG, PNG, PDF — max 10MB)</div></div></div><div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-ghost" onclick="closeModal()">Save Draft</button><button class="btn btn-primary" onclick="closeModal()">Submit</button></div></div>`);
+    }
+
+    // ── Expense Form ──
+    let expItems = 1;
+    function expenseItemsHTML(n) {
+      let h='';
+      for(let i=1;i<=n;i++) h+=`<div class="expense-item"><div class="expense-item-head"><span class="expense-item-num">Item #${i}</span>${i>1?'<button class="expense-item-remove" onclick="this.closest(\'.expense-item\').remove();expItems--">✕</button>':''}</div><div class="form-row"><div class="form-group" style="margin:0"><label class="form-label">Date *</label><input class="form-input" type="date"></div><div class="form-group" style="margin:0"><label class="form-label">Amount *</label><input class="form-input" type="number" placeholder="0.00"></div></div><div class="form-row" style="margin-top:8px"><div class="form-group" style="margin:0"><label class="form-label">Currency</label><select class="form-select"><option>CNY</option><option>USD</option><option>EUR</option></select></div><div class="form-group" style="margin:0"><label class="form-label">Category *</label><select class="form-select"><option>Travel</option><option>Meals</option><option>Equipment</option><option>Communication</option><option>Transportation</option><option>Other</option></select></div></div><div class="form-group" style="margin-top:8px;margin-bottom:0"><label class="form-label">Description</label><input class="form-input" placeholder="Brief description"></div></div>`;
+      return h;
+    }
+    function openExpenseForm() {
+      expItems=1;
+      openModal(`<div class="modal modal--lg"><div class="modal-header"><h3>New Expense Claim</h3><button class="modal-close" onclick="closeModal()">&times;</button></div><div class="modal-body"><div id="expItemsWrap">${expenseItemsHTML(1)}</div><button class="add-item-btn" onclick="expItems++;document.getElementById('expItemsWrap').innerHTML=expenseItemsHTML(expItems)">+ Add Another Item</button><div class="form-group" style="margin-top:14px"><label class="form-label">Receipts / Invoices</label><div class="upload-zone">Click or drag to upload receipts (multiple files — JPG, PNG, PDF)</div></div></div><div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-ghost" onclick="closeModal()">Save Draft</button><button class="btn btn-primary" onclick="closeModal()">Submit</button></div></div>`);
+    }
+
+    // ── Ticket Form ──
+    function openTicketForm() {
+      openModal(`<div class="modal modal--lg"><div class="modal-header"><h3>New Support Ticket</h3><button class="modal-close" onclick="closeModal()">&times;</button></div><div class="modal-body"><div class="form-row"><div class="form-group"><label class="form-label">Category *</label><select class="form-select"><option>IT Support</option><option>HR</option><option>Facilities</option><option>Finance</option><option>Other</option></select></div><div class="form-group"><label class="form-label">Priority *</label><select class="form-select"><option>Low</option><option>Medium</option><option>High</option></select></div></div><div class="form-group"><label class="form-label">Subject *</label><input class="form-input" placeholder="Brief summary of the issue"></div><div class="form-group"><label class="form-label">Description *</label><div class="md-editor-wrap"><div class="md-toolbar"><button><b>B</b></button><button><i>I</i></button><button style="font-family:monospace;font-size:.7rem">&lt;/&gt;</button><button>🔗</button><button>☰</button></div><textarea placeholder="Describe the issue in detail. Markdown supported..."></textarea></div></div><div class="form-group"><label class="form-label">Attachments</label><div class="upload-zone">Click or drag to upload screenshots, logs, etc.</div></div></div><div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="closeModal()">Create Ticket</button></div></div>`);
+    }
+
+    // ── Edit Profile Form ──
+    function openEditProfile() {
+      openModal(`<div class="modal"><div class="modal-header"><h3>Edit Profile</h3><button class="modal-close" onclick="closeModal()">&times;</button></div><div class="modal-body"><div class="form-row"><div class="form-group"><label class="form-label">Full Name</label><input class="form-input" value="Zhang Wei"></div><div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" value="zhang.wei@company.com"></div></div><div class="form-row"><div class="form-group"><label class="form-label">Phone</label><input class="form-input" value="+86 138-0013-8000"></div><div class="form-group"><label class="form-label">Date of Birth</label><input class="form-input" type="date" value="1992-06-15"></div></div><div class="form-group"><label class="form-label">Address</label><textarea class="form-textarea" style="min-height:60px">Rm 1203, Bldg 8, Wangjing SOHO, Chaoyang, Beijing</textarea></div><div class="form-row"><div class="form-group"><label class="form-label">Emergency Contact Name</label><input class="form-input" value="Li Min (Spouse)"></div><div class="form-group"><label class="form-label">Emergency Contact Phone</label><input class="form-input" value="+86 139-0013-9000"></div></div></div><div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="closeModal()">Save Changes</button></div></div>`);
+    }
+
+    /* ============================================
+       ROUTING
+       ============================================ */
+    const pages = ['dashboard', 'leave', 'salary', 'expenses', 'tickets', 'contract', 'wallet', 'profile'];
+
+    function navigateTo(page) {
+      window.location.hash = '#/' + page;
+    }
+
+    function handleRoute() {
+      let hash = window.location.hash.replace('#/', '') || 'dashboard';
+      if (!pages.includes(hash)) hash = 'dashboard';
+
+      // Activate page
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      const target = document.getElementById('page-' + hash);
+      if (target) {
+        target.classList.remove('active');
+        // Force reflow for animation
+        void target.offsetWidth;
+        target.classList.add('active');
+      }
+
+      // Active nav
+      document.querySelectorAll('.topnav-links a, .mobile-nav a').forEach(a => {
+        a.classList.toggle('active', a.dataset.page === hash);
+      });
+    }
+
+    /* ============================================
+       MOBILE NAV
+       ============================================ */
+    function toggleMobileNav() {
+      const nav = document.getElementById('mobileNav');
+      const btn = document.getElementById('hamburger');
+      nav.classList.toggle('show');
+      btn.classList.toggle('open');
+    }
+
+    function closeMobileNav() {
+      document.getElementById('mobileNav').classList.remove('show');
+      document.getElementById('hamburger').classList.remove('open');
+    }
+
+    /* ============================================
+       PROFILE TABS
+       ============================================ */
+    function switchProfileTab(btn, tab) {
+      document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.profile-section').forEach(s => s.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('prof-' + tab).classList.add('active');
+    }
+
+    /* ============================================
+       INIT
+       ============================================ */
+    function init() {
+      renderDashDate();
+      renderSalaryBars();
+      renderLeaveBalances();
+      renderLeaveTable();
+      renderSalaryStats();
+      renderSalaryTable();
+      renderExpenseStats();
+      renderExpenseTable();
+      renderTicketTable();
+      renderContract();
+      renderWallet();
+
+      window.addEventListener('hashchange', handleRoute);
+      handleRoute();
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

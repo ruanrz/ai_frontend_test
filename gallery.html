@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RampingUp — Theme Gallery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 14px; -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0a0a0a; color: #e2e8f0; min-height: 100vh;
+    }
+
+    /* ── Header ──────────────────────── */
+    .gallery-header {
+      padding: 48px 40px 40px;
+      max-width: 1280px; margin: 0 auto;
+    }
+    .gallery-header__brand {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
+    }
+    .gallery-header__brand svg { filter: drop-shadow(0 0 8px rgba(71,252,34,0.3)); }
+    .gallery-header__brand span {
+      font-size: 1.3rem; font-weight: 700; letter-spacing: 0.04em;
+      background: linear-gradient(135deg, #47FC22, #22b455);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .gallery-header h1 {
+      font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em;
+      color: #fff; margin-bottom: 8px;
+    }
+    .gallery-header p {
+      font-size: 1rem; color: #64748b; max-width: 520px; line-height: 1.6;
+    }
+    .gallery-header__meta {
+      display: flex; gap: 20px; margin-top: 20px;
+      font-size: 0.82rem; color: #475569;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .gallery-header__meta span { color: #47FC22; }
+
+    /* ── Grid ─────────────────────────── */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 20px;
+      max-width: 1280px; margin: 0 auto;
+      padding: 0 40px 60px;
+    }
+
+    /* ── Card ─────────────────────────── */
+    .theme-card {
+      background: #111111;
+      border: 1px solid #1e1e1e;
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      display: block;
+      text-decoration: none;
+      color: inherit;
+    }
+    .theme-card:hover {
+      border-color: #2a2a2a;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4), 0 0 1px rgba(255,255,255,0.05);
+      transform: translateY(-4px);
+    }
+
+    /* Preview area */
+    .theme-card__preview {
+      height: 220px;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid #1e1e1e;
+    }
+
+    /* Mini browser mockup inside preview */
+    .mini-browser {
+      position: absolute;
+      top: 16px; left: 16px; right: 16px; bottom: 0;
+      border-radius: 10px 10px 0 0;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+    }
+    .mini-browser__bar {
+      height: 28px;
+      display: flex; align-items: center; gap: 6px;
+      padding: 0 12px;
+      font-size: 0.55rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .mini-browser__dot {
+      width: 8px; height: 8px; border-radius: 50%;
+    }
+    .mini-browser__url {
+      margin-left: 8px; opacity: 0.5;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .mini-browser__content {
+      display: flex; height: calc(100% - 28px);
+    }
+    .mini-sidebar {
+      width: 48px; flex-shrink: 0;
+      display: flex; flex-direction: column;
+      padding: 8px 6px; gap: 4px;
+    }
+    .mini-sidebar__logo {
+      width: 10px; height: 10px; border-radius: 3px;
+      margin-bottom: 6px;
+    }
+    .mini-sidebar__item {
+      height: 5px; border-radius: 2px;
+      width: 70%; opacity: 0.3;
+    }
+    .mini-sidebar__item.active { opacity: 0.8; width: 85%; }
+    .mini-main {
+      flex: 1; padding: 10px; display: flex; flex-direction: column; gap: 6px;
+    }
+    .mini-topbar { height: 8px; border-radius: 3px; width: 40%; }
+    .mini-cards {
+      display: flex; gap: 5px;
+    }
+    .mini-card {
+      flex: 1; height: 36px; border-radius: 4px;
+    }
+    .mini-table {
+      flex: 1; border-radius: 4px;
+    }
+
+    /* Card info */
+    .theme-card__info { padding: 20px; }
+
+    .theme-card__version {
+      font-size: 0.7rem; font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+    .theme-card__name {
+      font-size: 1.2rem; font-weight: 700; color: #fff;
+      margin-bottom: 6px; letter-spacing: -0.01em;
+    }
+    .theme-card__desc {
+      font-size: 0.82rem; color: #64748b; line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    .theme-card__tags {
+      display: flex; gap: 6px; flex-wrap: wrap;
+    }
+    .theme-tag {
+      padding: 3px 10px; border-radius: 999px;
+      font-size: 0.7rem; font-weight: 500;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #94a3b8;
+    }
+
+    /* ── Per-theme color schemes for previews ──── */
+
+    /* V1 — Remofirst (SaaS Professional) */
+    .preview-v1 { background: #f9fafb; }
+    .preview-v1 .mini-browser { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .preview-v1 .mini-browser__bar { background: #fff; color: #98a2b3; border-bottom: 1px solid #eaecf0; }
+    .preview-v1 .mini-browser__dot { background: #04C53A; }
+    .preview-v1 .mini-sidebar { width: 52px; background: #fff; border-right: 1px solid #eaecf0; padding: 8px 6px; }
+    .preview-v1 .mini-sidebar__logo { width: 10px; height: 10px; background: #04C53A; border-radius: 3px; margin-bottom: 6px; }
+    .preview-v1 .mini-sidebar__item { background: #eaecf0; height: 4px; border-radius: 2px; }
+    .preview-v1 .mini-sidebar__item.active { background: #04C53A; }
+    .preview-v1 .mini-main { background: #f9fafb; }
+    .preview-v1 .mini-topbar { background: #eaecf0; height: 8px; width: 35%; }
+    .preview-v1 .mini-card { background: #fff; border: 1px solid #eaecf0; border-radius: 6px; }
+    .preview-v1 .mini-table { background: #fff; border: 1px solid #eaecf0; border-radius: 6px; }
+    .preview-v1 .theme-card__version { color: #04C53A; }
+
+    /* V2 — Clean Light */
+    .preview-v2 { background: #F5F3EE; }
+    .preview-v2 .mini-browser { box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
+    .preview-v2 .mini-browser__bar { background: #1C1917; color: #a8a29e; }
+    .preview-v2 .mini-browser__dot { background: #47FC22; }
+    .preview-v2 .mini-sidebar { background: #1C1917; }
+    .preview-v2 .mini-sidebar__logo { background: #2D9B1B; }
+    .preview-v2 .mini-sidebar__item { background: #44403c; }
+    .preview-v2 .mini-sidebar__item.active { background: #47FC22; }
+    .preview-v2 .mini-main { background: #F5F3EE; }
+    .preview-v2 .mini-topbar { background: #e7e5e4; }
+    .preview-v2 .mini-card { background: #ffffff; border: 1px solid #e7e5e4; }
+    .preview-v2 .mini-table { background: #ffffff; border: 1px solid #e7e5e4; }
+    .preview-v2 .theme-card__version { color: #2D9B1B; }
+
+    /* V3 — Neon Terminal */
+    .preview-v3 { background: #000000; }
+    .preview-v3 .mini-browser__bar { background: #0a0a0a; color: #555; }
+    .preview-v3 .mini-browser__dot { background: #47FC22; box-shadow: 0 0 6px rgba(71,252,34,0.5); }
+    .preview-v3 .mini-sidebar { background: #0a0a0a; border-right: 1px solid rgba(71,252,34,0.1); }
+    .preview-v3 .mini-sidebar__logo { background: #47FC22; box-shadow: 0 0 6px rgba(71,252,34,0.4); }
+    .preview-v3 .mini-sidebar__item { background: #1a1a1a; }
+    .preview-v3 .mini-sidebar__item.active { background: #47FC22; box-shadow: 0 0 4px rgba(71,252,34,0.3); }
+    .preview-v3 .mini-main { background: #000; }
+    .preview-v3 .mini-topbar { background: #111; }
+    .preview-v3 .mini-card { background: #0d0d0d; border: 1px solid rgba(71,252,34,0.1); }
+    .preview-v3 .mini-table { background: #0d0d0d; border: 1px solid rgba(71,252,34,0.08); }
+    .preview-v3 .theme-card__version { color: #47FC22; }
+
+    /* V4 — Soft Modern */
+    .preview-v4 { background: #f0f4f3; }
+    .preview-v4 .mini-browser { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+    .preview-v4 .mini-browser__bar { background: #ffffff; color: #9ca3af; border-bottom: 1px solid #e5e7eb; }
+    .preview-v4 .mini-browser__dot { background: linear-gradient(135deg, #22b455, #47FC22); }
+    .preview-v4 .mini-sidebar { background: #ffffff; border-right: 1px solid #e5e7eb; }
+    .preview-v4 .mini-sidebar__logo { background: linear-gradient(135deg, #22b455, #47FC22); }
+    .preview-v4 .mini-sidebar__item { background: #e5e7eb; }
+    .preview-v4 .mini-sidebar__item.active { background: rgba(34,180,85,0.2); }
+    .preview-v4 .mini-main { background: #f0f4f3; }
+    .preview-v4 .mini-topbar { background: #e5e7eb; }
+    .preview-v4 .mini-card { background: #fff; border: 1px solid #e5e7eb; }
+    .preview-v4 .mini-table { background: #fff; border: 1px solid #e5e7eb; }
+    .preview-v4 .theme-card__version { color: #22b455; }
+
+    /* V5 — Light Terminal */
+    .preview-v5 { background: #f3f4f1; }
+    .preview-v5 .mini-browser { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+    .preview-v5 .mini-browser__bar { background: #1a1a1a; color: #666; }
+    .preview-v5 .mini-browser__dot { background: #1a9e2c; }
+    .preview-v5 .mini-sidebar { background: #1a1a1a; }
+    .preview-v5 .mini-sidebar__logo { background: #1a9e2c; }
+    .preview-v5 .mini-sidebar__item { background: #333; }
+    .preview-v5 .mini-sidebar__item.active { background: #47FC22; }
+    .preview-v5 .mini-main { background: #f3f4f1; }
+    .preview-v5 .mini-topbar { background: #ddddd8; }
+    .preview-v5 .mini-card { background: #fff; border: 1px solid #ddddd8; }
+    .preview-v5 .mini-table { background: #fff; border: 1px solid #ddddd8; }
+    .preview-v5 .theme-card__version { color: #1a9e2c; }
+
+    /* V6 — Bento Dashboard */
+    .preview-v6 { background: #0c0c0c; }
+    .preview-v6 .mini-browser__bar { background: rgba(20,20,20,0.95); color: #666; }
+    .preview-v6 .mini-browser__dot { background: #47FC22; }
+    .preview-v6 .mini-sidebar { display: none; }
+    .preview-v6 .mini-main { background: #0c0c0c; padding: 6px; }
+    .preview-v6 .mini-topbar { background: rgba(20,20,20,0.8); height: 10px; width: 100%; border-radius: 4px; margin-bottom: 6px; }
+    .preview-v6 .mini-cards { display: grid; grid-template-columns: 2fr 1fr; grid-template-rows: 1fr 1fr; gap: 4px; flex: 1; }
+    .preview-v6 .mini-card { background: rgba(20,20,20,0.8); border: 1px solid rgba(71,252,34,0.08); border-radius: 6px; }
+    .preview-v6 .mini-card:first-child { grid-row: 1 / 3; }
+    .preview-v6 .mini-table { display: none; }
+    .preview-v6 .theme-card__version { color: #47FC22; }
+
+    /* V7 — Feed Mobile */
+    .preview-v7 { background: #ffffff; }
+    .preview-v7 .mini-browser { left: 50%; transform: translateX(-50%); right: auto; width: 180px; border-radius: 16px 16px 0 0; box-shadow: 0 2px 16px rgba(0,0,0,0.08); }
+    .preview-v7 .mini-browser__bar { background: #fff; color: #ccc; border-bottom: 1px solid #f0f0f0; }
+    .preview-v7 .mini-browser__dot { background: #22c55e; }
+    .preview-v7 .mini-sidebar { display: none; }
+    .preview-v7 .mini-main { background: #f9f9f9; padding: 8px; flex-direction: column; gap: 4px; }
+    .preview-v7 .mini-topbar { background: #fff; height: 24px; border-radius: 8px; border: 1px solid #eee; width: 100%; }
+    .preview-v7 .mini-cards { flex-direction: column; gap: 4px; flex: 1; }
+    .preview-v7 .mini-card { background: #fff; border: 1px solid #eee; border-radius: 10px; height: auto; flex: 1; }
+    .preview-v7 .mini-table { background: #22c55e; border-radius: 50%; width: 20px; height: 20px; position: absolute; bottom: 8px; right: 8px; border: none; }
+    .preview-v7 .theme-card__version { color: #22c55e; }
+
+    /* V8 — Icon Rail */
+    .preview-v8 { background: #161616; }
+    .preview-v8 .mini-browser__bar { background: #1c1c1c; color: #555; height: 22px; }
+    .preview-v8 .mini-browser__dot { background: #47FC22; }
+    .preview-v8 .mini-sidebar { width: 24px; background: #111; border-right: 1px solid #2a2a2a; padding: 6px 4px; gap: 5px; }
+    .preview-v8 .mini-sidebar__logo { width: 8px; height: 8px; background: #47FC22; border-radius: 2px; margin: 0 auto 4px; }
+    .preview-v8 .mini-sidebar__item { width: 8px; height: 8px; border-radius: 2px; margin: 0 auto; background: #2a2a2a; }
+    .preview-v8 .mini-sidebar__item.active { background: #47FC22; }
+    .preview-v8 .mini-main { background: #161616; }
+    .preview-v8 .mini-topbar { background: #222; height: 6px; }
+    .preview-v8 .mini-card { background: #1c1c1c; border: 1px solid #2a2a2a; border-radius: 4px; }
+    .preview-v8 .mini-table { background: #1c1c1c; border: 1px solid #2a2a2a; border-radius: 4px; }
+    .preview-v8 .theme-card__version { color: #47FC22; }
+
+    /* V9 — Neo Dashboard (Bento Dark + Glow) */
+    .preview-v9 { background: #0a0a0a; }
+    .preview-v9 .mini-browser__bar { background: #000; color: #444; }
+    .preview-v9 .mini-browser__dot { background: #47FC22; box-shadow: 0 0 4px rgba(71,252,34,0.4); }
+    .preview-v9 .mini-sidebar { width: 22px; background: #000; border-right: 1px solid #1a1a1a; padding: 6px 4px; gap: 5px; }
+    .preview-v9 .mini-sidebar__logo { width: 8px; height: 8px; background: #47FC22; border-radius: 2px; margin: 0 auto 4px; }
+    .preview-v9 .mini-sidebar__item { width: 6px; height: 6px; border-radius: 50%; margin: 0 auto; background: #222; }
+    .preview-v9 .mini-sidebar__item.active { background: #47FC22; box-shadow: 0 0 4px rgba(71,252,34,0.3); }
+    .preview-v9 .mini-main { background: #0a0a0a; padding: 6px; }
+    .preview-v9 .mini-topbar { background: #161616; height: 10px; width: 50%; border-radius: 3px; }
+    .preview-v9 .mini-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+    .preview-v9 .mini-card { background: #111; border: 1px solid #1a1a1a; border-radius: 5px; height: 32px; }
+    .preview-v9 .mini-card:hover { border-color: rgba(71,252,34,0.2); }
+    .preview-v9 .mini-table { background: #111; border: 1px solid #1a1a1a; border-radius: 5px; }
+    .preview-v9 .theme-card__version { color: #47FC22; }
+
+    /* V10 — Clean Minimal (Light + Black accent) */
+    .preview-v10 { background: #fafafa; }
+    .preview-v10 .mini-browser { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .preview-v10 .mini-browser__bar { background: #fff; color: #bbb; border-bottom: 1px solid #eaeaea; }
+    .preview-v10 .mini-browser__dot { background: #111; }
+    .preview-v10 .mini-sidebar { width: 56px; background: #fff; border-right: 1px solid #eaeaea; padding: 8px 8px; }
+    .preview-v10 .mini-sidebar__logo { width: 10px; height: 10px; background: #111; border-radius: 3px; margin-bottom: 6px; }
+    .preview-v10 .mini-sidebar__item { background: #e8e8e8; height: 4px; border-radius: 2px; }
+    .preview-v10 .mini-sidebar__item.active { background: #111; }
+    .preview-v10 .mini-main { background: #fafafa; }
+    .preview-v10 .mini-topbar { background: #eaeaea; height: 10px; width: 35%; }
+    .preview-v10 .mini-card { background: #fff; border: 1px solid #eaeaea; border-radius: 6px; position: relative; }
+    .preview-v10 .mini-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: #47FC22; border-radius: 6px 6px 0 0; }
+    .preview-v10 .mini-table { background: #fff; border: 1px solid #eaeaea; border-radius: 6px; }
+    .preview-v10 .theme-card__version { color: #111; }
+
+    /* V11 — Card Stack (Mobile-first + warm bg) */
+    .preview-v11 { background: #f5f5f0; }
+    .preview-v11 .mini-browser { left: 50%; transform: translateX(-50%); right: auto; width: 180px; border-radius: 16px 16px 0 0; box-shadow: 0 2px 16px rgba(0,0,0,0.06); }
+    .preview-v11 .mini-browser__bar { background: rgba(245,245,240,0.9); color: #ccc; backdrop-filter: blur(4px); }
+    .preview-v11 .mini-browser__dot { background: #111; }
+    .preview-v11 .mini-sidebar { display: none; }
+    .preview-v11 .mini-main { background: #f5f5f0; padding: 6px; flex-direction: column; gap: 4px; }
+    .preview-v11 .mini-topbar { background: #000; height: 28px; border-radius: 8px; width: 100%; }
+    .preview-v11 .mini-cards { flex-direction: row; gap: 3px; overflow: hidden; }
+    .preview-v11 .mini-card { background: #fff; border: 1px solid #e8e8e3; border-radius: 8px; height: auto; flex: 0 0 60px; }
+    .preview-v11 .mini-table { background: #fff; border: 1px solid #e8e8e3; border-radius: 8px; }
+    .preview-v11 .theme-card__version { color: #111; }
+
+    /* V12 — Neo Dashboard Light */
+    .preview-v12 { background: #f5f5f2; }
+    .preview-v12 .mini-browser { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .preview-v12 .mini-browser__bar { background: #fff; color: #bbb; border-bottom: 1px solid #e0e0db; }
+    .preview-v12 .mini-browser__dot { background: #1a9e2c; }
+    .preview-v12 .mini-sidebar { width: 22px; background: #fff; border-right: 1px solid #e0e0db; padding: 6px 4px; gap: 5px; }
+    .preview-v12 .mini-sidebar__logo { width: 8px; height: 8px; background: #111; border-radius: 2px; margin: 0 auto 4px; }
+    .preview-v12 .mini-sidebar__item { width: 6px; height: 6px; border-radius: 50%; margin: 0 auto; background: #e0e0db; }
+    .preview-v12 .mini-sidebar__item.active { background: #111; }
+    .preview-v12 .mini-main { background: #f5f5f2; padding: 6px; }
+    .preview-v12 .mini-topbar { background: #e5e5e0; height: 10px; width: 50%; border-radius: 3px; }
+    .preview-v12 .mini-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+    .preview-v12 .mini-card { background: #fff; border: 1px solid #e0e0db; border-radius: 5px; height: 32px; }
+    .preview-v12 .mini-table { background: #fff; border: 1px solid #e0e0db; border-radius: 5px; }
+    .preview-v12 .theme-card__version { color: #1a9e2c; }
+
+    /* ── Section divider ─────────────── */
+    .gallery-divider {
+      max-width: 1280px; margin: 8px auto 28px; padding: 0 40px;
+      display: flex; align-items: center; gap: 16px;
+      font-size: 0.78rem; color: #334155;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .gallery-divider::before, .gallery-divider::after {
+      content: ''; flex: 1; height: 1px; background: #1e1e1e;
+    }
+    .gallery-divider span { color: #47FC22; font-weight: 600; }
+
+    /* ── Footer ───────────────────────── */
+    .gallery-footer {
+      max-width: 1280px; margin: 0 auto;
+      padding: 0 40px 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 0.78rem; color: #334155;
+      border-top: 1px solid #1e1e1e;
+      padding-top: 24px;
+    }
+    .gallery-footer a { color: #47FC22; text-decoration: none; }
+
+    /* ── Responsive ───────────────────── */
+    @media (max-width: 860px) {
+      .gallery-grid { grid-template-columns: 1fr; padding: 0 20px 40px; }
+      .gallery-header { padding: 32px 20px 28px; }
+      .gallery-header h1 { font-size: 1.6rem; }
+      .gallery-footer { padding: 24px 20px 32px; flex-direction: column; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="gallery-header">
+    <div class="gallery-header__brand">
+      <svg width="32" height="32" viewBox="80 46 82 82" fill="none">
+        <rect x="80" y="46" width="82" height="82" rx="10" fill="#1a1a1a"/>
+        <path d="M110.39,71.82c.85,0,1.42.88,1.06,1.66l-4.55,9.9-.06.13-.67,1.46-6.4,13.93c-.19.42-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l5.95-12.96.67-1.46,5.06-11.01c.19-.41.61-.68,1.06-.68h10.58Z" fill="#fff"/>
+        <path d="M151.2,83.51h-10.58c-.46,0-.87-.27-1.06-.68l-4.3-9.35c-.36-.77.21-1.66,1.06-1.66h10.58c.46,0,.87.27,1.06.68l4.3,9.35c.36.77-.21,1.66-1.06,1.66Z" fill="#47fa22"/>
+        <path d="M126.07,73.48l-4.3,9.35c-.19.41-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l4.3-9.35c.19-.41.61-.68,1.06-.68h10.58c.85,0,1.42.88,1.06,1.66Z" fill="#fff"/>
+        <path d="M125.69,99.59h-10.59c-.46,0-.87-.27-1.06-.68l-5.64-12.28c-.36-.77.21-1.66,1.06-1.66h10.59c.46,0,.87.27,1.06.68l5.64,12.28c.36.77-.21,1.66-1.06,1.66Z" fill="#fff"/>
+        <path d="M152.93,86.63l-5.64,12.28c-.19.42-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l5.64-12.28c.19-.42.61-.68,1.06-.68h10.58c.85,0,1.42.88,1.06,1.66Z" fill="#47fa22"/>
+      </svg>
+      <span>RampingUp</span>
+    </div>
+    <h1>Employee Portal — Theme Gallery</h1>
+    <p>13 个完整 UI 主题。V1 参考 Remofirst 专业 SaaS 风格，V2-V5 共享侧边栏布局，V6-V8 采用全新交互模式，V9-V12 四种全新创意设计。点击任意卡片进入预览。</p>
+    <div class="gallery-header__meta">
+      <div><span>13</span> themes</div>
+      <div><span>5</span> layout types</div>
+      <div><span>5+</span> pages each</div>
+      <div><span>100%</span> vanilla</div>
+    </div>
+  </header>
+
+  <div class="gallery-grid">
+
+    <!-- V1 -->
+    <a class="theme-card" href="remofirst.html" target="_blank">
+      <div class="theme-card__preview preview-v1">
+        <div class="mini-browser">
+          <div class="mini-browser__bar">
+            <div class="mini-browser__dot"></div>
+            <div class="mini-browser__dot" style="opacity:0.5"></div>
+            <div class="mini-browser__dot" style="opacity:0.3"></div>
+            <div class="mini-browser__url">remofirst.html</div>
+          </div>
+          <div class="mini-browser__content">
+            <div class="mini-sidebar">
+              <div class="mini-sidebar__logo"></div>
+              <div class="mini-sidebar__item active"></div>
+              <div class="mini-sidebar__item"></div>
+              <div class="mini-sidebar__item"></div>
+              <div class="mini-sidebar__item"></div>
+            </div>
+            <div class="mini-main">
+              <div class="mini-topbar"></div>
+              <div class="mini-cards">
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+              </div>
+              <div class="mini-table"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="theme-card__info">
+        <div class="theme-card__version">V1</div>
+        <div class="theme-card__name">Remofirst Professional</div>
+        <div class="theme-card__desc">参考 Remofirst EOR 平台。白底 + 绿色主色 #04C53A + DM Sans 字体 + 圆角卡片 + Pill 状态标签。专业 SaaS 风格。</div>
+        <div class="theme-card__tags">
+          <span class="theme-tag">Light</span>
+          <span class="theme-tag">SaaS</span>
+          <span class="theme-tag">Professional</span>
+          <span class="theme-tag">Green Accent</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- V2 -->
+    <a class="theme-card" href="v2.html" target="_blank">
+      <div class="theme-card__preview preview-v2">
+        <div class="mini-browser">
+          <div class="mini-browser__bar">
+            <div class="mini-browser__dot"></div>
+            <div class="mini-browser__dot" style="opacity:0.5"></div>
+            <div class="mini-browser__dot" style="opacity:0.3"></div>
+            <div class="mini-browser__url">v2.html</div>
+          </div>
+          <div class="mini-browser__content">
+            <div class="mini-sidebar">
+              <div class="mini-sidebar__logo"></div>
+              <div class="mini-sidebar__item active"></div>
+              <div class="mini-sidebar__item"></div>
+              <div class="mini-sidebar__item"></div>
+              <div class="mini-sidebar__item"></div>
+            </div>
+            <div class="mini-main">
+              <div class="mini-topbar"></div>
+              <div class="mini-cards">
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+              </div>
+              <div class="mini-table"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="theme-card__info">
+        <div class="theme-card__version">V2</div>
+        <div class="theme-card__name">Clean Light</div>
+        <div class="theme-card__desc">暖白背景 + 深色侧边栏 + 绿色强调。干净专业的 SaaS 风格，参考 Remote People。</div>
+        <div class="theme-card__tags">
+          <span class="theme-tag">Light</span>
+          <span class="theme-tag">Professional</span>
+          <span class="theme-tag">Clean</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- V3 -->
+    <a class="theme-card" href="v3.html" target="_blank">
+      <div class="theme-card__preview preview-v3">
+        <div class="mini-browser">
+          <div class="mini-browser__bar">
+            <div class="mini-browser__dot"></div>
+            <div class="mini-browser__dot" style="opacity:0.5"></div>
+            <div class="mini-browser__dot" style="opacity:0.3"></div>
+            <div class="mini-browser__url">v3.html</div>
+          </div>
+          <div class="mini-browser__content">
+            <div class="mini-sidebar">
+              <div class="mini-sidebar__logo"></div>
+              <div class="mini-sidebar__item active"></div>
+              <div class="mini-sidebar__item"></div>
+              <div class="mini-sidebar__item"></div>
+              <div class="mini-sidebar__item"></div>
+            </div>
+            <div class="mini-main">
+              <div class="mini-topbar"></div>
+              <div class="mini-cards">
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+              </div>
+              <div class="mini-table"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="theme-card__info">
+        <div class="theme-card__version">V3</div>
+        <div class="theme-card__name">Neon Terminal</div>
+        <div class="theme-card__desc">纯黑背景 + 品牌绿 #47FC22 霓虹 + 全等宽字体 + 扫描线。赛博朋克终端美学。</div>
+        <div class="theme-card__tags">
+          <span class="theme-tag">Dark</span>
+          <span class="theme-tag">Terminal</span>
+          <span class="theme-tag">Monospace</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- V4 -->
+    <a class="theme-card" href="v4.html" target="_blank">
+      <div class="theme-card__preview preview-v4">
+        <div class="mini-browser">
+          <div class="mini-browser__bar">
+            <div class="mini-browser__dot"></div>
+            <div class="mini-browser__dot" style="opacity:0.5"></div>
+            <div class="mini-browser__dot" style="opacity:0.3"></div>
+            <div class="mini-browser__url">v4.html</div>
+          </div>
+          <div class="mini-browser__content">
+            <div class="mini-sidebar">
+              <div class="mini-sidebar__logo"></div>
+              <div class="mini-sidebar__item active"></div>
+              <div class="mini-sidebar__item"></div>
+              <div class="mini-sidebar__item"></div>
+              <div class="mini-sidebar__item"></div>
+            </div>
+            <div class="mini-main">
+              <div class="mini-topbar"></div>
+              <div class="mini-cards">
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+              </div>
+              <div class="mini-table"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="theme-card__info">
+        <div class="theme-card__version">V4</div>
+        <div class="theme-card__name">Soft Modern</div>
+        <div class="theme-card__desc">柔灰背景 + 白色侧边栏 + 绿渐变强调 + 超大圆角 + 彩色阴影。现代 Fintech 风格。</div>
+        <div class="theme-card__tags">
+          <span class="theme-tag">Light</span>
+          <span class="theme-tag">Gradient</span>
+          <span class="theme-tag">Rounded</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- V5 -->
+    <a class="theme-card" href="v5.html" target="_blank">
+      <div class="theme-card__preview preview-v5">
+        <div class="mini-browser">
+          <div class="mini-browser__bar">
+            <div class="mini-browser__dot"></div>
+            <div class="mini-browser__dot" style="opacity:0.5"></div>
+            <div class="mini-browser__dot" style="opacity:0.3"></div>
+            <div class="mini-browser__url">v5.html</div>
+          </div>
+          <div class="mini-browser__content">
+            <div class="mini-sidebar">
+              <div class="mini-sidebar__logo"></div>
+              <div class="mini-sidebar__item active"></div>
+              <div class="mini-sidebar__item"></div>
+              <div class="mini-sidebar__item"></div>
+              <div class="mini-sidebar__item"></div>
+            </div>
+            <div class="mini-main">
+              <div class="mini-topbar"></div>
+              <div class="mini-cards">
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+              </div>
+              <div class="mini-table"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="theme-card__info">
+        <div class="theme-card__version">V5</div>
+        <div class="theme-card__name">Light Terminal</div>
+        <div class="theme-card__desc">浅灰背景 + 深色侧边栏 + 全等宽字体 + 终端前缀。V3 的浅色版本，纸质终端感。</div>
+        <div class="theme-card__tags">
+          <span class="theme-tag">Light</span>
+          <span class="theme-tag">Terminal</span>
+          <span class="theme-tag">Monospace</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="gallery-divider"><span>NEW LAYOUTS</span> — 全新交互模式</div>
+
+  <div class="gallery-grid">
+
+    <!-- V6 -->
+    <a class="theme-card" href="v6.html" target="_blank">
+      <div class="theme-card__preview preview-v6">
+        <div class="mini-browser">
+          <div class="mini-browser__bar">
+            <div class="mini-browser__dot"></div>
+            <div class="mini-browser__dot" style="opacity:0.5"></div>
+            <div class="mini-browser__dot" style="opacity:0.3"></div>
+            <div class="mini-browser__url">v6.html</div>
+          </div>
+          <div class="mini-browser__content">
+            <div class="mini-sidebar"></div>
+            <div class="mini-main">
+              <div class="mini-topbar"></div>
+              <div class="mini-cards">
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="theme-card__info">
+        <div class="theme-card__version">V6</div>
+        <div class="theme-card__name">Bento Dashboard</div>
+        <div class="theme-card__desc">无侧边栏，顶部水平导航。Dashboard 为不规则 Bento 卡片网格，任务控制台风格。</div>
+        <div class="theme-card__tags">
+          <span class="theme-tag">Top Nav</span>
+          <span class="theme-tag">Bento Grid</span>
+          <span class="theme-tag">Mission Control</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- V7 -->
+    <a class="theme-card" href="v7.html" target="_blank">
+      <div class="theme-card__preview preview-v7">
+        <div class="mini-browser">
+          <div class="mini-browser__bar">
+            <div class="mini-browser__dot"></div>
+            <div class="mini-browser__dot" style="opacity:0.5"></div>
+            <div class="mini-browser__dot" style="opacity:0.3"></div>
+            <div class="mini-browser__url">v7.html</div>
+          </div>
+          <div class="mini-browser__content">
+            <div class="mini-sidebar"></div>
+            <div class="mini-main">
+              <div class="mini-topbar"></div>
+              <div class="mini-cards">
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+              </div>
+              <div class="mini-table"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="theme-card__info">
+        <div class="theme-card__version">V7</div>
+        <div class="theme-card__name">Feed Mobile</div>
+        <div class="theme-card__desc">底部 Tab Bar + 480px 单列居中 + 卡片流 + FAB 悬浮按钮。像手机 App 一样操作。</div>
+        <div class="theme-card__tags">
+          <span class="theme-tag">Mobile-first</span>
+          <span class="theme-tag">Tab Bar</span>
+          <span class="theme-tag">Card Feed</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- V8 -->
+    <a class="theme-card" href="v8.html" target="_blank">
+      <div class="theme-card__preview preview-v8">
+        <div class="mini-browser">
+          <div class="mini-browser__bar">
+            <div class="mini-browser__dot"></div>
+            <div class="mini-browser__dot" style="opacity:0.5"></div>
+            <div class="mini-browser__dot" style="opacity:0.3"></div>
+            <div class="mini-browser__url">v8.html — ⌘K</div>
+          </div>
+          <div class="mini-browser__content">
+            <div class="mini-sidebar">
+              <div class="mini-sidebar__logo"></div>
+              <div class="mini-sidebar__item active"></div>
+              <div class="mini-sidebar__item"></div>
+              <div class="mini-sidebar__item"></div>
+              <div class="mini-sidebar__item"></div>
+            </div>
+            <div class="mini-main">
+              <div class="mini-topbar"></div>
+              <div class="mini-cards">
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+              </div>
+              <div class="mini-table"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="theme-card__info">
+        <div class="theme-card__version">V8</div>
+        <div class="theme-card__name">Command Center</div>
+        <div class="theme-card__desc">56px 图标栏悬浮展开 + Cmd+K 命令面板 + 行内展开详情。键盘驱动，Power User 专属。</div>
+        <div class="theme-card__tags">
+          <span class="theme-tag">Icon Rail</span>
+          <span class="theme-tag">Cmd+K</span>
+          <span class="theme-tag">Keyboard-first</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="gallery-divider"><span>CREATIVE EDITIONS</span> — 全新创意设计</div>
+
+  <div class="gallery-grid">
+
+    <!-- V9 -->
+    <a class="theme-card" href="neo-dashboard.html" target="_blank">
+      <div class="theme-card__preview preview-v9">
+        <div class="mini-browser">
+          <div class="mini-browser__bar">
+            <div class="mini-browser__dot"></div>
+            <div class="mini-browser__dot" style="opacity:0.5"></div>
+            <div class="mini-browser__dot" style="opacity:0.3"></div>
+            <div class="mini-browser__url">neo-dashboard.html</div>
+          </div>
+          <div class="mini-browser__content">
+            <div class="mini-sidebar">
+              <div class="mini-sidebar__logo"></div>
+              <div class="mini-sidebar__item active"></div>
+              <div class="mini-sidebar__item"></div>
+              <div class="mini-sidebar__item"></div>
+              <div class="mini-sidebar__item"></div>
+            </div>
+            <div class="mini-main">
+              <div class="mini-topbar"></div>
+              <div class="mini-cards">
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+              </div>
+              <div class="mini-table"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="theme-card__info">
+        <div class="theme-card__version">V9</div>
+        <div class="theme-card__name">Neo Dashboard</div>
+        <div class="theme-card__desc">纯黑底 + Bento Grid 仪表盘 + 绿色辉光悬浮效果 + hover 展开侧边栏。一屏聚合所有模块数据。</div>
+        <div class="theme-card__tags">
+          <span class="theme-tag">Dark</span>
+          <span class="theme-tag">Bento Grid</span>
+          <span class="theme-tag">Glow Effect</span>
+          <span class="theme-tag">All-in-one</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- V10 -->
+    <a class="theme-card" href="clean-minimal.html" target="_blank">
+      <div class="theme-card__preview preview-v10">
+        <div class="mini-browser">
+          <div class="mini-browser__bar">
+            <div class="mini-browser__dot"></div>
+            <div class="mini-browser__dot" style="opacity:0.5"></div>
+            <div class="mini-browser__dot" style="opacity:0.3"></div>
+            <div class="mini-browser__url">clean-minimal.html</div>
+          </div>
+          <div class="mini-browser__content">
+            <div class="mini-sidebar">
+              <div class="mini-sidebar__logo"></div>
+              <div class="mini-sidebar__item active"></div>
+              <div class="mini-sidebar__item"></div>
+              <div class="mini-sidebar__item"></div>
+              <div class="mini-sidebar__item"></div>
+            </div>
+            <div class="mini-main">
+              <div class="mini-topbar"></div>
+              <div class="mini-cards">
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+              </div>
+              <div class="mini-table"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="theme-card__info">
+        <div class="theme-card__version">V10</div>
+        <div class="theme-card__name">Clean Minimal</div>
+        <div class="theme-card__desc">极简白底 + 黑色主强调 + 绿色顶部线条 + SVG 环形图 + 大字号排版。Linear/Notion 风格。</div>
+        <div class="theme-card__tags">
+          <span class="theme-tag">Light</span>
+          <span class="theme-tag">Minimal</span>
+          <span class="theme-tag">Multi-page</span>
+          <span class="theme-tag">Ring Charts</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- V11 -->
+    <a class="theme-card" href="card-stack.html" target="_blank">
+      <div class="theme-card__preview preview-v11">
+        <div class="mini-browser">
+          <div class="mini-browser__bar">
+            <div class="mini-browser__dot"></div>
+            <div class="mini-browser__dot" style="opacity:0.5"></div>
+            <div class="mini-browser__dot" style="opacity:0.3"></div>
+            <div class="mini-browser__url">card-stack.html</div>
+          </div>
+          <div class="mini-browser__content">
+            <div class="mini-sidebar"></div>
+            <div class="mini-main">
+              <div class="mini-topbar"></div>
+              <div class="mini-cards">
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+              </div>
+              <div class="mini-table"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="theme-card__info">
+        <div class="theme-card__version">V11</div>
+        <div class="theme-card__name">Card Stack</div>
+        <div class="theme-card__desc">暖白底 + 黑色 Hero 区 + 横向滚动卡片 + 底部 Tab Bar + FAB 浮动按钮。移动优先，桌面端自动适配侧边栏。</div>
+        <div class="theme-card__tags">
+          <span class="theme-tag">Mobile-first</span>
+          <span class="theme-tag">Horizontal Scroll</span>
+          <span class="theme-tag">Tab Bar</span>
+          <span class="theme-tag">Responsive</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- V12 -->
+    <a class="theme-card" href="neo-dashboard-light.html" target="_blank">
+      <div class="theme-card__preview preview-v12">
+        <div class="mini-browser">
+          <div class="mini-browser__bar">
+            <div class="mini-browser__dot"></div>
+            <div class="mini-browser__dot" style="opacity:0.5"></div>
+            <div class="mini-browser__dot" style="opacity:0.3"></div>
+            <div class="mini-browser__url">neo-dashboard-light.html</div>
+          </div>
+          <div class="mini-browser__content">
+            <div class="mini-sidebar">
+              <div class="mini-sidebar__logo"></div>
+              <div class="mini-sidebar__item active"></div>
+              <div class="mini-sidebar__item"></div>
+              <div class="mini-sidebar__item"></div>
+              <div class="mini-sidebar__item"></div>
+            </div>
+            <div class="mini-main">
+              <div class="mini-topbar"></div>
+              <div class="mini-cards">
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+                <div class="mini-card"></div>
+              </div>
+              <div class="mini-table"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="theme-card__info">
+        <div class="theme-card__version">V12</div>
+        <div class="theme-card__name">Neo Dashboard Light</div>
+        <div class="theme-card__desc">V9 的浅色版本。暖白底 + Bento Grid + 白色卡片 + 柔和阴影悬浮 + 深绿文字。同等功能，明亮清爽。</div>
+        <div class="theme-card__tags">
+          <span class="theme-tag">Light</span>
+          <span class="theme-tag">Bento Grid</span>
+          <span class="theme-tag">Warm White</span>
+          <span class="theme-tag">All-in-one</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+
+  <footer class="gallery-footer">
+    <div>RampingUp Employee Portal — Theme Gallery</div>
+    <div>13 themes · 5 layout types · Built with vanilla HTML/CSS/JS</div>
+  </footer>
+
+</body>
+</html>

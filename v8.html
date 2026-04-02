@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>V8 Command Center — Employee HR Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-body:#0e0e0e;
+  --bg-sidebar:#111;
+  --bg-content:#161616;
+  --bg-panel:#1c1c1c;
+  --bg-panel-hover:#222;
+  --border:#2a2a2a;
+  --border-light:#333;
+  --accent:#47FC22;
+  --accent-dim:rgba(71,252,34,.08);
+  --accent-mid:rgba(71,252,34,.15);
+  --text-primary:#e8e8e8;
+  --text-secondary:#999;
+  --text-tertiary:#666;
+  --text-muted:#555;
+  --font-mono:'JetBrains Mono',monospace;
+  --font-sans:'Inter',sans-serif;
+  --radius:6px;
+  --transition:150ms ease;
+  --rail-collapsed:56px;
+  --rail-expanded:220px;
+  --topbar-h:48px;
+}
+html{font-size:12px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{font-family:var(--font-mono);color:var(--text-primary);background:var(--bg-body);overflow:hidden;height:100vh;display:flex}
+a{color:inherit;text-decoration:none}
+input,button{font-family:inherit;font-size:inherit;color:inherit;border:none;outline:none;background:none}
+::selection{background:var(--accent);color:#000}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text-muted)}
+
+/* ── ICON RAIL ── */
+.icon-rail{
+  position:fixed;left:0;top:0;bottom:0;
+  width:var(--rail-collapsed);
+  background:var(--bg-sidebar);
+  border-right:1px solid var(--border);
+  z-index:100;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  transition:width 200ms cubic-bezier(.4,0,.2,1);
+}
+.icon-rail:hover{width:var(--rail-expanded)}
+.icon-rail .rail-logo{
+  height:var(--topbar-h);
+  display:flex;align-items:center;
+  padding:0 16px;gap:12px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+  cursor:default;
+}
+.icon-rail .rail-logo .logo-icon{
+  width:24px;height:24px;flex-shrink:0;
+  background:#1a1a1a;border-radius:5px;
+  display:flex;align-items:center;justify-content:center;
+}
+.icon-rail .rail-logo .logo-icon svg{width:18px;height:18px}
+.icon-rail .rail-logo .logo-text{
+  font-size:13px;font-weight:600;
+  white-space:nowrap;opacity:0;
+  transition:opacity 200ms;
+  color:var(--text-primary);
+}
+.icon-rail:hover .rail-logo .logo-text{opacity:1}
+.rail-nav{flex:1;display:flex;flex-direction:column;padding:8px 0;overflow-y:auto;overflow-x:hidden}
+.rail-nav-main{flex:1}
+.rail-nav-bottom{border-top:1px solid var(--border);padding-top:8px}
+.rail-item{
+  position:relative;
+  display:flex;align-items:center;
+  height:40px;
+  padding:0 18px;gap:14px;
+  cursor:pointer;
+  color:var(--text-secondary);
+  transition:color var(--transition),background var(--transition);
+  white-space:nowrap;
+}
+.rail-item:hover{color:var(--text-primary);background:rgba(255,255,255,.04)}
+.rail-item.active{color:var(--accent);background:var(--accent-dim)}
+.rail-item.active::before{
+  content:'';position:absolute;left:0;top:6px;bottom:6px;
+  width:2px;background:var(--accent);border-radius:0 2px 2px 0;
+}
+.rail-item svg{width:20px;height:20px;flex-shrink:0}
+.rail-item .rail-label{
+  font-size:12px;font-weight:500;
+  opacity:0;transition:opacity 200ms;
+}
+.icon-rail:hover .rail-label{opacity:1}
+.rail-item .rail-shortcut{
+  margin-left:auto;
+  font-size:10px;color:var(--text-muted);
+  opacity:0;transition:opacity 200ms;
+}
+.icon-rail:hover .rail-shortcut{opacity:1}
+
+/* Tooltip for collapsed state */
+.rail-item[data-tip]::after{
+  content:attr(data-tip);
+  position:absolute;left:calc(var(--rail-collapsed) + 4px);
+  background:#222;color:var(--text-primary);
+  font-size:11px;padding:4px 8px;border-radius:4px;
+  white-space:nowrap;pointer-events:none;
+  opacity:0;transition:opacity 150ms;
+  z-index:200;
+}
+.icon-rail:not(:hover) .rail-item:hover::after{opacity:1}
+
+/* ── TOP BAR ── */
+.topbar{
+  position:fixed;top:0;right:0;
+  left:var(--rail-collapsed);
+  height:var(--topbar-h);
+  background:var(--bg-content);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;
+  padding:0 20px;
+  z-index:90;
+  transition:left 200ms cubic-bezier(.4,0,.2,1);
+}
+.icon-rail:hover ~ .topbar{left:var(--rail-expanded)}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-tertiary)}
+.breadcrumb span{color:var(--text-secondary)}
+.breadcrumb .bc-current{color:var(--text-primary);font-weight:500}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:4px}
+.topbar-btn{
+  width:34px;height:34px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:var(--radius);
+  cursor:pointer;color:var(--text-secondary);
+  transition:color var(--transition),background var(--transition);
+}
+.topbar-btn:hover{color:var(--text-primary);background:rgba(255,255,255,.06)}
+.topbar-btn svg{width:18px;height:18px}
+.search-trigger{
+  display:flex;align-items:center;gap:8px;
+  padding:0 10px;height:30px;
+  border:1px solid var(--border);border-radius:var(--radius);
+  cursor:pointer;color:var(--text-muted);font-size:11px;
+  transition:border-color var(--transition);
+  margin-right:8px;
+}
+.search-trigger:hover{border-color:var(--text-muted);color:var(--text-secondary)}
+.search-trigger svg{width:14px;height:14px}
+.search-trigger .kbd{
+  font-size:10px;padding:1px 5px;
+  background:rgba(255,255,255,.06);border-radius:3px;
+  color:var(--text-muted);
+}
+.topbar-avatar{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--accent-mid);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:600;color:var(--accent);
+  cursor:pointer;margin-left:4px;
+}
+.topbar-notif-dot{position:relative}
+.topbar-notif-dot::after{
+  content:'';position:absolute;top:6px;right:6px;
+  width:6px;height:6px;background:#f43;border-radius:50%;
+}
+
+/* ── MAIN CONTENT ── */
+.main-wrap{
+  margin-left:var(--rail-collapsed);
+  margin-top:var(--topbar-h);
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  background:var(--bg-content);
+  height:calc(100vh - var(--topbar-h));
+  transition:margin-left 200ms cubic-bezier(.4,0,.2,1);
+}
+.icon-rail:hover ~ .main-wrap{margin-left:var(--rail-expanded)}
+.page{display:none;padding:24px;max-width:1280px;animation:fadeIn 150ms ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── PANELS / CARDS ── */
+.panel{
+  background:var(--bg-panel);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+}
+.panel-header{
+  padding:12px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  font-size:12px;font-weight:600;
+}
+.panel-body{padding:12px 16px}
+
+/* ── STATS ROW ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{
+  background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px 16px;
+}
+.stat-label{font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.stat-value{font-size:22px;font-weight:700;line-height:1}
+.stat-sub{font-size:11px;color:var(--text-muted);margin-top:4px}
+.stat-value.accent{color:var(--accent)}
+
+/* ── TWO COL ── */
+.two-col{display:grid;grid-template-columns:1fr 340px;gap:16px}
+@media(max-width:900px){.two-col{grid-template-columns:1fr}.stats-row{grid-template-columns:repeat(2,1fr)}}
+
+/* ── TABLES ── */
+.data-table{width:100%;border-collapse:collapse;font-size:12px}
+.data-table th{
+  text-align:left;padding:8px 12px;
+  font-weight:600;color:var(--text-tertiary);
+  text-transform:uppercase;letter-spacing:.4px;font-size:10px;
+  border-bottom:1px solid var(--border);
+  background:var(--bg-panel);
+  position:sticky;top:0;
+}
+.data-table td{
+  padding:8px 12px;
+  border-bottom:1px solid rgba(255,255,255,.03);
+  color:var(--text-secondary);
+}
+.data-table tbody tr{cursor:pointer;transition:background var(--transition)}
+.data-table tbody tr:nth-child(even){background:rgba(255,255,255,.015)}
+.data-table tbody tr:hover{background:rgba(255,255,255,.04)}
+.data-table tbody tr.expanded-parent{background:var(--accent-dim)}
+.data-table .expand-row td{
+  padding:0;border-bottom:1px solid var(--border);
+}
+.expand-content{
+  padding:16px 20px;
+  background:rgba(71,252,34,.02);
+  border-left:2px solid var(--accent);
+  font-family:var(--font-sans);font-size:12px;
+  line-height:1.6;color:var(--text-secondary);
+  display:none;
+}
+.expand-row.open .expand-content{display:block;animation:fadeIn 150ms ease}
+.expand-content .detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.expand-content .detail-item{display:flex;flex-direction:column;gap:2px}
+.expand-content .detail-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;font-family:var(--font-mono);letter-spacing:.4px}
+.expand-content .detail-value{font-size:12px;color:var(--text-primary)}
+
+/* ── APPROVAL FLOW TIMELINE ── */
+.af-flow{padding:12px 0 4px}
+.af-title{font-size:11px;font-weight:600;color:var(--accent);margin-bottom:12px;text-transform:uppercase;letter-spacing:.4px;font-family:var(--font-mono)}
+.af-steps{display:flex;flex-direction:column}
+.af-step{display:flex;gap:12px;position:relative;padding-bottom:16px}
+.af-step:last-child{padding-bottom:0}
+.af-step:not(:last-child)::before{content:'';position:absolute;left:11px;top:24px;bottom:0;width:2px;background:var(--border)}
+.af-step.done:not(:last-child)::before{background:var(--accent)}
+.af-step.rejected:not(:last-child)::before{background:#f44}
+.af-dot{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;position:relative;z-index:1;font-family:var(--font-sans)}
+.af-step.done .af-dot{background:var(--accent-dim);color:var(--accent);border:2px solid var(--accent)}
+.af-step.current .af-dot{background:rgba(249,168,37,.1);color:#f9a825;border:2px solid #f9a825;animation:af-pulse 2s ease infinite}
+.af-step.waiting .af-dot{background:rgba(255,255,255,.03);color:var(--text-muted);border:2px solid var(--border)}
+.af-step.rejected .af-dot{background:rgba(244,67,54,.1);color:#f44;border:2px solid #f44}
+@keyframes af-pulse{0%,100%{box-shadow:0 0 0 0 rgba(249,168,37,.3)}50%{box-shadow:0 0 0 5px rgba(249,168,37,0)}}
+.af-content{flex:1;padding-top:2px}
+.af-label{font-size:12px;font-weight:600;color:var(--text-primary);font-family:var(--font-sans)}
+.af-step.waiting .af-label{color:var(--text-muted)}
+.af-person{font-size:11px;color:var(--text-secondary);margin-top:1px}
+.af-meta{font-size:11px;color:var(--text-muted);margin-top:1px}
+
+/* ── FILTER BAR ── */
+.filter-bar{
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:16px;flex-wrap:wrap;
+}
+.filter-btn{
+  padding:5px 10px;
+  border:1px solid var(--border);border-radius:var(--radius);
+  font-size:11px;color:var(--text-secondary);
+  cursor:pointer;transition:all var(--transition);
+}
+.filter-btn:hover,.filter-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.filter-search{
+  padding:5px 10px;
+  border:1px solid var(--border);border-radius:var(--radius);
+  font-size:11px;color:var(--text-primary);
+  background:transparent;width:180px;
+  transition:border-color var(--transition);
+}
+.filter-search:focus{border-color:var(--accent)}
+.filter-search::placeholder{color:var(--text-muted)}
+
+/* ── STATUS TAGS ── */
+.tag{font-size:10px;font-weight:500;letter-spacing:.3px;text-transform:uppercase}
+.tag-approved{color:#47FC22}
+.tag-pending{color:#f9a825}
+.tag-rejected{color:#f44}
+.tag-active{color:#47FC22}
+.tag-expired{color:var(--text-muted)}
+.tag-open{color:#2196f3}
+.tag-closed{color:var(--text-muted)}
+.tag-paid{color:#47FC22}
+.tag-unpaid{color:#f9a825}
+
+/* ── QUICK STATS PANEL ── */
+.quick-stats .qs-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+.quick-stats .qs-item:last-child{border-bottom:none}
+.quick-stats .qs-label{color:var(--text-secondary);font-size:12px}
+.quick-stats .qs-val{font-weight:600;font-size:13px}
+
+/* ── PROFILE / CONTRACT / WALLET ── */
+.info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:20px}
+.info-item .info-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;font-weight:500}
+.info-item .info-value{font-size:13px;color:var(--text-primary);font-weight:500}
+.info-item .info-value.mono{font-family:var(--font-mono)}
+
+.wallet-balance{font-size:36px;font-weight:700;color:var(--accent);margin:16px 0 8px;line-height:1}
+.wallet-sub{color:var(--text-muted);font-size:12px;margin-bottom:20px}
+.tx-list .tx-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);
+}
+.tx-list .tx-item:last-child{border-bottom:none}
+.tx-desc{font-size:12px;color:var(--text-secondary)}
+.tx-date{font-size:10px;color:var(--text-muted);margin-top:2px}
+.tx-amount{font-weight:600;font-size:13px}
+.tx-amount.credit{color:var(--accent)}
+.tx-amount.debit{color:#f44}
+
+/* ── COMMAND PALETTE ── */
+.cmd-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(8px);
+  z-index:1000;
+  display:none;align-items:flex-start;justify-content:center;
+  padding-top:min(20vh,160px);
+}
+.cmd-overlay.open{display:flex}
+.cmd-palette{
+  width:520px;max-height:420px;
+  background:rgba(28,28,28,.97);
+  border:1px solid var(--border);
+  border-radius:12px;
+  box-shadow:0 24px 80px rgba(0,0,0,.6),0 0 0 1px rgba(71,252,34,.06);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  animation:cmdIn 120ms ease;
+}
+@keyframes cmdIn{from{opacity:0;transform:scale(.97) translateY(-8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.cmd-input-wrap{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 16px;
+  border-bottom:1px solid var(--border);
+}
+.cmd-input-wrap svg{width:18px;height:18px;color:var(--text-muted);flex-shrink:0}
+.cmd-input{
+  flex:1;font-size:14px;font-family:var(--font-mono);
+  color:var(--text-primary);background:transparent;
+}
+.cmd-input::placeholder{color:var(--text-muted)}
+.cmd-hint{font-size:10px;color:var(--text-muted);flex-shrink:0}
+.cmd-results{overflow-y:auto;padding:6px}
+.cmd-section{padding:6px 10px 4px;font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px}
+.cmd-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-radius:6px;
+  cursor:pointer;transition:background 80ms;
+}
+.cmd-item:hover,.cmd-item.selected{background:var(--accent-dim)}
+.cmd-item.selected{outline:1px solid rgba(71,252,34,.2)}
+.cmd-item svg{width:16px;height:16px;color:var(--text-tertiary);flex-shrink:0}
+.cmd-item .cmd-item-label{flex:1;font-size:12px;color:var(--text-primary)}
+.cmd-item .cmd-item-shortcut{font-size:10px;color:var(--text-muted);padding:1px 6px;background:rgba(255,255,255,.06);border-radius:3px}
+.cmd-item .cmd-item-type{font-size:10px;color:var(--text-muted);margin-left:auto}
+.cmd-empty{padding:24px;text-align:center;color:var(--text-muted);font-size:12px}
+
+/* ── PAGE TITLE ── */
+.page-title{font-size:16px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.page-title .page-count{font-size:12px;color:var(--text-muted);font-weight:400}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.6);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;animation:fadeIn .15s ease}
+.modal{width:560px;max-width:94vw;max-height:88vh;background:#1c1c1c;border:1px solid #2a2a2a;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;animation:mIn .2s ease}
+.modal--lg{width:700px}
+@keyframes mIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.m-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #2a2a2a}
+.m-header h3{font-size:.9rem;font-weight:600;color:#fff;font-family:'JetBrains Mono',monospace;letter-spacing:.03em}
+.m-close{width:26px;height:26px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#555;background:none;border:1px solid #2a2a2a;cursor:pointer;font-size:.9rem}
+.m-close:hover{border-color:#ef4444;color:#ef4444}
+.m-body{padding:18px;overflow-y:auto;flex:1}
+.m-footer{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid #2a2a2a}
+.m-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.m-group{margin-bottom:12px}
+.m-label{display:block;font-size:.62rem;font-weight:600;color:#555;margin-bottom:4px;text-transform:uppercase;letter-spacing:.08em;font-family:'JetBrains Mono',monospace}
+.m-input,.m-select,.m-textarea{width:100%;padding:7px 10px;background:#161616;border:1px solid #2a2a2a;border-radius:4px;color:#e2e8f0;font-size:.82rem;font-family:'JetBrains Mono',monospace;outline:none}
+.m-input:focus,.m-select:focus,.m-textarea:focus{border-color:#47FC22;box-shadow:0 0 0 1px rgba(71,252,34,.15)}
+.m-textarea{min-height:80px;resize:vertical}
+.m-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:28px}
+.m-upload{border:1px dashed #2a2a2a;border-radius:4px;padding:16px;text-align:center;color:#555;font-size:.75rem;font-family:'JetBrains Mono',monospace;cursor:pointer}
+.m-upload:hover{border-color:rgba(71,252,34,.3);color:#888}
+.m-btn{padding:6px 14px;border-radius:4px;font-size:.78rem;font-weight:600;cursor:pointer;border:none;font-family:'JetBrains Mono',monospace;letter-spacing:.03em;text-transform:uppercase}
+.m-btn-primary{background:#47FC22;color:#000}
+.m-btn-primary:hover{background:#3de01c}
+.m-btn-ghost{background:none;border:1px solid #2a2a2a;color:#888}
+.m-btn-ghost:hover{border-color:#47FC22;color:#47FC22}
+.m-exp-item{background:#161616;border:1px solid #2a2a2a;border-radius:4px;padding:12px;margin-bottom:8px}
+.m-exp-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.m-exp-num{font-size:.7rem;font-weight:600;color:#47FC22}
+.m-exp-rm{background:none;border:none;color:#555;cursor:pointer;font-size:.85rem}
+.m-exp-rm:hover{color:#ef4444}
+.m-add{width:100%;padding:8px;border:1px dashed #2a2a2a;border-radius:4px;background:none;color:#555;font-size:.75rem;cursor:pointer;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;justify-content:center;gap:4px}
+.m-add:hover{border-color:rgba(71,252,34,.3);color:#47FC22}
+.m-md-wrap{border:1px solid #2a2a2a;border-radius:4px;overflow:hidden}
+.m-md-bar{display:flex;gap:1px;padding:4px 6px;background:#161616;border-bottom:1px solid #2a2a2a}
+.m-md-bar button{width:24px;height:24px;border-radius:2px;display:flex;align-items:center;justify-content:center;color:#555;font-weight:700;font-size:.75rem;cursor:pointer;background:none;border:none}
+.m-md-bar button:hover{color:#47FC22;background:rgba(71,252,34,.06)}
+.m-md-wrap textarea{width:100%;min-height:100px;padding:8px;background:#111;border:none;color:#47FC22;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.5;resize:vertical;outline:none}
+</style>
+</head>
+<body>
+
+<!-- ── ICON RAIL ── -->
+<nav class="icon-rail" id="iconRail">
+  <div class="rail-logo">
+    <div class="logo-icon">
+      <svg viewBox="86 70 70 32" fill="none"><path d="M110.39,71.82c.85,0,1.42.88,1.06,1.66l-4.55,9.9-.06.13-.67,1.46-6.4,13.93c-.19.42-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l5.95-12.96.67-1.46,5.06-11.01c.19-.41.61-.68,1.06-.68h10.58Z" fill="#fff"/><path d="M151.2,83.51h-10.58c-.46,0-.87-.27-1.06-.68l-4.3-9.35c-.36-.77.21-1.66,1.06-1.66h10.58c.46,0,.87.27,1.06.68l4.3,9.35c.36.77-.21,1.66-1.06,1.66Z" fill="#47fa22"/><path d="M126.07,73.48l-4.3,9.35c-.19.41-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l4.3-9.35c.19-.41.61-.68,1.06-.68h10.58c.85,0,1.42.88,1.06,1.66Z" fill="#fff"/><path d="M125.69,99.59h-10.59c-.46,0-.87-.27-1.06-.68l-5.64-12.28c-.36-.77.21-1.66,1.06-1.66h10.59c.46,0,.87.27,1.06.68l5.64,12.28c.36.77-.21,1.66-1.06,1.66Z" fill="#fff"/><path d="M152.93,86.63l-5.64,12.28c-.19.42-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l5.64-12.28c.19-.42.61-.68,1.06-.68h10.58c.85,0,1.42.88,1.06,1.66Z" fill="#47fa22"/></svg>
+    </div>
+    <span class="rail-logo-text logo-text">RampingUp</span>
+  </div>
+  <div class="rail-nav">
+    <div class="rail-nav-main" id="railNav">
+      <div class="rail-item active" data-page="dashboard" data-tip="Dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span class="rail-label">Dashboard</span>
+        <span class="rail-shortcut">&#8984;1</span>
+      </div>
+      <div class="rail-item" data-page="leave" data-tip="Leave">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span class="rail-label">Leave</span>
+        <span class="rail-shortcut">&#8984;2</span>
+      </div>
+      <div class="rail-item" data-page="salary" data-tip="Salary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        <span class="rail-label">Salary</span>
+        <span class="rail-shortcut">&#8984;3</span>
+      </div>
+      <div class="rail-item" data-page="expenses" data-tip="Expenses">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+        <span class="rail-label">Expenses</span>
+        <span class="rail-shortcut">&#8984;4</span>
+      </div>
+      <div class="rail-item" data-page="tickets" data-tip="Tickets">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5h2a2 2 0 012 2v1a2 2 0 010 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2v-1a2 2 0 010-4V7a2 2 0 012-2h2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+        <span class="rail-label">Tickets</span>
+        <span class="rail-shortcut">&#8984;5</span>
+      </div>
+      <div class="rail-item" data-page="contract" data-tip="Contract">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <span class="rail-label">Contract</span>
+        <span class="rail-shortcut">&#8984;6</span>
+      </div>
+      <div class="rail-item" data-page="wallet" data-tip="Wallet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><circle cx="17" cy="15" r="1"/></svg>
+        <span class="rail-label">Wallet</span>
+        <span class="rail-shortcut">&#8984;7</span>
+      </div>
+    </div>
+    <div class="rail-nav-bottom">
+      <div class="rail-item" data-page="profile" data-tip="Profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="rail-label">Profile</span>
+        <span class="rail-shortcut">&#8984;8</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── TOP BAR ── -->
+<header class="topbar">
+  <div class="breadcrumb" id="breadcrumb">
+    <span>Home</span>
+    <span style="color:var(--text-muted)">/</span>
+    <span class="bc-current" id="bcCurrent">Dashboard</span>
+  </div>
+  <div class="topbar-right">
+    <div class="search-trigger" id="searchTrigger" title="Search or jump to...">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span>Search...</span>
+      <span class="kbd">&#8984;K</span>
+    </div>
+    <div class="topbar-btn topbar-notif-dot" id="notifBtn" title="Notifications">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+    </div>
+    <div class="topbar-avatar" title="Wei Zhang">WZ</div>
+  </div>
+</header>
+
+<!-- ── MAIN CONTENT ── -->
+<div class="main-wrap" id="mainWrap">
+
+  <!-- DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div class="page-title">Dashboard</div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-label">Leave Balance</div><div class="stat-value accent">14</div><div class="stat-sub">days remaining</div></div>
+      <div class="stat-card"><div class="stat-label">Net Salary (Mar)</div><div class="stat-value">&#165;28,450</div><div class="stat-sub">paid Mar 25</div></div>
+      <div class="stat-card"><div class="stat-label">Open Expenses</div><div class="stat-value">3</div><div class="stat-sub">&#165;4,320 pending</div></div>
+      <div class="stat-card"><div class="stat-label">Tickets</div><div class="stat-value">1</div><div class="stat-sub">open</div></div>
+    </div>
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-header"><span>Recent Activity</span><span style="color:var(--text-muted);font-weight:400;font-size:11px">Last 30 days</span></div>
+        <table class="data-table">
+          <thead><tr><th>Date</th><th>Type</th><th>Detail</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Apr 01</td><td>Leave</td><td>Annual Leave &middot; Apr 07-09</td><td><span class="tag tag-pending">Pending</span></td></tr>
+            <tr><td>Mar 28</td><td>Expense</td><td>Client dinner &middot; &#165;680</td><td><span class="tag tag-approved">Approved</span></td></tr>
+            <tr><td>Mar 25</td><td>Salary</td><td>Mar 2026 payslip</td><td><span class="tag tag-paid">Paid</span></td></tr>
+            <tr><td>Mar 20</td><td>Ticket</td><td>VPN access request</td><td><span class="tag tag-open">Open</span></td></tr>
+            <tr><td>Mar 18</td><td>Expense</td><td>Travel reimbursement &middot; &#165;2,140</td><td><span class="tag tag-pending">Pending</span></td></tr>
+            <tr><td>Mar 15</td><td>Leave</td><td>Sick Leave &middot; Mar 15</td><td><span class="tag tag-approved">Approved</span></td></tr>
+            <tr><td>Mar 10</td><td>Contract</td><td>Contract renewed until 2027</td><td><span class="tag tag-active">Active</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="panel" style="margin-bottom:16px">
+          <div class="panel-header">Quick Stats</div>
+          <div class="panel-body quick-stats">
+            <div class="qs-item"><span class="qs-label">Annual Leave Used</span><span class="qs-val">6 / 20</span></div>
+            <div class="qs-item"><span class="qs-label">Sick Leave Used</span><span class="qs-val">2 / 10</span></div>
+            <div class="qs-item"><span class="qs-label">Expenses (YTD)</span><span class="qs-val">&#165;12,840</span></div>
+            <div class="qs-item"><span class="qs-label">Tickets (YTD)</span><span class="qs-val">7 resolved</span></div>
+            <div class="qs-item"><span class="qs-label">Contract End</span><span class="qs-val">Dec 2027</span></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">Upcoming</div>
+          <div class="panel-body quick-stats">
+            <div class="qs-item"><span class="qs-label">Apr 05 - Qingming</span><span class="qs-val" style="color:var(--accent)">Holiday</span></div>
+            <div class="qs-item"><span class="qs-label">Apr 07-09 - Leave</span><span class="qs-val" style="color:#f9a825">Pending</span></div>
+            <div class="qs-item"><span class="qs-label">Apr 25 - Salary</span><span class="qs-val">&#165;28,450</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEAVE -->
+  <div class="page" id="page-leave">
+    <div class="page-title">Leave <span class="page-count">8 records</span></div>
+    <div class="filter-bar">
+      <button class="filter-btn active">All</button>
+      <button class="filter-btn">Pending</button>
+      <button class="filter-btn">Approved</button>
+      <button class="filter-btn">Rejected</button>
+      <input class="filter-search" placeholder="Search leaves..." type="text"/>
+      <button class="filter-btn" style="margin-left:auto;border-color:var(--accent);color:var(--accent)" onclick="openLeaveForm()">+ New Request</button>
+    </div>
+    <div class="panel">
+      <table class="data-table" id="leaveTable">
+        <thead><tr><th>ID</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th><th>Approver</th></tr></thead>
+        <tbody>
+          <tr data-expand="lv1"><td>LV-2408</td><td>Annual</td><td>Apr 07</td><td>Apr 09</td><td>3</td><td><span class="tag tag-pending">Pending</span></td><td>Li Wei</td></tr>
+          <tr class="expand-row" id="lv1"><td colspan="7"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Leave Type</div><div class="detail-value">Annual Leave</div></div><div class="detail-item"><div class="detail-label">Applied On</div><div class="detail-value">Apr 01, 2026</div></div><div class="detail-item"><div class="detail-label">Approver</div><div class="detail-value">Li Wei (Manager)</div></div><div class="detail-item"><div class="detail-label">Reason</div><div class="detail-value" style="font-family:var(--font-sans)">Family trip to Hangzhou. Will be offline Apr 7-9.</div></div><div class="detail-item"><div class="detail-label">Balance After</div><div class="detail-value">11 days</div></div><div class="detail-item"><div class="detail-label">Emergency Contact</div><div class="detail-value">+86 138-0000-1234</div></div></div></div></td></tr>
+          <tr data-expand="lv2"><td>LV-2405</td><td>Sick</td><td>Mar 15</td><td>Mar 15</td><td>1</td><td><span class="tag tag-approved">Approved</span></td><td>Li Wei</td></tr>
+          <tr class="expand-row" id="lv2"><td colspan="7"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Leave Type</div><div class="detail-value">Sick Leave</div></div><div class="detail-item"><div class="detail-label">Applied On</div><div class="detail-value">Mar 15, 2026</div></div><div class="detail-item"><div class="detail-label">Approver</div><div class="detail-value">Li Wei (Manager)</div></div><div class="detail-item"><div class="detail-label">Reason</div><div class="detail-value" style="font-family:var(--font-sans)">Fever and headache. Visited clinic.</div></div><div class="detail-item"><div class="detail-label">Medical Cert</div><div class="detail-value">Uploaded</div></div><div class="detail-item"><div class="detail-label">Balance After</div><div class="detail-value">8 days</div></div></div></div></td></tr>
+          <tr data-expand="lv3"><td>LV-2403</td><td>Annual</td><td>Feb 28</td><td>Mar 01</td><td>2</td><td><span class="tag tag-approved">Approved</span></td><td>Li Wei</td></tr>
+          <tr class="expand-row" id="lv3"><td colspan="7"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Leave Type</div><div class="detail-value">Annual Leave</div></div><div class="detail-item"><div class="detail-label">Applied On</div><div class="detail-value">Feb 20, 2026</div></div><div class="detail-item"><div class="detail-label">Approver</div><div class="detail-value">Li Wei (Manager)</div></div></div></div></td></tr>
+          <tr data-expand="lv4"><td>LV-2401</td><td>Annual</td><td>Jan 27</td><td>Jan 31</td><td>5</td><td><span class="tag tag-approved">Approved</span></td><td>Li Wei</td></tr>
+          <tr class="expand-row" id="lv4"><td colspan="7"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Leave Type</div><div class="detail-value">Annual Leave</div></div><div class="detail-item"><div class="detail-label">Applied On</div><div class="detail-value">Jan 10, 2026</div></div><div class="detail-item"><div class="detail-label">Reason</div><div class="detail-value" style="font-family:var(--font-sans)">Spring Festival holiday extension.</div></div></div></div></td></tr>
+          <tr data-expand="lv5"><td>LV-2312</td><td>Personal</td><td>Dec 20</td><td>Dec 20</td><td>1</td><td><span class="tag tag-approved">Approved</span></td><td>Li Wei</td></tr>
+          <tr class="expand-row" id="lv5"><td colspan="7"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Leave Type</div><div class="detail-value">Personal Leave</div></div><div class="detail-item"><div class="detail-label">Applied On</div><div class="detail-value">Dec 15, 2025</div></div></div></div></td></tr>
+          <tr data-expand="lv6"><td>LV-2310</td><td>Annual</td><td>Oct 06</td><td>Oct 10</td><td>5</td><td><span class="tag tag-approved">Approved</span></td><td>Li Wei</td></tr>
+          <tr class="expand-row" id="lv6"><td colspan="7"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Leave Type</div><div class="detail-value">Annual Leave</div></div><div class="detail-item"><div class="detail-label">Applied On</div><div class="detail-value">Sep 25, 2025</div></div><div class="detail-item"><div class="detail-label">Reason</div><div class="detail-value" style="font-family:var(--font-sans)">National Day holiday extension.</div></div></div></div></td></tr>
+          <tr data-expand="lv7"><td>LV-2308</td><td>Sick</td><td>Aug 12</td><td>Aug 12</td><td>1</td><td><span class="tag tag-approved">Approved</span></td><td>Li Wei</td></tr>
+          <tr class="expand-row" id="lv7"><td colspan="7"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Leave Type</div><div class="detail-value">Sick Leave</div></div></div></div></td></tr>
+          <tr data-expand="lv8"><td>LV-2306</td><td>Annual</td><td>Jun 09</td><td>Jun 10</td><td>2</td><td><span class="tag tag-rejected">Rejected</span></td><td>Li Wei</td></tr>
+          <tr class="expand-row" id="lv8"><td colspan="7"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Leave Type</div><div class="detail-value">Annual Leave</div></div><div class="detail-item"><div class="detail-label">Reason for Rejection</div><div class="detail-value" style="font-family:var(--font-sans);color:#f44">Team capacity insufficient during this period.</div></div></div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SALARY -->
+  <div class="page" id="page-salary">
+    <div class="page-title">Salary <span class="page-count">12 payslips</span></div>
+    <div class="filter-bar">
+      <button class="filter-btn active">2026</button>
+      <button class="filter-btn">2025</button>
+      <input class="filter-search" placeholder="Search payslips..." type="text"/>
+    </div>
+    <div class="panel">
+      <table class="data-table" id="salaryTable">
+        <thead><tr><th>Period</th><th>Gross</th><th>Deductions</th><th>Tax</th><th>Net</th><th>Status</th><th>Paid On</th></tr></thead>
+        <tbody>
+          <tr data-expand="sal1"><td>Mar 2026</td><td>&#165;35,000</td><td>&#165;3,150</td><td>&#165;3,400</td><td>&#165;28,450</td><td><span class="tag tag-paid">Paid</span></td><td>Mar 25</td></tr>
+          <tr class="expand-row" id="sal1"><td colspan="7"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Base Salary</div><div class="detail-value">&#165;30,000</div></div><div class="detail-item"><div class="detail-label">Housing Allowance</div><div class="detail-value">&#165;3,000</div></div><div class="detail-item"><div class="detail-label">Meal Allowance</div><div class="detail-value">&#165;2,000</div></div><div class="detail-item"><div class="detail-label">Social Insurance</div><div class="detail-value">-&#165;1,750</div></div><div class="detail-item"><div class="detail-label">Housing Fund</div><div class="detail-value">-&#165;1,400</div></div><div class="detail-item"><div class="detail-label">Income Tax</div><div class="detail-value">-&#165;3,400</div></div></div></div></td></tr>
+          <tr data-expand="sal2"><td>Feb 2026</td><td>&#165;35,000</td><td>&#165;3,150</td><td>&#165;3,400</td><td>&#165;28,450</td><td><span class="tag tag-paid">Paid</span></td><td>Feb 25</td></tr>
+          <tr class="expand-row" id="sal2"><td colspan="7"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Base Salary</div><div class="detail-value">&#165;30,000</div></div><div class="detail-item"><div class="detail-label">Housing Allowance</div><div class="detail-value">&#165;3,000</div></div><div class="detail-item"><div class="detail-label">Meal Allowance</div><div class="detail-value">&#165;2,000</div></div></div></div></td></tr>
+          <tr data-expand="sal3"><td>Jan 2026</td><td>&#165;35,000</td><td>&#165;3,150</td><td>&#165;2,800</td><td>&#165;29,050</td><td><span class="tag tag-paid">Paid</span></td><td>Jan 25</td></tr>
+          <tr class="expand-row" id="sal3"><td colspan="7"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Base Salary</div><div class="detail-value">&#165;30,000</div></div><div class="detail-item"><div class="detail-label">Note</div><div class="detail-value" style="font-family:var(--font-sans)">First month of new tax year. Cumulative tax bracket resets.</div></div></div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EXPENSES -->
+  <div class="page" id="page-expenses">
+    <div class="page-title">Expenses <span class="page-count">6 claims</span></div>
+    <div class="filter-bar">
+      <button class="filter-btn active">All</button>
+      <button class="filter-btn">Pending</button>
+      <button class="filter-btn">Approved</button>
+      <button class="filter-btn">Rejected</button>
+      <input class="filter-search" placeholder="Search expenses..." type="text"/>
+      <button class="filter-btn" style="margin-left:auto;border-color:var(--accent);color:var(--accent)" onclick="openExpenseForm()">+ New Claim</button>
+    </div>
+    <div class="panel">
+      <table class="data-table" id="expenseTable">
+        <thead><tr><th>ID</th><th>Category</th><th>Description</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr data-expand="exp1"><td>EXP-0089</td><td>Meals</td><td>Client dinner - Haidilao</td><td>&#165;680</td><td>Mar 28</td><td><span class="tag tag-approved">Approved</span></td></tr>
+          <tr class="expand-row" id="exp1"><td colspan="6"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Category</div><div class="detail-value">Client Entertainment</div></div><div class="detail-item"><div class="detail-label">Attendees</div><div class="detail-value">4 people (2 clients)</div></div><div class="detail-item"><div class="detail-label">Receipt</div><div class="detail-value">Uploaded (fapiao)</div></div><div class="detail-item"><div class="detail-label">Approved By</div><div class="detail-value">Li Wei</div></div><div class="detail-item"><div class="detail-label">Reimbursement</div><div class="detail-value">Pending payment</div></div></div></div></td></tr>
+          <tr data-expand="exp2"><td>EXP-0087</td><td>Travel</td><td>Shanghai trip - train + hotel</td><td>&#165;2,140</td><td>Mar 18</td><td><span class="tag tag-pending">Pending</span></td></tr>
+          <tr class="expand-row" id="exp2"><td colspan="6"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Category</div><div class="detail-value">Business Travel</div></div><div class="detail-item"><div class="detail-label">Breakdown</div><div class="detail-value">Train &#165;540 + Hotel &#165;1,200 + Meals &#165;400</div></div><div class="detail-item"><div class="detail-label">Trip Purpose</div><div class="detail-value" style="font-family:var(--font-sans)">Client visit - ABC Corp Shanghai office</div></div></div></div></td></tr>
+          <tr data-expand="exp3"><td>EXP-0085</td><td>Transport</td><td>Taxi to airport</td><td>&#165;180</td><td>Mar 15</td><td><span class="tag tag-pending">Pending</span></td></tr>
+          <tr class="expand-row" id="exp3"><td colspan="6"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Category</div><div class="detail-value">Local Transport</div></div><div class="detail-item"><div class="detail-label">Receipt</div><div class="detail-value">Uploaded</div></div></div></div></td></tr>
+          <tr data-expand="exp4"><td>EXP-0082</td><td>Office</td><td>Monitor stand + keyboard</td><td>&#165;520</td><td>Mar 05</td><td><span class="tag tag-approved">Approved</span></td></tr>
+          <tr class="expand-row" id="exp4"><td colspan="6"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Category</div><div class="detail-value">Office Equipment</div></div><div class="detail-item"><div class="detail-label">Receipt</div><div class="detail-value">Uploaded (JD.com invoice)</div></div></div></div></td></tr>
+          <tr data-expand="exp5"><td>EXP-0078</td><td>Meals</td><td>Team lunch</td><td>&#165;450</td><td>Feb 20</td><td><span class="tag tag-approved">Approved</span></td></tr>
+          <tr class="expand-row" id="exp5"><td colspan="6"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Attendees</div><div class="detail-value">6 people (team)</div></div></div></div></td></tr>
+          <tr data-expand="exp6"><td>EXP-0071</td><td>Software</td><td>Figma annual license</td><td>&#165;1,350</td><td>Jan 15</td><td><span class="tag tag-rejected">Rejected</span></td></tr>
+          <tr class="expand-row" id="exp6"><td colspan="6"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Reason</div><div class="detail-value" style="font-family:var(--font-sans);color:#f44">Company provides Figma licenses centrally. Please contact IT.</div></div></div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TICKETS -->
+  <div class="page" id="page-tickets">
+    <div class="page-title">Tickets <span class="page-count">5 tickets</span></div>
+    <div class="filter-bar">
+      <button class="filter-btn active">All</button>
+      <button class="filter-btn">Open</button>
+      <button class="filter-btn">Closed</button>
+      <input class="filter-search" placeholder="Search tickets..." type="text"/>
+      <button class="filter-btn" style="margin-left:auto;border-color:var(--accent);color:var(--accent)" onclick="openTicketForm()">+ New Ticket</button>
+    </div>
+    <div class="panel">
+      <table class="data-table" id="ticketTable">
+        <thead><tr><th>ID</th><th>Subject</th><th>Category</th><th>Priority</th><th>Created</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr data-expand="tk1"><td>TK-0034</td><td>VPN access request</td><td>IT</td><td>Medium</td><td>Mar 20</td><td><span class="tag tag-open">Open</span></td></tr>
+          <tr class="expand-row" id="tk1"><td colspan="6"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Description</div><div class="detail-value" style="font-family:var(--font-sans)">Need VPN access to Shanghai office network for remote debugging. Currently unable to connect to staging servers.</div></div><div class="detail-item"><div class="detail-label">Assigned To</div><div class="detail-value">IT Support Team</div></div><div class="detail-item"><div class="detail-label">Last Update</div><div class="detail-value">Mar 28 - IT reviewing request</div></div></div></div></td></tr>
+          <tr data-expand="tk2"><td>TK-0031</td><td>Payslip discrepancy - Feb</td><td>HR</td><td>High</td><td>Mar 02</td><td><span class="tag tag-closed">Closed</span></td></tr>
+          <tr class="expand-row" id="tk2"><td colspan="6"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Description</div><div class="detail-value" style="font-family:var(--font-sans)">Feb payslip shows incorrect housing fund deduction. Expected &#165;1,400 but deducted &#165;1,600.</div></div><div class="detail-item"><div class="detail-label">Resolution</div><div class="detail-value" style="font-family:var(--font-sans)">Corrected in Mar payslip. Difference of &#165;200 added back.</div></div></div></div></td></tr>
+          <tr data-expand="tk3"><td>TK-0028</td><td>Office chair replacement</td><td>Facilities</td><td>Low</td><td>Feb 15</td><td><span class="tag tag-closed">Closed</span></td></tr>
+          <tr class="expand-row" id="tk3"><td colspan="6"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Description</div><div class="detail-value" style="font-family:var(--font-sans)">Ergonomic chair armrest broken. Request replacement.</div></div><div class="detail-item"><div class="detail-label">Resolution</div><div class="detail-value" style="font-family:var(--font-sans)">New chair delivered Feb 20.</div></div></div></div></td></tr>
+          <tr data-expand="tk4"><td>TK-0025</td><td>Badge not working</td><td>Facilities</td><td>Medium</td><td>Jan 28</td><td><span class="tag tag-closed">Closed</span></td></tr>
+          <tr class="expand-row" id="tk4"><td colspan="6"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Resolution</div><div class="detail-value" style="font-family:var(--font-sans)">Badge re-encoded at front desk. Working now.</div></div></div></div></td></tr>
+          <tr data-expand="tk5"><td>TK-0019</td><td>Software license - IntelliJ</td><td>IT</td><td>Medium</td><td>Jan 10</td><td><span class="tag tag-closed">Closed</span></td></tr>
+          <tr class="expand-row" id="tk5"><td colspan="6"><div class="expand-content"><div class="detail-grid"><div class="detail-item"><div class="detail-label">Resolution</div><div class="detail-value" style="font-family:var(--font-sans)">License activated via JetBrains account. Valid until Jan 2027.</div></div></div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CONTRACT -->
+  <div class="page" id="page-contract">
+    <div class="page-title">Contract</div>
+    <div class="panel" style="margin-bottom:16px">
+      <div class="panel-header"><span>Employment Contract</span><span class="tag tag-active">Active</span></div>
+      <div class="panel-body">
+        <div class="info-grid">
+          <div class="info-item"><div class="info-label">Contract ID</div><div class="info-value mono">EOR-2024-00482</div></div>
+          <div class="info-item"><div class="info-label">Contract Type</div><div class="info-value">Full-time (EOR)</div></div>
+          <div class="info-item"><div class="info-label">Start Date</div><div class="info-value">Mar 10, 2024</div></div>
+          <div class="info-item"><div class="info-label">End Date</div><div class="info-value">Dec 31, 2027</div></div>
+          <div class="info-item"><div class="info-label">Employer of Record</div><div class="info-value">RampingUp (Beijing) Ltd.</div></div>
+          <div class="info-item"><div class="info-label">Client Company</div><div class="info-value">TechVision Inc.</div></div>
+          <div class="info-item"><div class="info-label">Work Location</div><div class="info-value">Beijing, China</div></div>
+          <div class="info-item"><div class="info-label">Probation</div><div class="info-value">Completed (Jun 10, 2024)</div></div>
+          <div class="info-item"><div class="info-label">Notice Period</div><div class="info-value">30 days</div></div>
+          <div class="info-item"><div class="info-label">Annual Leave</div><div class="info-value">20 days / year</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">Contract History</div>
+      <table class="data-table">
+        <thead><tr><th>Date</th><th>Event</th><th>Detail</th></tr></thead>
+        <tbody>
+          <tr><td>Mar 10, 2026</td><td>Renewal</td><td>Extended to Dec 2027. Salary adjusted +8%.</td></tr>
+          <tr><td>Jun 10, 2024</td><td>Probation End</td><td>Probation completed. Converted to regular.</td></tr>
+          <tr><td>Mar 10, 2024</td><td>Contract Start</td><td>Initial contract. 3-month probation.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- WALLET -->
+  <div class="page" id="page-wallet">
+    <div class="page-title">Wallet</div>
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-header">Reimbursement Wallet</div>
+        <div class="panel-body">
+          <div class="wallet-balance">&#165;3,820</div>
+          <div class="wallet-sub">Available balance &middot; Last updated Apr 01</div>
+          <div class="tx-list">
+            <div class="tx-item"><div><div class="tx-desc">Client dinner reimbursement</div><div class="tx-date">Mar 30</div></div><div class="tx-amount credit">+&#165;680</div></div>
+            <div class="tx-item"><div><div class="tx-desc">Monitor stand reimbursement</div><div class="tx-date">Mar 20</div></div><div class="tx-amount credit">+&#165;520</div></div>
+            <div class="tx-item"><div><div class="tx-desc">Team lunch reimbursement</div><div class="tx-date">Mar 05</div></div><div class="tx-amount credit">+&#165;450</div></div>
+            <div class="tx-item"><div><div class="tx-desc">Withdrawal to bank</div><div class="tx-date">Feb 28</div></div><div class="tx-amount debit">-&#165;2,400</div></div>
+            <div class="tx-item"><div><div class="tx-desc">Jan travel reimbursement</div><div class="tx-date">Feb 10</div></div><div class="tx-amount credit">+&#165;1,870</div></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="panel" style="margin-bottom:16px">
+          <div class="panel-header">Bank Account</div>
+          <div class="panel-body">
+            <div class="info-grid" style="grid-template-columns:1fr">
+              <div class="info-item"><div class="info-label">Bank</div><div class="info-value">China Merchants Bank</div></div>
+              <div class="info-item"><div class="info-label">Account</div><div class="info-value mono">**** **** **** 8842</div></div>
+              <div class="info-item"><div class="info-label">Branch</div><div class="info-value">Beijing Zhongguancun Branch</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">Summary (2026)</div>
+          <div class="panel-body quick-stats">
+            <div class="qs-item"><span class="qs-label">Total Reimbursed</span><span class="qs-val" style="color:var(--accent)">&#165;8,240</span></div>
+            <div class="qs-item"><span class="qs-label">Pending Claims</span><span class="qs-val" style="color:#f9a825">&#165;2,320</span></div>
+            <div class="qs-item"><span class="qs-label">Withdrawn</span><span class="qs-val">&#165;4,420</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="page" id="page-profile">
+    <div class="page-title">Profile <button class="m-btn m-btn-ghost" style="margin-left:auto;font-size:11px;padding:4px 10px" onclick="openEditProfile()">Edit Profile</button></div>
+    <div class="two-col">
+      <div>
+        <div class="panel" style="margin-bottom:16px">
+          <div class="panel-header">Personal Information</div>
+          <div class="panel-body">
+            <div class="info-grid">
+              <div class="info-item"><div class="info-label">Full Name</div><div class="info-value">Wei Zhang (&#x5F20;&#x4F1F;)</div></div>
+              <div class="info-item"><div class="info-label">Employee ID</div><div class="info-value mono">EMP-2024-0482</div></div>
+              <div class="info-item"><div class="info-label">Email</div><div class="info-value">wei.zhang@techvision.com</div></div>
+              <div class="info-item"><div class="info-label">Phone</div><div class="info-value mono">+86 138-0000-1234</div></div>
+              <div class="info-item"><div class="info-label">Date of Birth</div><div class="info-value">Sep 15, 1992</div></div>
+              <div class="info-item"><div class="info-label">ID Number</div><div class="info-value mono">110***********3456</div></div>
+              <div class="info-item"><div class="info-label">Department</div><div class="info-value">Engineering</div></div>
+              <div class="info-item"><div class="info-label">Position</div><div class="info-value">Senior Frontend Developer</div></div>
+              <div class="info-item"><div class="info-label">Manager</div><div class="info-value">Li Wei</div></div>
+              <div class="info-item"><div class="info-label">Join Date</div><div class="info-value">Mar 10, 2024</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">Emergency Contact</div>
+          <div class="panel-body">
+            <div class="info-grid">
+              <div class="info-item"><div class="info-label">Name</div><div class="info-value">Zhang Mei (mother)</div></div>
+              <div class="info-item"><div class="info-label">Phone</div><div class="info-value mono">+86 139-0000-5678</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="panel" style="margin-bottom:16px">
+          <div class="panel-header">Benefits</div>
+          <div class="panel-body quick-stats">
+            <div class="qs-item"><span class="qs-label">Social Insurance</span><span class="qs-val tag-active">Active</span></div>
+            <div class="qs-item"><span class="qs-label">Housing Fund</span><span class="qs-val tag-active">Active</span></div>
+            <div class="qs-item"><span class="qs-label">Supplemental Medical</span><span class="qs-val tag-active">Active</span></div>
+            <div class="qs-item"><span class="qs-label">Annual Checkup</span><span class="qs-val">Jul 2026</span></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">Documents</div>
+          <div class="panel-body quick-stats">
+            <div class="qs-item"><span class="qs-label">Contract (signed)</span><span class="qs-val" style="color:var(--text-secondary);font-size:11px">PDF</span></div>
+            <div class="qs-item"><span class="qs-label">ID Copy</span><span class="qs-val" style="color:var(--text-secondary);font-size:11px">Uploaded</span></div>
+            <div class="qs-item"><span class="qs-label">Bank Proof</span><span class="qs-val" style="color:var(--text-secondary);font-size:11px">Verified</span></div>
+            <div class="qs-item"><span class="qs-label">Photo</span><span class="qs-val" style="color:var(--text-secondary);font-size:11px">Uploaded</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── COMMAND PALETTE ── -->
+<div class="cmd-overlay" id="cmdOverlay">
+  <div class="cmd-palette" id="cmdPalette">
+    <div class="cmd-input-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="cmd-input" id="cmdInput" placeholder="Type a command or search..." autocomplete="off" spellcheck="false"/>
+      <span class="cmd-hint">ESC to close</span>
+    </div>
+    <div class="cmd-results" id="cmdResults"></div>
+  </div>
+</div>
+
+<script>
+// ── Modal ──
+function openModal(h){closeModal();const o=document.createElement('div');o.className='modal-overlay';o.id='appModal';o.innerHTML=h;o.addEventListener('click',e=>{if(e.target===o)closeModal()});document.body.appendChild(o)}
+function closeModal(){document.getElementById('appModal')?.remove()}
+
+function openLeaveForm(){openModal(`<div class="modal"><div class="m-header"><h3>// NEW LEAVE REQUEST</h3><button class="m-close" onclick="closeModal()">✕</button></div><div class="m-body"><div class="m-row"><div class="m-group"><label class="m-label">Leave Type</label><select class="m-select"><option>Annual Leave</option><option>Sick Leave</option><option>Personal Leave</option><option>Compensatory</option></select></div><div class="m-group"><label class="m-label">Half Day</label><select class="m-select"><option>No</option><option>Forenoon</option><option>Afternoon</option></select></div></div><div class="m-row"><div class="m-group"><label class="m-label">From Date</label><input class="m-input" type="date"></div><div class="m-group"><label class="m-label">To Date</label><input class="m-input" type="date"></div></div><div class="m-group"><label class="m-label">Reason</label><textarea class="m-textarea" placeholder="Describe reason..."></textarea></div><div class="m-group"><label class="m-label">Attachment</label><div class="m-upload">Click to upload (JPG, PNG, PDF — max 10MB)</div></div></div><div class="m-footer"><button class="m-btn m-btn-ghost" onclick="closeModal()">Cancel</button><button class="m-btn m-btn-ghost" onclick="closeModal()">Draft</button><button class="m-btn m-btn-primary" onclick="closeModal()">Submit</button></div></div>`)}
+
+let mExpN=1;
+function mExpHTML(n){let h='';for(let i=1;i<=n;i++)h+=`<div class="m-exp-item"><div class="m-exp-head"><span class="m-exp-num">#${String(i).padStart(2,'0')}</span>${i>1?`<button class="m-exp-rm" onclick="this.closest('.m-exp-item').remove();mExpN--">✕</button>`:''}</div><div class="m-row"><div class="m-group" style="margin:0"><label class="m-label">Date</label><input class="m-input" type="date"></div><div class="m-group" style="margin:0"><label class="m-label">Amount</label><input class="m-input" type="number" placeholder="0.00"></div></div><div class="m-row" style="margin-top:6px"><div class="m-group" style="margin:0"><label class="m-label">Category</label><select class="m-select"><option>Travel</option><option>Meals</option><option>Equipment</option><option>Transport</option><option>Other</option></select></div><div class="m-group" style="margin:0"><label class="m-label">Currency</label><select class="m-select"><option>CNY</option><option>USD</option><option>EUR</option></select></div></div></div>`;return h}
+function openExpenseForm(){mExpN=1;openModal(`<div class="modal modal--lg"><div class="m-header"><h3>// NEW EXPENSE CLAIM</h3><button class="m-close" onclick="closeModal()">✕</button></div><div class="m-body"><div id="mExpWrap">${mExpHTML(1)}</div><button class="m-add" onclick="mExpN++;document.getElementById('mExpWrap').innerHTML=mExpHTML(mExpN)">+ ADD ITEM</button><div class="m-group" style="margin-top:12px"><label class="m-label">Receipts</label><div class="m-upload">Click to upload receipts</div></div></div><div class="m-footer"><button class="m-btn m-btn-ghost" onclick="closeModal()">Cancel</button><button class="m-btn m-btn-ghost" onclick="closeModal()">Draft</button><button class="m-btn m-btn-primary" onclick="closeModal()">Submit</button></div></div>`)}
+
+function openTicketForm(){openModal(`<div class="modal modal--lg"><div class="m-header"><h3>// NEW TICKET</h3><button class="m-close" onclick="closeModal()">✕</button></div><div class="m-body"><div class="m-row"><div class="m-group"><label class="m-label">Category</label><select class="m-select"><option>IT Support</option><option>HR</option><option>Facilities</option><option>Finance</option></select></div><div class="m-group"><label class="m-label">Priority</label><select class="m-select"><option>Low</option><option>Medium</option><option>High</option></select></div></div><div class="m-group"><label class="m-label">Subject</label><input class="m-input" placeholder="Brief summary"></div><div class="m-group"><label class="m-label">Description</label><div class="m-md-wrap"><div class="m-md-bar"><button><b>B</b></button><button><i>I</i></button><button style="font-size:.65rem">&lt;/&gt;</button><button>—</button></div><textarea placeholder="Describe the issue... (markdown supported)"></textarea></div></div><div class="m-group"><label class="m-label">Attachments</label><div class="m-upload">Click to upload</div></div></div><div class="m-footer"><button class="m-btn m-btn-ghost" onclick="closeModal()">Cancel</button><button class="m-btn m-btn-primary" onclick="closeModal()">Create</button></div></div>`)}
+
+function openEditProfile(){openModal(`<div class="modal"><div class="m-header"><h3>// EDIT PROFILE</h3><button class="m-close" onclick="closeModal()">✕</button></div><div class="m-body"><div class="m-row"><div class="m-group"><label class="m-label">Full Name</label><input class="m-input" value="Wei Zhang"></div><div class="m-group"><label class="m-label">Email</label><input class="m-input" value="wei.zhang@techvision.com"></div></div><div class="m-row"><div class="m-group"><label class="m-label">Phone</label><input class="m-input" value="+86 138-0000-1234"></div><div class="m-group"><label class="m-label">Location</label><input class="m-input" value="Beijing, China"></div></div></div><div class="m-footer"><button class="m-btn m-btn-ghost" onclick="closeModal()">Cancel</button><button class="m-btn m-btn-primary" onclick="closeModal()">Save</button></div></div>`)}
+
+(function(){
+  // ── DATA ──
+  const pages = [
+    {id:'dashboard', label:'Dashboard', shortcut:'\u23181', icon:'grid'},
+    {id:'leave', label:'Leave', shortcut:'\u23182', icon:'calendar'},
+    {id:'salary', label:'Salary', shortcut:'\u23183', icon:'dollar'},
+    {id:'expenses', label:'Expenses', shortcut:'\u23184', icon:'receipt'},
+    {id:'tickets', label:'Tickets', shortcut:'\u23185', icon:'ticket'},
+    {id:'contract', label:'Contract', shortcut:'\u23186', icon:'document'},
+    {id:'wallet', label:'Wallet', shortcut:'\u23187', icon:'wallet'},
+    {id:'profile', label:'Profile', shortcut:'\u23188', icon:'user'},
+  ];
+  const actions = [
+    {id:'action-leave', label:'New Leave Request', target:'leave', type:'action'},
+    {id:'action-expense', label:'New Expense Claim', target:'expenses', type:'action'},
+    {id:'action-ticket', label:'New Ticket', target:'tickets', type:'action'},
+  ];
+
+  const iconSVGs = {
+    grid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
+    calendar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+    dollar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>',
+    receipt:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>',
+    ticket:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5h2a2 2 0 012 2v1a2 2 0 010 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2v-1a2 2 0 010-4V7a2 2 0 012-2h2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>',
+    document:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+    wallet:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><circle cx="17" cy="15" r="1"/></svg>',
+    user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+    plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  };
+
+  // ── ROUTING ──
+  let currentPage = 'dashboard';
+  const recentPages = ['dashboard','leave','salary'];
+
+  function navigate(pageId) {
+    currentPage = pageId;
+    location.hash = pageId;
+    // Update rail
+    document.querySelectorAll('.rail-item').forEach(el => {
+      el.classList.toggle('active', el.dataset.page === pageId);
+    });
+    // Update pages
+    document.querySelectorAll('.page').forEach(el => {
+      el.classList.toggle('active', el.id === 'page-' + pageId);
+    });
+    // Update breadcrumb
+    const pg = pages.find(p => p.id === pageId);
+    document.getElementById('bcCurrent').textContent = pg ? pg.label : pageId;
+    // Track recent
+    const idx = recentPages.indexOf(pageId);
+    if (idx > -1) recentPages.splice(idx, 1);
+    recentPages.unshift(pageId);
+    if (recentPages.length > 5) recentPages.pop();
+    // Close palette
+    closePalette();
+  }
+
+  // Hash routing
+  function handleHash() {
+    const hash = location.hash.replace('#','');
+    if (hash && pages.find(p => p.id === hash)) {
+      navigate(hash);
+    }
+  }
+  window.addEventListener('hashchange', handleHash);
+  if (location.hash) handleHash();
+
+  // Rail click
+  document.querySelectorAll('.rail-item[data-page]').forEach(el => {
+    el.addEventListener('click', () => navigate(el.dataset.page));
+  });
+
+  // ── EXPAND ROWS ──
+  document.querySelectorAll('tr[data-expand]').forEach(tr => {
+    tr.addEventListener('click', () => {
+      const target = document.getElementById(tr.dataset.expand);
+      if (!target) return;
+      const isOpen = target.classList.contains('open');
+      // Close all siblings in same table
+      const table = tr.closest('table');
+      table.querySelectorAll('.expand-row.open').forEach(r => {
+        r.classList.remove('open');
+        r.previousElementSibling?.classList.remove('expanded-parent');
+      });
+      if (!isOpen) {
+        target.classList.add('open');
+        tr.classList.add('expanded-parent');
+      }
+    });
+  });
+
+  // ── FILTER BAR ──
+  document.querySelectorAll('.filter-bar').forEach(bar => {
+    const btns = bar.querySelectorAll('.filter-btn:not([style])');
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  });
+
+  // ── COMMAND PALETTE ──
+  const overlay = document.getElementById('cmdOverlay');
+  const palette = document.getElementById('cmdPalette');
+  const cmdInput = document.getElementById('cmdInput');
+  const cmdResults = document.getElementById('cmdResults');
+  let selectedIdx = 0;
+  let filteredItems = [];
+
+  function openPalette() {
+    overlay.classList.add('open');
+    cmdInput.value = '';
+    selectedIdx = 0;
+    renderResults('');
+    requestAnimationFrame(() => cmdInput.focus());
+  }
+
+  function closePalette() {
+    overlay.classList.remove('open');
+    cmdInput.value = '';
+  }
+
+  function getAllItems() {
+    const pageItems = pages.map(p => ({
+      id: p.id,
+      label: p.label,
+      shortcut: p.shortcut,
+      icon: p.icon,
+      type: 'page',
+      action: () => navigate(p.id),
+    }));
+    const actionFns = {
+      'action-leave': openLeaveForm,
+      'action-expense': openExpenseForm,
+      'action-ticket': openTicketForm,
+    };
+    const actionItems = actions.map(a => ({
+      id: a.id,
+      label: a.label,
+      shortcut: '',
+      icon: 'plus',
+      type: 'action',
+      action: () => { closePalette(); (actionFns[a.id] || (() => navigate(a.target)))(); },
+    }));
+    return [...pageItems, ...actionItems];
+  }
+
+  function renderResults(query) {
+    const all = getAllItems();
+    const q = query.toLowerCase().trim();
+
+    if (!q) {
+      // Show recent + all actions
+      const recentItems = recentPages
+        .map(id => all.find(item => item.id === id))
+        .filter(Boolean);
+      const actionItems = all.filter(i => i.type === 'action');
+      const otherPages = all.filter(i => i.type === 'page' && !recentPages.includes(i.id));
+
+      filteredItems = [...recentItems, ...actionItems, ...otherPages];
+
+      let html = '<div class="cmd-section">Recent</div>';
+      recentItems.forEach((item, i) => {
+        html += renderItem(item, i);
+      });
+      const offset1 = recentItems.length;
+      if (actionItems.length) {
+        html += '<div class="cmd-section">Actions</div>';
+        actionItems.forEach((item, i) => {
+          html += renderItem(item, offset1 + i);
+        });
+      }
+      const offset2 = offset1 + actionItems.length;
+      if (otherPages.length) {
+        html += '<div class="cmd-section">Pages</div>';
+        otherPages.forEach((item, i) => {
+          html += renderItem(item, offset2 + i);
+        });
+      }
+      cmdResults.innerHTML = html;
+    } else {
+      filteredItems = all.filter(item => item.label.toLowerCase().includes(q));
+      if (filteredItems.length === 0) {
+        cmdResults.innerHTML = '<div class="cmd-empty">No results for "' + escHtml(query) + '"</div>';
+        return;
+      }
+      let html = '';
+      filteredItems.forEach((item, i) => {
+        html += renderItem(item, i);
+      });
+      cmdResults.innerHTML = html;
+    }
+
+    if (selectedIdx >= filteredItems.length) selectedIdx = 0;
+    updateSelection();
+    bindItemClicks();
+  }
+
+  function renderItem(item, idx) {
+    const iconHtml = iconSVGs[item.icon] || '';
+    const typeLabel = item.type === 'action' ? 'Action' : '';
+    return '<div class="cmd-item" data-idx="' + idx + '">' +
+      iconHtml +
+      '<span class="cmd-item-label">' + escHtml(item.label) + '</span>' +
+      (item.shortcut ? '<span class="cmd-item-shortcut">' + item.shortcut + '</span>' : '') +
+      (typeLabel ? '<span class="cmd-item-type">' + typeLabel + '</span>' : '') +
+      '</div>';
+  }
+
+  function updateSelection() {
+    cmdResults.querySelectorAll('.cmd-item').forEach((el, i) => {
+      el.classList.toggle('selected', parseInt(el.dataset.idx) === selectedIdx);
+    });
+    const sel = cmdResults.querySelector('.cmd-item.selected');
+    if (sel) sel.scrollIntoView({block:'nearest'});
+  }
+
+  function bindItemClicks() {
+    cmdResults.querySelectorAll('.cmd-item').forEach(el => {
+      el.addEventListener('click', () => {
+        const idx = parseInt(el.dataset.idx);
+        if (filteredItems[idx]) filteredItems[idx].action();
+      });
+    });
+  }
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  cmdInput.addEventListener('input', () => {
+    selectedIdx = 0;
+    renderResults(cmdInput.value);
+  });
+
+  // Keyboard nav
+  cmdInput.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      selectedIdx = Math.min(selectedIdx + 1, filteredItems.length - 1);
+      updateSelection();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      selectedIdx = Math.max(selectedIdx - 1, 0);
+      updateSelection();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (filteredItems[selectedIdx]) filteredItems[selectedIdx].action();
+    }
+  });
+
+  // Open/close shortcuts
+  document.addEventListener('keydown', (e) => {
+    // Cmd+K / Ctrl+K
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      if (overlay.classList.contains('open')) {
+        closePalette();
+      } else {
+        openPalette();
+      }
+    }
+    // Escape
+    if (e.key === 'Escape' && overlay.classList.contains('open')) {
+      e.preventDefault();
+      closePalette();
+    }
+    // Cmd+1-8 navigation
+    if ((e.metaKey || e.ctrlKey) && e.key >= '1' && e.key <= '8') {
+      e.preventDefault();
+      const idx = parseInt(e.key) - 1;
+      if (pages[idx]) navigate(pages[idx].id);
+    }
+  });
+
+  // Click overlay to close
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closePalette();
+  });
+
+  // Search trigger button
+  document.getElementById('searchTrigger').addEventListener('click', openPalette);
+
+  // ── APPROVAL FLOW INJECTION ──
+  function afSteps(status, approver) {
+    const s = status.toLowerCase();
+    if (s === 'pending') return [
+      {l:'Submitted',st:'done',i:'✓'},
+      {l:'Manager Review',p:approver,m:'Awaiting approval',st:'current',i:'◷'},
+      {l:'HR Confirmation',st:'waiting',i:'○'},
+      {l:'Completed',st:'waiting',i:'✓'}
+    ];
+    if (s === 'approved') return [
+      {l:'Submitted',st:'done',i:'✓'},
+      {l:'Manager Approved',p:approver,m:'Approved',st:'done',i:'✓'},
+      {l:'HR Confirmed',m:'Confirmed',st:'done',i:'✓'},
+      {l:'Completed',m:'All approvals received',st:'done',i:'✓'}
+    ];
+    if (s === 'rejected') return [
+      {l:'Submitted',st:'done',i:'✓'},
+      {l:'Manager Rejected',p:approver,m:'Request rejected',st:'rejected',i:'✕'},
+      {l:'HR Confirmation',m:'Skipped',st:'waiting',i:'○'},
+      {l:'Completed',st:'waiting',i:'✓'}
+    ];
+    if (s === 'paid') return [
+      {l:'Generated',st:'done',i:'✓'},
+      {l:'Verified',st:'done',i:'✓'},
+      {l:'Paid',m:'Payment completed',st:'done',i:'✓'}
+    ];
+    return [{l:status,st:'done',i:'✓'}];
+  }
+
+  function afHTML(status, approver) {
+    const steps = afSteps(status, approver || 'Li Wei');
+    return '<div class="af-flow"><div class="af-title">// Approval Progress</div><div class="af-steps">' +
+      steps.map(s => '<div class="af-step ' + s.st + '"><div class="af-dot">' + s.i + '</div><div class="af-content"><div class="af-label">' + s.l + '</div>' + (s.p ? '<div class="af-person">' + s.p + '</div>' : '') + (s.m ? '<div class="af-meta">' + s.m + '</div>' : '') + '</div></div>').join('') +
+      '</div></div>';
+  }
+
+  // Inject into leave and expense expand rows
+  function injectApprovalFlows() {
+    ['leaveTable', 'expenseTable'].forEach(tableId => {
+      const table = document.getElementById(tableId);
+      if (!table) return;
+      const dataRows = table.querySelectorAll('tr[data-expand]');
+      dataRows.forEach(row => {
+        const expandId = row.dataset.expand;
+        const expandRow = document.getElementById(expandId);
+        if (!expandRow) return;
+        const tag = row.querySelector('.tag');
+        if (!tag) return;
+        const status = tag.textContent.trim();
+        const approverCell = tableId === 'leaveTable' ? row.cells[row.cells.length - 1] : null;
+        const approver = approverCell ? approverCell.textContent.trim() : 'Li Wei';
+        const ec = expandRow.querySelector('.expand-content');
+        if (ec && !ec.querySelector('.af-flow')) {
+          ec.insertAdjacentHTML('beforeend', afHTML(status, approver));
+        }
+      });
+    });
+  }
+  injectApprovalFlows();
+
+})();
+</script>
+</body>
+</html>

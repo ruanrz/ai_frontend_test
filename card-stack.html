@@ -1,0 +1,2666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>RampingUp — Employee Portal (Card Stack)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --green:#47FC22;
+      --green-dim:rgba(71,252,34,.08);
+      --green-dark:#2ab810;
+      --black:#000;
+      --bg:#f5f5f0;
+      --white:#fff;
+      --surface:#fff;
+      --surface-warm:#fafaf7;
+      --border:#e8e8e3;
+      --text:#111;
+      --text-2:#555;
+      --text-3:#999;
+      --radius:20px;
+      --radius-sm:12px;
+      --radius-xs:8px;
+      --shadow:0 2px 8px rgba(0,0,0,.04);
+      --shadow-md:0 4px 20px rgba(0,0,0,.06);
+      --shadow-lg:0 12px 48px rgba(0,0,0,.08);
+      --font-en:'Inter',sans-serif;
+      --font-cn:'Noto Sans SC','Inter',sans-serif;
+    }
+    html{font-size:15px}
+    body{
+      background:var(--bg);color:var(--text);
+      font-family:var(--font-cn);line-height:1.5;
+      min-height:100vh;padding-bottom:80px;
+    }
+
+    /* ===== TOP BAR ===== */
+    .topbar{
+      position:fixed;top:0;left:0;right:0;z-index:100;
+      background:rgba(245,245,240,.85);
+      backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--border);
+      padding:0 24px;height:56px;
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .topbar-left{display:flex;align-items:center;gap:14px}
+    .topbar-logo{
+      width:32px;height:32px;background:var(--black);border-radius:8px;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .topbar-logo svg{width:20px;height:20px}
+    .topbar-brand{font-family:var(--font-en);font-weight:700;font-size:.95rem}
+    .topbar-right{display:flex;align-items:center;gap:16px}
+    .topbar-avatar{
+      width:34px;height:34px;border-radius:50%;
+      background:var(--black);color:var(--white);
+      display:flex;align-items:center;justify-content:center;
+      font-weight:600;font-size:.8rem;cursor:pointer;
+    }
+    .topbar-icon{
+      width:20px;height:20px;color:var(--text-2);cursor:pointer;
+      transition:color .2s;
+    }
+    .topbar-icon:hover{color:var(--text)}
+    .notif-badge{
+      position:relative;
+    }
+    .notif-badge::after{
+      content:'';position:absolute;top:-2px;right:-2px;
+      width:8px;height:8px;border-radius:50%;
+      background:var(--green);border:2px solid var(--bg);
+    }
+
+    /* ===== BOTTOM TAB BAR ===== */
+    .tabbar{
+      position:fixed;bottom:0;left:0;right:0;z-index:100;
+      background:var(--white);
+      border-top:1px solid var(--border);
+      display:flex;justify-content:space-around;
+      padding:6px 0 env(safe-area-inset-bottom,8px);
+      box-shadow:0 -4px 20px rgba(0,0,0,.04);
+    }
+    .tabbar-item{
+      display:flex;flex-direction:column;align-items:center;
+      gap:3px;padding:6px 12px;cursor:pointer;
+      color:var(--text-3);transition:color .2s;
+      text-decoration:none;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .tabbar-item.active{color:var(--black)}
+    .tabbar-item.active .tabbar-icon{color:var(--green)}
+    .tabbar-icon{width:22px;height:22px}
+    .tabbar-label{font-size:.65rem;font-weight:500}
+
+    /* ===== CONTENT ===== */
+    .content{
+      padding:72px 20px 20px;
+      max-width:none;margin:0 auto;
+    }
+
+    /* --- Hero Section --- */
+    .hero{
+      background:var(--black);color:var(--white);
+      border-radius:var(--radius);
+      padding:32px 28px;margin-bottom:20px;
+      position:relative;overflow:hidden;
+    }
+    .hero::before{
+      content:'';position:absolute;top:-60px;right:-40px;
+      width:200px;height:200px;border-radius:50%;
+      background:var(--green);opacity:.15;filter:blur(60px);
+    }
+    .hero::after{
+      content:'';position:absolute;bottom:-80px;left:20%;
+      width:300px;height:200px;border-radius:50%;
+      background:var(--green);opacity:.08;filter:blur(80px);
+    }
+    .hero-greeting{font-size:.9rem;color:rgba(255,255,255,.6);margin-bottom:4px}
+    .hero-name{
+      font-size:2rem;font-weight:900;letter-spacing:-.03em;
+      line-height:1.1;
+    }
+    .hero-name span{color:var(--green)}
+    .hero-stats{
+      display:flex;gap:24px;margin-top:20px;
+      position:relative;z-index:1;
+    }
+    .hero-stat{flex:1}
+    .hero-stat-value{
+      font-size:1.6rem;font-weight:800;font-family:var(--font-en);
+      letter-spacing:-.02em;
+    }
+    .hero-stat-value.green{color:var(--green)}
+    .hero-stat-label{font-size:.72rem;color:rgba(255,255,255,.5);margin-top:2px}
+
+    /* --- Section --- */
+    .section{margin-bottom:24px}
+    .section-head{
+      display:flex;justify-content:space-between;align-items:center;
+      margin-bottom:12px;padding:0 4px;
+    }
+    .section-title{font-size:1.05rem;font-weight:700;letter-spacing:-.01em}
+    .section-link{
+      font-size:.8rem;color:var(--text-3);cursor:pointer;
+      font-family:var(--font-en);font-weight:500;
+      text-decoration:none;transition:color .2s;
+    }
+    .section-link:hover{color:var(--text)}
+
+    /* --- Horizontal Scroll Cards --- */
+    .hscroll{
+      display:flex;gap:14px;overflow-x:auto;
+      padding:4px 0 12px;
+      scrollbar-width:none;-ms-overflow-style:none;
+    }
+    .hscroll::-webkit-scrollbar{display:none}
+
+    .module-card{
+      flex:0 0 160px;
+      background:var(--white);border:1px solid var(--border);
+      border-radius:var(--radius-sm);padding:20px 16px;
+      cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);
+      text-decoration:none;color:inherit;
+    }
+    .module-card:hover{
+      transform:translateY(-4px);
+      box-shadow:var(--shadow-lg);
+    }
+    .module-card:active{transform:scale(.97)}
+    .module-icon{
+      width:44px;height:44px;border-radius:var(--radius-xs);
+      display:flex;align-items:center;justify-content:center;
+      margin-bottom:14px;
+    }
+    .module-icon svg{width:22px;height:22px}
+    .module-icon.green{background:var(--green-dim);color:var(--green-dark)}
+    .module-icon.black{background:#f0f0f0;color:var(--black)}
+    .module-icon.orange{background:#fff7e6;color:#b36b00}
+    .module-icon.blue{background:#e6f0ff;color:#0055cc}
+    .module-name{font-size:.9rem;font-weight:600}
+    .module-desc{font-size:.72rem;color:var(--text-3);margin-top:3px}
+    .module-badge{
+      display:inline-block;font-size:.65rem;font-weight:600;
+      background:var(--green);color:var(--black);
+      padding:2px 6px;border-radius:8px;margin-top:8px;
+      font-family:var(--font-en);
+    }
+
+    /* --- Leave Balance Pill Row --- */
+    .pill-row{
+      display:flex;gap:10px;overflow-x:auto;
+      padding:0 0 8px;
+      scrollbar-width:none;
+    }
+    .pill-row::-webkit-scrollbar{display:none}
+    .pill{
+      flex:0 0 auto;
+      display:flex;align-items:center;gap:10px;
+      background:var(--white);border:1px solid var(--border);
+      border-radius:40px;padding:8px 16px 8px 8px;
+      white-space:nowrap;
+    }
+    .pill-ring{
+      width:36px;height:36px;border-radius:50%;
+      position:relative;
+    }
+    .pill-ring svg{width:36px;height:36px;transform:rotate(-90deg)}
+    .pill-ring circle{fill:none;stroke-width:3;stroke-linecap:round}
+    .pill-ring .track{stroke:var(--border)}
+    .pill-ring .fill{stroke:var(--green)}
+    .pill-ring-num{
+      position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+      font-size:.65rem;font-weight:700;font-family:var(--font-en);
+    }
+    .pill-label{font-size:.8rem;font-weight:500}
+    .pill-sub{font-size:.65rem;color:var(--text-3);font-family:var(--font-en)}
+
+    /* --- Action Cards (Salary / Recent) --- */
+    .action-card{
+      background:var(--white);border:1px solid var(--border);
+      border-radius:var(--radius-sm);
+      overflow:hidden;transition:all .2s;
+    }
+    .action-card:hover{box-shadow:var(--shadow-md)}
+
+    .salary-card{padding:24px;cursor:pointer}
+    .salary-label{font-size:.72rem;color:var(--text-3);font-weight:500;font-family:var(--font-en);text-transform:uppercase;letter-spacing:.05em}
+    .salary-amount{
+      font-size:2.5rem;font-weight:900;font-family:var(--font-en);
+      letter-spacing:-.04em;line-height:1;margin:8px 0;
+    }
+    .salary-amount .unit{font-size:.9rem;font-weight:500;color:var(--text-3)}
+    .salary-row{
+      display:flex;justify-content:space-between;
+      font-size:.8rem;color:var(--text-2);margin-top:4px;
+    }
+    .salary-row-val{font-family:var(--font-en);font-weight:600}
+    .salary-divider{height:1px;background:var(--border);margin:12px 0}
+    .salary-month{font-size:.8rem;color:var(--text-3);display:flex;align-items:center;gap:6px}
+
+    /* --- Activity Feed --- */
+    .feed{display:flex;flex-direction:column;gap:0}
+    .feed-item{
+      display:flex;align-items:flex-start;gap:14px;
+      padding:16px 20px;
+      border-bottom:1px solid var(--border);
+      background:var(--white);
+      cursor:pointer;transition:background .15s;
+    }
+    .feed-item:hover{background:var(--surface-warm)}
+    .feed-item:first-child{border-radius:var(--radius-sm) var(--radius-sm) 0 0}
+    .feed-item:last-child{border-radius:0 0 var(--radius-sm) var(--radius-sm);border-bottom:none}
+    .feed-dot{
+      width:10px;height:10px;border-radius:50%;
+      margin-top:5px;flex-shrink:0;
+    }
+    .feed-dot.green{background:var(--green)}
+    .feed-dot.orange{background:#ff9500}
+    .feed-dot.red{background:#ff3b30}
+    .feed-dot.grey{background:#ccc}
+    .feed-body{flex:1}
+    .feed-title{font-size:.9rem;font-weight:500}
+    .feed-meta{font-size:.72rem;color:var(--text-3);margin-top:2px;font-family:var(--font-en)}
+    .feed-arrow{
+      color:var(--text-3);align-self:center;
+    }
+
+    /* --- Expense Mini Cards --- */
+    .expense-scroll{
+      display:flex;gap:12px;overflow-x:auto;
+      padding:4px 0 8px;
+      scrollbar-width:none;
+    }
+    .expense-scroll::-webkit-scrollbar{display:none}
+    .expense-mini{
+      flex:0 0 200px;
+      background:var(--white);border:1px solid var(--border);
+      border-radius:var(--radius-sm);padding:18px;
+      cursor:pointer;transition:all .2s;
+    }
+    .expense-mini:hover{box-shadow:var(--shadow-md)}
+    .expense-mini-id{font-size:.7rem;color:var(--text-3);font-family:var(--font-en);font-weight:500}
+    .expense-mini-amount{
+      font-size:1.5rem;font-weight:800;font-family:var(--font-en);
+      letter-spacing:-.02em;margin:6px 0 4px;
+    }
+    .expense-mini-type{font-size:.8rem;color:var(--text-2)}
+    .expense-mini-status{
+      display:inline-block;font-size:.65rem;font-weight:600;
+      padding:2px 8px;border-radius:10px;margin-top:8px;
+      font-family:var(--font-en);
+    }
+    .s-pending{background:#fff7e6;color:#b36b00}
+    .s-approved{background:#e8ffe4;color:#1a7a00}
+    .s-rejected{background:#ffe6e6;color:#cc0000}
+
+    /* --- Ticket List --- */
+    .ticket-list{
+      display:flex;flex-direction:column;gap:10px;
+    }
+    .ticket-row{
+      background:var(--white);border:1px solid var(--border);
+      border-radius:var(--radius-sm);padding:16px 18px;
+      display:flex;align-items:center;gap:14px;
+      cursor:pointer;transition:all .2s;
+    }
+    .ticket-row:hover{box-shadow:var(--shadow-md)}
+    .ticket-prio{
+      width:4px;height:36px;border-radius:2px;flex-shrink:0;
+    }
+    .ticket-prio.high{background:#ff3b30}
+    .ticket-prio.mid{background:#ff9500}
+    .ticket-prio.low{background:var(--green)}
+    .ticket-info{flex:1}
+    .ticket-id{font-size:.7rem;font-family:var(--font-en);color:var(--text-3);font-weight:500}
+    .ticket-title{font-size:.9rem;font-weight:500;margin-top:2px}
+    .ticket-status{
+      font-size:.65rem;font-weight:600;padding:3px 8px;
+      border-radius:10px;font-family:var(--font-en);
+    }
+    .ts-open{background:#e8ffe4;color:#1a7a00}
+    .ts-progress{background:#e6f0ff;color:#0055cc}
+    .ts-closed{background:#f0f0f0;color:#666}
+
+    /* --- Profile Card --- */
+    .profile-card{
+      background:var(--white);border:1px solid var(--border);
+      border-radius:var(--radius);overflow:hidden;
+    }
+    .profile-cover{
+      height:120px;position:relative;
+      background:linear-gradient(135deg,var(--black) 0%,#1a1a1a 40%,var(--green) 100%);
+    }
+    .profile-cover-pattern{
+      position:absolute;inset:0;
+      background:repeating-linear-gradient(
+        45deg,transparent,transparent 20px,rgba(255,255,255,.03) 20px,rgba(255,255,255,.03) 40px
+      );
+    }
+    .profile-body{padding:0 24px 24px;position:relative}
+    .profile-avatar-wrap{
+      width:80px;height:80px;border-radius:50%;
+      border:4px solid var(--white);
+      background:var(--white);
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.8rem;font-weight:700;
+      margin-top:-40px;position:relative;
+      box-shadow:var(--shadow-md);
+    }
+    .profile-name{font-size:1.3rem;font-weight:700;margin-top:12px}
+    .profile-role{font-size:.85rem;color:var(--text-2);margin-top:2px}
+    .profile-fields{
+      display:grid;grid-template-columns:1fr 1fr;gap:14px;
+      margin-top:20px;padding-top:20px;border-top:1px solid var(--border);
+    }
+    .pf-label{font-size:.68rem;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;font-family:var(--font-en)}
+    .pf-value{font-size:.88rem;margin-top:2px}
+    .profile-edit-btn{
+      width:100%;padding:12px;margin-top:20px;
+      background:var(--black);color:var(--white);
+      border:none;border-radius:var(--radius-xs);
+      font-size:.9rem;font-weight:600;cursor:pointer;
+      font-family:inherit;transition:all .2s;
+    }
+    .profile-edit-btn:hover{background:#222}
+
+    /* --- Onboarding Banner --- */
+    .onboard-banner{
+      background:var(--black);color:var(--white);
+      border-radius:var(--radius-sm);padding:20px;
+      display:flex;align-items:center;gap:16px;
+      margin-bottom:20px;cursor:pointer;
+    }
+    .onboard-progress{
+      width:48px;height:48px;border-radius:50%;position:relative;
+      flex-shrink:0;
+    }
+    .onboard-progress svg{width:48px;height:48px;transform:rotate(-90deg)}
+    .onboard-progress circle{fill:none;stroke-width:4;stroke-linecap:round}
+    .onboard-progress .track{stroke:rgba(255,255,255,.15)}
+    .onboard-progress .fill{stroke:var(--green)}
+    .onboard-progress-num{
+      position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+      font-size:.8rem;font-weight:700;font-family:var(--font-en);
+    }
+    .onboard-text{flex:1}
+    .onboard-title{font-weight:600;font-size:.95rem}
+    .onboard-desc{font-size:.8rem;color:rgba(255,255,255,.5);margin-top:2px}
+    .onboard-btn{
+      padding:10px 18px;background:var(--green);color:var(--black);
+      border:none;border-radius:var(--radius-xs);
+      font-weight:600;font-size:.85rem;cursor:pointer;
+      font-family:inherit;white-space:nowrap;
+    }
+
+    /* --- Quick Actions Floating --- */
+    .fab{
+      position:fixed;bottom:76px;right:24px;
+      width:52px;height:52px;border-radius:50%;
+      background:var(--black);color:var(--green);
+      border:none;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 4px 20px rgba(0,0,0,.2);
+      transition:all .25s;z-index:90;
+    }
+    .fab:hover{transform:scale(1.08);box-shadow:0 6px 30px rgba(0,0,0,.25)}
+    .fab svg{width:24px;height:24px;transition:transform .3s cubic-bezier(.4,0,.2,1)}
+    .fab.open svg{transform:rotate(45deg)}
+
+    /* --- FAB Quick Action Menu --- */
+    .fab-menu{
+      position:fixed;bottom:140px;right:24px;z-index:89;
+      display:flex;flex-direction:column;gap:10px;align-items:flex-end;
+      pointer-events:none;opacity:0;transform:translateY(20px);
+      transition:all .3s cubic-bezier(.4,0,.2,1);
+    }
+    .fab-menu.open{pointer-events:auto;opacity:1;transform:translateY(0)}
+    .fab-menu-item{
+      display:flex;align-items:center;gap:10px;
+      padding:10px 18px;
+      background:var(--black);color:var(--white);
+      border-radius:40px;border:none;cursor:pointer;
+      font-size:.85rem;font-weight:500;font-family:var(--font-cn);
+      box-shadow:0 4px 16px rgba(0,0,0,.2);
+      white-space:nowrap;transition:all .2s;
+    }
+    .fab-menu-item:hover{background:#222;transform:scale(1.04)}
+    .fab-menu-item svg{width:18px;height:18px;color:var(--green);flex-shrink:0}
+    .fab-overlay{
+      position:fixed;inset:0;z-index:88;
+      background:rgba(0,0,0,.15);backdrop-filter:blur(2px);
+      opacity:0;pointer-events:none;transition:opacity .3s;
+    }
+    .fab-overlay.open{opacity:1;pointer-events:auto}
+
+    /* --- Page containers --- */
+    .page{display:none}
+    .page.active{display:block}
+
+    /* --- Page Action Button --- */
+    .page-action-btn{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:10px 20px;
+      background:var(--black);color:var(--white);
+      border:none;border-radius:var(--radius-xs);
+      font-size:.85rem;font-weight:600;cursor:pointer;
+      font-family:inherit;transition:all .2s;
+    }
+    .page-action-btn:hover{background:#222}
+    .page-action-btn svg{width:16px;height:16px}
+
+    /* ===== MODAL SYSTEM ===== */
+    .modal-backdrop{
+      position:fixed;inset:0;z-index:200;
+      background:rgba(0,0,0,.4);
+      backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+      opacity:0;pointer-events:none;transition:opacity .3s;
+      display:flex;align-items:flex-end;justify-content:center;
+    }
+    .modal-backdrop.open{opacity:1;pointer-events:auto}
+    .modal-sheet{
+      background:var(--white);
+      border-radius:var(--radius) var(--radius) 0 0;
+      width:100%;max-height:90vh;
+      overflow-y:auto;
+      transform:translateY(100%);
+      transition:transform .35s cubic-bezier(.4,0,.2,1);
+      padding:0 0 env(safe-area-inset-bottom,20px);
+    }
+    .modal-backdrop.open .modal-sheet{transform:translateY(0)}
+    .modal-handle{
+      width:40px;height:4px;border-radius:2px;background:var(--border);
+      margin:12px auto 0;
+    }
+    .modal-header{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:16px 24px 12px;
+      border-bottom:1px solid var(--border);
+      position:sticky;top:0;background:var(--white);z-index:1;
+    }
+    .modal-title{font-size:1.1rem;font-weight:700}
+    .modal-close{
+      width:32px;height:32px;border-radius:50%;
+      background:var(--bg);border:none;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:background .2s;
+    }
+    .modal-close:hover{background:var(--border)}
+    .modal-close svg{width:18px;height:18px;color:var(--text-2)}
+    .modal-body{padding:20px 24px}
+
+    /* --- Form Elements --- */
+    .form-group{margin-bottom:18px}
+    .form-label{
+      display:block;font-size:.8rem;font-weight:600;color:var(--text-2);
+      margin-bottom:6px;
+    }
+    .form-input,.form-select,.form-textarea{
+      width:100%;padding:11px 14px;
+      background:var(--bg);border:1px solid var(--border);
+      border-radius:var(--radius-xs);
+      font-size:.9rem;font-family:inherit;color:var(--text);
+      transition:border-color .2s,box-shadow .2s;
+      outline:none;
+    }
+    .form-input:focus,.form-select:focus,.form-textarea:focus{
+      border-color:var(--black);
+      box-shadow:0 0 0 3px rgba(0,0,0,.06);
+    }
+    .form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+    .form-textarea{resize:vertical;min-height:80px}
+    .form-row{display:flex;gap:12px}
+    .form-row>*{flex:1}
+    .form-check{
+      display:flex;align-items:center;gap:8px;
+      font-size:.82rem;color:var(--text-2);cursor:pointer;margin-top:6px;
+    }
+    .form-check input[type="checkbox"]{
+      width:16px;height:16px;accent-color:var(--black);cursor:pointer;
+    }
+    .form-hint{font-size:.72rem;color:var(--text-3);margin-top:4px}
+    .form-display{
+      padding:11px 14px;background:var(--bg);
+      border:1px solid var(--border);border-radius:var(--radius-xs);
+      font-size:.9rem;font-weight:600;font-family:var(--font-en);
+    }
+
+    /* --- File Upload Area --- */
+    .upload-area{
+      border:2px dashed var(--border);border-radius:var(--radius-xs);
+      padding:24px;text-align:center;cursor:pointer;
+      transition:border-color .2s,background .2s;
+    }
+    .upload-area:hover{border-color:var(--text-3);background:var(--surface-warm)}
+    .upload-area svg{width:28px;height:28px;color:var(--text-3);margin-bottom:8px}
+    .upload-area-text{font-size:.82rem;color:var(--text-3)}
+    .upload-area-hint{font-size:.7rem;color:var(--text-3);margin-top:4px;opacity:.6}
+
+    /* --- Button Group --- */
+    .btn-group{display:flex;gap:12px;margin-top:24px}
+    .btn-primary{
+      flex:1;padding:13px;
+      background:var(--black);color:var(--white);
+      border:none;border-radius:var(--radius-xs);
+      font-size:.9rem;font-weight:600;cursor:pointer;
+      font-family:inherit;transition:all .2s;
+    }
+    .btn-primary:hover{background:#222}
+    .btn-secondary{
+      flex:1;padding:13px;
+      background:var(--bg);color:var(--text);
+      border:1px solid var(--border);border-radius:var(--radius-xs);
+      font-size:.9rem;font-weight:600;cursor:pointer;
+      font-family:inherit;transition:all .2s;
+    }
+    .btn-secondary:hover{background:var(--border)}
+    .btn-outline{
+      padding:10px 18px;
+      background:transparent;color:var(--text);
+      border:1px solid var(--border);border-radius:var(--radius-xs);
+      font-size:.82rem;font-weight:500;cursor:pointer;
+      font-family:inherit;transition:all .2s;
+    }
+    .btn-outline:hover{background:var(--bg)}
+    .btn-danger-text{
+      padding:10px 18px;
+      background:transparent;color:#cc0000;
+      border:1px solid #ffe6e6;border-radius:var(--radius-xs);
+      font-size:.82rem;font-weight:500;cursor:pointer;
+      font-family:inherit;transition:all .2s;
+    }
+    .btn-danger-text:hover{background:#ffe6e6}
+
+    /* --- Approval Timeline --- */
+    .approval-timeline{margin-top:20px}
+    .timeline-item{
+      display:flex;gap:14px;position:relative;
+      padding-bottom:24px;
+    }
+    .timeline-item:last-child{padding-bottom:0}
+    .timeline-item:not(:last-child)::before{
+      content:'';position:absolute;left:11px;top:24px;
+      width:2px;bottom:0;background:var(--border);
+    }
+    .timeline-dot{
+      width:24px;height:24px;border-radius:50%;flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;
+      position:relative;z-index:1;
+    }
+    .timeline-dot.done{background:var(--green)}
+    .timeline-dot.done svg{color:var(--black)}
+    .timeline-dot.current{background:#ff9500}
+    .timeline-dot.current svg{color:var(--white)}
+    .timeline-dot.pending{background:var(--border)}
+    .timeline-dot.pending svg{color:var(--text-3)}
+    .timeline-dot svg{width:12px;height:12px}
+    .timeline-content{flex:1;padding-top:2px}
+    .timeline-label{font-size:.85rem;font-weight:500}
+    .timeline-meta{font-size:.72rem;color:var(--text-3);margin-top:2px;font-family:var(--font-en)}
+    .timeline-note{
+      margin-top:8px;padding:10px 14px;
+      background:#ffe6e6;border-radius:var(--radius-xs);
+      font-size:.82rem;color:#cc0000;
+    }
+
+    /* --- Expense Line Items --- */
+    .line-item{
+      display:flex;align-items:center;gap:12px;
+      padding:14px 0;border-bottom:1px solid var(--border);
+    }
+    .line-item:last-child{border-bottom:none}
+    .line-item-body{flex:1}
+    .line-item-desc{font-size:.85rem;font-weight:500}
+    .line-item-date{font-size:.7rem;color:var(--text-3);font-family:var(--font-en);margin-top:2px}
+    .line-item-amount{font-size:.95rem;font-weight:700;font-family:var(--font-en)}
+    .line-item-remove{
+      width:28px;height:28px;border-radius:50%;
+      background:var(--bg);border:none;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:background .2s;flex-shrink:0;
+    }
+    .line-item-remove:hover{background:#ffe6e6}
+    .line-item-remove svg{width:14px;height:14px;color:var(--text-3)}
+
+    /* --- Dynamic Line Item Rows (Expense Create) --- */
+    .dynamic-item{
+      background:var(--bg);border-radius:var(--radius-xs);
+      padding:14px;margin-bottom:10px;position:relative;
+    }
+    .dynamic-item .form-group{margin-bottom:10px}
+    .dynamic-item .form-group:last-child{margin-bottom:0}
+    .dynamic-item-remove{
+      position:absolute;top:10px;right:10px;
+      width:24px;height:24px;border-radius:50%;
+      background:var(--white);border:1px solid var(--border);cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:all .2s;
+    }
+    .dynamic-item-remove:hover{background:#ffe6e6;border-color:#ffcccc}
+    .dynamic-item-remove svg{width:12px;height:12px;color:var(--text-3)}
+    .add-item-btn{
+      display:flex;align-items:center;justify-content:center;gap:6px;
+      width:100%;padding:12px;
+      background:transparent;border:2px dashed var(--border);
+      border-radius:var(--radius-xs);color:var(--text-3);
+      font-size:.82rem;font-weight:500;cursor:pointer;
+      font-family:inherit;transition:all .2s;
+    }
+    .add-item-btn:hover{border-color:var(--text-3);color:var(--text-2);background:var(--surface-warm)}
+    .add-item-btn svg{width:16px;height:16px}
+
+    /* --- Total Display --- */
+    .total-display{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:14px 0;margin-top:8px;
+      border-top:2px solid var(--black);
+    }
+    .total-label{font-size:.9rem;font-weight:600}
+    .total-value{font-size:1.3rem;font-weight:800;font-family:var(--font-en)}
+
+    /* --- Priority Pills --- */
+    .prio-pills{display:flex;gap:8px}
+    .prio-pill{
+      padding:8px 18px;border-radius:40px;
+      border:1px solid var(--border);background:var(--white);
+      font-size:.82rem;font-weight:500;cursor:pointer;
+      font-family:inherit;transition:all .2s;
+    }
+    .prio-pill:hover{border-color:var(--text-3)}
+    .prio-pill.selected{background:var(--black);color:var(--white);border-color:var(--black)}
+
+    /* --- Comments Section --- */
+    .comments-section{margin-top:20px}
+    .comment{
+      display:flex;gap:12px;
+      padding:14px 0;border-bottom:1px solid var(--border);
+    }
+    .comment:last-child{border-bottom:none}
+    .comment-avatar{
+      width:32px;height:32px;border-radius:50%;
+      background:var(--bg);color:var(--text-2);
+      display:flex;align-items:center;justify-content:center;
+      font-size:.72rem;font-weight:600;flex-shrink:0;
+    }
+    .comment-body{flex:1}
+    .comment-author{font-size:.82rem;font-weight:600}
+    .comment-time{font-size:.68rem;color:var(--text-3);font-family:var(--font-en);margin-left:8px;font-weight:400}
+    .comment-text{font-size:.85rem;color:var(--text-2);margin-top:4px;line-height:1.5}
+    .comment-input-wrap{
+      display:flex;gap:10px;margin-top:16px;
+      padding-top:16px;border-top:1px solid var(--border);
+    }
+    .comment-input{
+      flex:1;padding:10px 14px;
+      background:var(--bg);border:1px solid var(--border);
+      border-radius:40px;font-size:.85rem;
+      font-family:inherit;outline:none;
+      transition:border-color .2s;
+    }
+    .comment-input:focus{border-color:var(--black)}
+    .comment-send{
+      width:40px;height:40px;border-radius:50%;
+      background:var(--black);color:var(--green);
+      border:none;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:all .2s;flex-shrink:0;
+    }
+    .comment-send:hover{background:#222}
+    .comment-send svg{width:18px;height:18px}
+
+    /* --- Salary Earnings vs Deductions --- */
+    .salary-summary-bars{
+      display:flex;gap:16px;margin-top:16px;
+    }
+    .salary-bar-col{flex:1}
+    .salary-bar-label{font-size:.72rem;color:var(--text-3);font-weight:500;margin-bottom:6px}
+    .salary-bar-track{
+      height:8px;background:var(--bg);border-radius:4px;overflow:hidden;
+    }
+    .salary-bar-fill{height:100%;border-radius:4px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+    .salary-bar-fill.earnings{background:var(--green)}
+    .salary-bar-fill.deductions{background:var(--black)}
+    .salary-bar-value{font-size:.95rem;font-weight:700;font-family:var(--font-en);margin-top:4px}
+
+    /* --- Profile Extra Sections --- */
+    .profile-section-card{
+      background:var(--white);border:1px solid var(--border);
+      border-radius:var(--radius-sm);padding:20px;
+      margin-top:16px;
+    }
+    .profile-section-title{
+      font-size:.9rem;font-weight:700;margin-bottom:14px;
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .profile-section-title .btn-outline{padding:6px 12px;font-size:.72rem}
+    .profile-field-row{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:10px 0;border-bottom:1px solid var(--border);
+    }
+    .profile-field-row:last-child{border-bottom:none}
+    .profile-field-label{font-size:.82rem;color:var(--text-2)}
+    .profile-field-value{font-size:.85rem;font-weight:500}
+    .settings-row{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:14px 0;border-bottom:1px solid var(--border);
+    }
+    .settings-row:last-child{border-bottom:none}
+    .settings-label{font-size:.88rem;font-weight:500}
+    .settings-desc{font-size:.72rem;color:var(--text-3);margin-top:2px}
+    .toggle-switch{
+      position:relative;width:44px;height:24px;cursor:pointer;
+    }
+    .toggle-switch input{opacity:0;width:0;height:0}
+    .toggle-track{
+      position:absolute;inset:0;background:var(--border);
+      border-radius:12px;transition:background .2s;
+    }
+    .toggle-switch input:checked + .toggle-track{background:var(--black)}
+    .toggle-track::after{
+      content:'';position:absolute;top:2px;left:2px;
+      width:20px;height:20px;border-radius:50%;
+      background:var(--white);transition:transform .2s;
+      box-shadow:0 1px 3px rgba(0,0,0,.15);
+    }
+    .toggle-switch input:checked + .toggle-track::after{transform:translateX(20px)}
+
+    /* --- Onboarding Step Form --- */
+    .step-indicator{
+      display:flex;align-items:center;gap:0;margin-bottom:24px;
+    }
+    .step-dot{
+      width:28px;height:28px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:.7rem;font-weight:700;font-family:var(--font-en);
+      flex-shrink:0;
+    }
+    .step-dot.done{background:var(--green);color:var(--black)}
+    .step-dot.current{background:var(--black);color:var(--white)}
+    .step-dot.future{background:var(--border);color:var(--text-3)}
+    .step-line{flex:1;height:2px;background:var(--border)}
+    .step-line.done{background:var(--green)}
+
+    /* ===== Responsive ===== */
+    @media(min-width:768px){
+      .content{padding:72px 32px 32px}
+      .hero{padding:40px 36px}
+      .hero-name{font-size:2.4rem}
+      .module-card{flex:0 0 180px}
+      /* Desktop modal: centered */
+      .modal-backdrop{align-items:center}
+      .modal-sheet{
+        border-radius:var(--radius);
+        max-width:520px;max-height:85vh;
+        transform:translateY(40px) scale(.96);
+      }
+      .modal-backdrop.open .modal-sheet{transform:translateY(0) scale(1)}
+      .modal-handle{display:none}
+    }
+    @media(min-width:1024px){
+      .tabbar{display:none}
+      body{padding-bottom:0}
+      .content{max-width:none}
+      /* Show a sidebar for desktop */
+      .desktop-nav{
+        display:flex !important;
+        position:fixed;left:0;top:56px;bottom:0;
+        width:200px;flex-direction:column;
+        background:var(--white);border-right:1px solid var(--border);
+        padding:20px 12px;z-index:50;
+      }
+      .content{margin-left:200px;max-width:1080px;padding:72px 40px 32px}
+    }
+
+    .desktop-nav{display:none}
+    .desktop-nav-item{
+      display:flex;align-items:center;gap:10px;
+      padding:10px 12px;border-radius:var(--radius-xs);
+      color:var(--text-2);cursor:pointer;font-size:.88rem;
+      font-weight:450;transition:all .15s;text-decoration:none;
+    }
+    .desktop-nav-item:hover{background:var(--bg);color:var(--text)}
+    .desktop-nav-item.active{background:var(--black);color:var(--white)}
+    .desktop-nav-item.active svg{color:var(--green)}
+    .desktop-nav-item svg{width:18px;height:18px;opacity:.6}
+    .desktop-nav-item.active svg{opacity:1}
+  </style>
+</head>
+<body>
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">
+        <svg viewBox="86 70 70 32" fill="none">
+          <path d="M110.39,71.82c.85,0,1.42.88,1.06,1.66l-4.55,9.9-.06.13-.67,1.46-6.4,13.93c-.19.42-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l5.95-12.96.67-1.46,5.06-11.01c.19-.41.61-.68,1.06-.68h10.58Z" fill="#fff"/>
+          <path d="M151.2,83.51h-10.58c-.46,0-.87-.27-1.06-.68l-4.3-9.35c-.36-.77.21-1.66,1.06-1.66h10.58c.46,0,.87.27,1.06.68l4.3,9.35c.36.77-.21,1.66-1.06,1.66Z" fill="#47fa22"/>
+          <path d="M126.07,73.48l-4.3,9.35c-.19.41-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l4.3-9.35c.19-.41.61-.68,1.06-.68h10.58c.85,0,1.42.88,1.06,1.66Z" fill="#fff"/>
+          <path d="M125.69,99.59h-10.59c-.46,0-.87-.27-1.06-.68l-5.64-12.28c-.36-.77.21-1.66,1.06-1.66h10.59c.46,0,.87.27,1.06.68l5.64,12.28c.36.77-.21,1.66-1.06,1.66Z" fill="#fff"/>
+          <path d="M152.93,86.63l-5.64,12.28c-.19.42-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l5.64-12.28c.19-.42.61-.68,1.06-.68h10.58c.85,0,1.42.88,1.06,1.66Z" fill="#47fa22"/>
+        </svg>
+      </div>
+      <span class="topbar-brand">RampingUp</span>
+    </div>
+    <div class="topbar-right">
+      <span class="notif-badge">
+        <svg class="topbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      </span>
+      <div class="topbar-avatar" onclick="switchPage('profile')">张</div>
+    </div>
+  </header>
+
+  <!-- Desktop Sidebar Nav -->
+  <nav class="desktop-nav">
+    <a class="desktop-nav-item active" onclick="switchPage('home',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      首页
+    </a>
+    <a class="desktop-nav-item" onclick="switchPage('leave',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      请假
+    </a>
+    <a class="desktop-nav-item" onclick="switchPage('salary',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
+      工资单
+    </a>
+    <a class="desktop-nav-item" onclick="switchPage('expense',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      报销
+    </a>
+    <a class="desktop-nav-item" onclick="switchPage('tickets',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5h5v5M20 5L10 15M4 7v10a2 2 0 002 2h10"/></svg>
+      工单
+    </a>
+    <a class="desktop-nav-item" onclick="switchPage('profile',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+      我的
+    </a>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="content">
+
+    <!-- ===== HOME PAGE ===== -->
+    <div class="page active" id="page-home">
+      <!-- Hero -->
+      <div class="hero">
+        <div class="hero-greeting">Welcome back</div>
+        <h1 class="hero-name">张明<span>.</span></h1>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="hero-stat-value green">12</div>
+            <div class="hero-stat-label">剩余年假</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">¥28.5k</div>
+            <div class="hero-stat-label">上月实发</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">3</div>
+            <div class="hero-stat-label">待处理</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Onboarding Banner -->
+      <div class="onboard-banner" onclick="openModal('onboarding-modal')">
+        <div class="onboard-progress">
+          <svg><circle class="track" cx="24" cy="24" r="20"/><circle class="fill" cx="24" cy="24" r="20" stroke-dasharray="125.6" stroke-dashoffset="41.9"/></svg>
+          <div class="onboard-progress-num">4/6</div>
+        </div>
+        <div class="onboard-text">
+          <div class="onboard-title">完成入职流程</div>
+          <div class="onboard-desc">还差 2 步即可完成全部信息填写</div>
+        </div>
+        <button class="onboard-btn" onclick="event.stopPropagation();openModal('onboarding-modal')">继续</button>
+      </div>
+
+      <!-- Quick Modules -->
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title">快捷入口</div>
+        </div>
+        <div class="hscroll">
+          <a class="module-card" onclick="switchPage('leave')">
+            <div class="module-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            </div>
+            <div class="module-name">请假</div>
+            <div class="module-desc">假期余额与申请</div>
+            <div class="module-badge">3 pending</div>
+          </a>
+          <a class="module-card" onclick="switchPage('salary')">
+            <div class="module-icon black">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
+            </div>
+            <div class="module-name">工资单</div>
+            <div class="module-desc">查看薪资明细</div>
+          </a>
+          <a class="module-card" onclick="switchPage('expense')">
+            <div class="module-icon orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+            </div>
+            <div class="module-name">报销</div>
+            <div class="module-desc">提交与跟踪</div>
+            <div class="module-badge">1 pending</div>
+          </a>
+          <a class="module-card" onclick="switchPage('tickets')">
+            <div class="module-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5h5v5M20 5L10 15M4 7v10a2 2 0 002 2h10"/></svg>
+            </div>
+            <div class="module-name">工单</div>
+            <div class="module-desc">提交问题反馈</div>
+          </a>
+          <a class="module-card" onclick="switchPage('profile')">
+            <div class="module-icon black">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+            </div>
+            <div class="module-name">个人信息</div>
+            <div class="module-desc">管理个人资料</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Activity Feed -->
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title">最近动态</div>
+          <a class="section-link">查看全部 →</a>
+        </div>
+        <div class="action-card">
+          <div class="feed">
+            <div class="feed-item" onclick="switchPage('leave')">
+              <div class="feed-dot green"></div>
+              <div class="feed-body">
+                <div class="feed-title">年假申请已通过</div>
+                <div class="feed-meta">Apr 1, 2026 · 审批人: 李经理 · 3 天</div>
+              </div>
+              <svg class="feed-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="feed-item" onclick="switchPage('expense')">
+              <div class="feed-dot orange"></div>
+              <div class="feed-body">
+                <div class="feed-title">差旅报销待审批</div>
+                <div class="feed-meta">Mar 28, 2026 · ¥3,200</div>
+              </div>
+              <svg class="feed-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="feed-item" onclick="switchPage('salary')">
+              <div class="feed-dot green"></div>
+              <div class="feed-body">
+                <div class="feed-title">3月工资单已发放</div>
+                <div class="feed-meta">Mar 25, 2026 · ¥28,500</div>
+              </div>
+              <svg class="feed-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="feed-item" onclick="switchPage('tickets')">
+              <div class="feed-dot red"></div>
+              <div class="feed-body">
+                <div class="feed-title">IT设备申请被驳回</div>
+                <div class="feed-meta">Mar 20, 2026 · 需补充说明</div>
+              </div>
+              <svg class="feed-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== LEAVE PAGE ===== -->
+    <div class="page" id="page-leave">
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title" style="font-size:1.4rem;font-weight:800">请假管理</div>
+          <button class="page-action-btn" onclick="openModal('leave-apply-modal')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            申请假期
+          </button>
+        </div>
+      </div>
+
+      <!-- Balance Pills -->
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title">假期余额</div>
+        </div>
+        <div class="pill-row">
+          <div class="pill">
+            <div class="pill-ring">
+              <svg><circle class="track" cx="18" cy="18" r="15"/><circle class="fill" cx="18" cy="18" r="15" stroke-dasharray="94.2" stroke-dashoffset="18.8"/></svg>
+              <div class="pill-ring-num">12</div>
+            </div>
+            <div><div class="pill-label">年假</div><div class="pill-sub">12/15</div></div>
+          </div>
+          <div class="pill">
+            <div class="pill-ring">
+              <svg><circle class="track" cx="18" cy="18" r="15"/><circle class="fill" cx="18" cy="18" r="15" stroke-dasharray="94.2" stroke-dashoffset="47.1"/></svg>
+              <div class="pill-ring-num">5</div>
+            </div>
+            <div><div class="pill-label">病假</div><div class="pill-sub">5/10</div></div>
+          </div>
+          <div class="pill">
+            <div class="pill-ring">
+              <svg><circle class="track" cx="18" cy="18" r="15"/><circle class="fill" cx="18" cy="18" r="15" stroke-dasharray="94.2" stroke-dashoffset="37.7"/></svg>
+              <div class="pill-ring-num">3</div>
+            </div>
+            <div><div class="pill-label">事假</div><div class="pill-sub">3/5</div></div>
+          </div>
+          <div class="pill">
+            <div class="pill-ring">
+              <svg><circle class="track" cx="18" cy="18" r="15"/><circle class="fill" cx="18" cy="18" r="15" stroke-dasharray="94.2" stroke-dashoffset="0"/></svg>
+              <div class="pill-ring-num">2</div>
+            </div>
+            <div><div class="pill-label">调休</div><div class="pill-sub">2/2</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leave Records -->
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title">申请记录</div>
+        </div>
+        <div class="action-card">
+          <div class="feed">
+            <div class="feed-item" onclick="openModal('leave-detail-1')">
+              <div class="feed-dot green"></div>
+              <div class="feed-body">
+                <div class="feed-title">年假 · 3天</div>
+                <div class="feed-meta">2026-04-05 → 2026-04-07 · Approved</div>
+              </div>
+              <svg class="feed-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="feed-item" onclick="openModal('leave-detail-2')">
+              <div class="feed-dot orange"></div>
+              <div class="feed-body">
+                <div class="feed-title">事假 · 0.5天</div>
+                <div class="feed-meta">2026-03-20 · Pending</div>
+              </div>
+              <svg class="feed-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="feed-item" onclick="openModal('leave-detail-3')">
+              <div class="feed-dot green"></div>
+              <div class="feed-body">
+                <div class="feed-title">年假 · 5天</div>
+                <div class="feed-meta">2026-02-10 → 2026-02-14 · Approved</div>
+              </div>
+              <svg class="feed-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="feed-item" onclick="openModal('leave-detail-4')">
+              <div class="feed-dot red"></div>
+              <div class="feed-body">
+                <div class="feed-title">病假 · 2天</div>
+                <div class="feed-meta">2026-01-15 → 2026-01-16 · Rejected</div>
+              </div>
+              <svg class="feed-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SALARY PAGE ===== -->
+    <div class="page" id="page-salary">
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title" style="font-size:1.4rem;font-weight:800">工资单</div>
+        </div>
+      </div>
+
+      <div class="action-card" style="margin-bottom:20px">
+        <div class="salary-card">
+          <div class="salary-label">Net Pay — March 2026</div>
+          <div class="salary-amount"><span class="unit">¥</span>28,500</div>
+          <div style="font-size:.8rem;color:var(--text-3);display:flex;align-items:center;gap:6px;margin-bottom:4px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            发放日期: 2026-03-25
+          </div>
+          <!-- Earnings vs Deductions Bars -->
+          <div class="salary-summary-bars">
+            <div class="salary-bar-col">
+              <div class="salary-bar-label">应发合计</div>
+              <div class="salary-bar-track"><div class="salary-bar-fill earnings" style="width:100%"></div></div>
+              <div class="salary-bar-value" style="color:var(--green-dark)">¥32,300</div>
+            </div>
+            <div class="salary-bar-col">
+              <div class="salary-bar-label">扣除合计</div>
+              <div class="salary-bar-track"><div class="salary-bar-fill deductions" style="width:31%"></div></div>
+              <div class="salary-bar-value">¥3,800</div>
+            </div>
+          </div>
+          <div class="salary-divider"></div>
+          <div class="salary-row"><span>基本工资</span><span class="salary-row-val">¥25,000</span></div>
+          <div class="salary-row"><span>绩效奖金</span><span class="salary-row-val">¥5,000</span></div>
+          <div class="salary-row"><span>交通补贴</span><span class="salary-row-val">¥1,500</span></div>
+          <div class="salary-row"><span>餐饮补贴</span><span class="salary-row-val">¥800</span></div>
+          <div class="salary-divider"></div>
+          <div class="salary-row"><span>养老保险</span><span class="salary-row-val">-¥1,600</span></div>
+          <div class="salary-row"><span>医疗保险</span><span class="salary-row-val">-¥400</span></div>
+          <div class="salary-row"><span>住房公积金</span><span class="salary-row-val">-¥1,200</span></div>
+          <div class="salary-row"><span>个人所得税</span><span class="salary-row-val">-¥600</span></div>
+        </div>
+      </div>
+
+      <!-- History scroll -->
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title">历史工资单</div>
+        </div>
+        <div class="hscroll">
+          <div class="expense-mini" onclick="openModal('salary-detail-feb')">
+            <div class="expense-mini-id">2026-02</div>
+            <div class="expense-mini-amount">¥27,800</div>
+            <div class="expense-mini-type">实发工资</div>
+            <div style="font-size:.7rem;color:var(--text-3);margin-top:4px;font-family:var(--font-en)">发放: 2026-02-25</div>
+            <div class="expense-mini-status s-approved">Posted</div>
+          </div>
+          <div class="expense-mini" onclick="openModal('salary-detail-jan')">
+            <div class="expense-mini-id">2026-01</div>
+            <div class="expense-mini-amount">¥27,800</div>
+            <div class="expense-mini-type">实发工资</div>
+            <div style="font-size:.7rem;color:var(--text-3);margin-top:4px;font-family:var(--font-en)">发放: 2026-01-25</div>
+            <div class="expense-mini-status s-approved">Posted</div>
+          </div>
+          <div class="expense-mini" onclick="openModal('salary-detail-dec')">
+            <div class="expense-mini-id">2025-12</div>
+            <div class="expense-mini-amount">¥35,200</div>
+            <div class="expense-mini-type">含年终奖</div>
+            <div style="font-size:.7rem;color:var(--text-3);margin-top:4px;font-family:var(--font-en)">发放: 2025-12-25</div>
+            <div class="expense-mini-status s-approved">Posted</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== EXPENSE PAGE ===== -->
+    <div class="page" id="page-expense">
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title" style="font-size:1.4rem;font-weight:800">报销管理</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title">报销单</div>
+          <a class="section-link" onclick="openModal('expense-create-modal')">+ 新建</a>
+        </div>
+        <div class="expense-scroll">
+          <div class="expense-mini" onclick="openModal('expense-detail-1')">
+            <div class="expense-mini-id">EXP-2026-042</div>
+            <div class="expense-mini-amount">¥3,200</div>
+            <div class="expense-mini-type">差旅</div>
+            <div class="expense-mini-status s-pending">Pending</div>
+          </div>
+          <div class="expense-mini" onclick="openModal('expense-detail-2')">
+            <div class="expense-mini-id">EXP-2026-038</div>
+            <div class="expense-mini-amount">¥680</div>
+            <div class="expense-mini-type">办公用品</div>
+            <div class="expense-mini-status s-approved">Approved</div>
+          </div>
+          <div class="expense-mini" onclick="openModal('expense-detail-3')">
+            <div class="expense-mini-id">EXP-2026-031</div>
+            <div class="expense-mini-amount">¥5,400</div>
+            <div class="expense-mini-type">差旅</div>
+            <div class="expense-mini-status s-approved">Approved</div>
+          </div>
+          <div class="expense-mini" onclick="openModal('expense-detail-4')">
+            <div class="expense-mini-id">EXP-2026-025</div>
+            <div class="expense-mini-amount">¥1,200</div>
+            <div class="expense-mini-type">餐饮</div>
+            <div class="expense-mini-status s-rejected">Rejected</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title">统计</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="action-card" style="padding:20px">
+            <div style="font-size:.72rem;color:var(--text-3);font-family:var(--font-en);font-weight:500">本月报销</div>
+            <div style="font-size:1.8rem;font-weight:800;font-family:var(--font-en);letter-spacing:-.03em;margin-top:4px">¥4,200</div>
+          </div>
+          <div class="action-card" style="padding:20px">
+            <div style="font-size:.72rem;color:var(--text-3);font-family:var(--font-en);font-weight:500">年度累计</div>
+            <div style="font-size:1.8rem;font-weight:800;font-family:var(--font-en);letter-spacing:-.03em;margin-top:4px">¥18.5k</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TICKETS PAGE ===== -->
+    <div class="page" id="page-tickets">
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title" style="font-size:1.4rem;font-weight:800">工单</div>
+          <a class="section-link" onclick="openModal('ticket-create-modal')">+ 创建工单</a>
+        </div>
+      </div>
+
+      <div class="ticket-list">
+        <div class="ticket-row" onclick="openModal('ticket-detail-1')">
+          <div class="ticket-prio high"></div>
+          <div class="ticket-info">
+            <div class="ticket-id">#TK-0042</div>
+            <div class="ticket-title">VPN连接异常，频繁断线</div>
+          </div>
+          <span class="ticket-status ts-open">Open</span>
+        </div>
+        <div class="ticket-row" onclick="openModal('ticket-detail-2')">
+          <div class="ticket-prio mid"></div>
+          <div class="ticket-info">
+            <div class="ticket-id">#TK-0039</div>
+            <div class="ticket-title">申请更换27寸显示器</div>
+          </div>
+          <span class="ticket-status ts-progress">In Progress</span>
+        </div>
+        <div class="ticket-row" onclick="openModal('ticket-detail-3')">
+          <div class="ticket-prio low"></div>
+          <div class="ticket-info">
+            <div class="ticket-id">#TK-0035</div>
+            <div class="ticket-title">新员工系统账号开通</div>
+          </div>
+          <span class="ticket-status ts-closed">Closed</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PROFILE PAGE ===== -->
+    <div class="page" id="page-profile">
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title" style="font-size:1.4rem;font-weight:800">我的</div>
+        </div>
+      </div>
+
+      <div class="profile-card">
+        <div class="profile-cover"><div class="profile-cover-pattern"></div></div>
+        <div class="profile-body">
+          <div class="profile-avatar-wrap">张</div>
+          <div class="profile-name">张明</div>
+          <div class="profile-role">高级前端工程师 · 技术部</div>
+          <div class="profile-fields">
+            <div><div class="pf-label">Employee ID</div><div class="pf-value">EMP-20240315</div></div>
+            <div><div class="pf-label">Email</div><div class="pf-value">zhangming@example.com</div></div>
+            <div><div class="pf-label">Phone</div><div class="pf-value">+86 138-0000-1234</div></div>
+            <div><div class="pf-label">Location</div><div class="pf-value">北京市朝阳区</div></div>
+            <div><div class="pf-label">Join Date</div><div class="pf-value">2024-03-15</div></div>
+            <div><div class="pf-label">Contract</div><div class="pf-value">全职 · 无固定期限</div></div>
+          </div>
+          <button class="profile-edit-btn" onclick="openModal('profile-edit-modal')">编辑个人信息</button>
+        </div>
+      </div>
+
+      <!-- Bank Info Card -->
+      <div class="profile-section-card">
+        <div class="profile-section-title">
+          银行账户信息
+          <button class="btn-outline" onclick="openModal('bank-edit-modal')">编辑</button>
+        </div>
+        <div class="profile-field-row">
+          <span class="profile-field-label">开户行</span>
+          <span class="profile-field-value">中国工商银行</span>
+        </div>
+        <div class="profile-field-row">
+          <span class="profile-field-label">账号</span>
+          <span class="profile-field-value" style="font-family:var(--font-en)">**** **** **** 5678</span>
+        </div>
+        <div class="profile-field-row">
+          <span class="profile-field-label">支行</span>
+          <span class="profile-field-value">北京朝阳支行</span>
+        </div>
+      </div>
+
+      <!-- Settings Card -->
+      <div class="profile-section-card">
+        <div class="profile-section-title">设置</div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">语言</div>
+            <div class="settings-desc">切换界面显示语言</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" checked>
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">深色模式</div>
+            <div class="settings-desc">使用深色主题</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox">
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">修改密码</div>
+            <div class="settings-desc">定期更新以保证账户安全</div>
+          </div>
+          <button class="btn-outline" onclick="openModal('password-modal')">修改</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== FAB + Quick Action Menu ===== -->
+  <div class="fab-overlay" id="fab-overlay" onclick="toggleFab()"></div>
+  <div class="fab-menu" id="fab-menu">
+    <button class="fab-menu-item" onclick="toggleFab();openModal('leave-apply-modal')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      申请假期
+    </button>
+    <button class="fab-menu-item" onclick="toggleFab();openModal('expense-create-modal')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      新建报销
+    </button>
+    <button class="fab-menu-item" onclick="toggleFab();openModal('ticket-create-modal')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5h5v5M20 5L10 15M4 7v10a2 2 0 002 2h10"/></svg>
+      创建工单
+    </button>
+  </div>
+  <button class="fab" id="fab-btn" onclick="toggleFab()" title="快速操作">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+  </button>
+
+  <!-- Bottom Tab Bar -->
+  <nav class="tabbar">
+    <a class="tabbar-item active" onclick="switchPage('home',null,this)">
+      <svg class="tabbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      <span class="tabbar-label">首页</span>
+    </a>
+    <a class="tabbar-item" onclick="switchPage('leave',null,this)">
+      <svg class="tabbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      <span class="tabbar-label">请假</span>
+    </a>
+    <a class="tabbar-item" onclick="switchPage('salary',null,this)">
+      <svg class="tabbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
+      <span class="tabbar-label">工资</span>
+    </a>
+    <a class="tabbar-item" onclick="switchPage('expense',null,this)">
+      <svg class="tabbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      <span class="tabbar-label">报销</span>
+    </a>
+    <a class="tabbar-item" onclick="switchPage('profile',null,this)">
+      <svg class="tabbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+      <span class="tabbar-label">我的</span>
+    </a>
+  </nav>
+
+  <!-- ===== ALL MODALS ===== -->
+
+  <!-- Leave Apply Modal -->
+  <div class="modal-backdrop" id="leave-apply-modal" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">申请假期</div>
+        <button class="modal-close" onclick="closeModal('leave-apply-modal')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">假期类型</label>
+          <select class="form-select" id="leave-type-select" onchange="updateLeaveDays()">
+            <option value="">请选择假期类型</option>
+            <option value="annual">年假（剩余 12 天）</option>
+            <option value="sick">病假（剩余 5 天）</option>
+            <option value="personal">事假（剩余 3 天）</option>
+            <option value="comp">调休（剩余 2 天）</option>
+            <option value="marriage">婚假</option>
+            <option value="maternity">产假</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">开始日期</label>
+            <input type="date" class="form-input" id="leave-from" value="2026-04-10" onchange="updateLeaveDays()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">结束日期</label>
+            <input type="date" class="form-input" id="leave-to" value="2026-04-12" onchange="updateLeaveDays()">
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="form-check">
+            <input type="checkbox" id="half-start" onchange="updateLeaveDays()"> 首日半天
+          </label>
+          <label class="form-check">
+            <input type="checkbox" id="half-end" onchange="updateLeaveDays()"> 末日半天
+          </label>
+        </div>
+        <div class="form-group" style="margin-top:14px">
+          <label class="form-label">请假天数</label>
+          <div class="form-display" id="leave-days-display">3 天</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">请假事由</label>
+          <textarea class="form-textarea" placeholder="请填写请假原因..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">附件</label>
+          <div class="upload-area">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <div class="upload-area-text">点击或拖拽上传文件</div>
+            <div class="upload-area-hint">支持 JPG, PNG, PDF，最大 10MB</div>
+          </div>
+        </div>
+        <div class="btn-group">
+          <button class="btn-primary" onclick="closeModal('leave-apply-modal')">提交申请</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leave Detail 1 (Approved) -->
+  <div class="modal-backdrop" id="leave-detail-1" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">假期详情</div>
+        <button class="modal-close" onclick="closeModal('leave-detail-1')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="background:var(--bg);border-radius:var(--radius-xs);padding:18px;margin-bottom:20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <span style="font-size:1.1rem;font-weight:700">年假</span>
+            <span class="expense-mini-status s-approved">Approved</span>
+          </div>
+          <div class="salary-row"><span>申请人</span><span class="salary-row-val">张明</span></div>
+          <div class="salary-row"><span>日期</span><span class="salary-row-val">2026-04-05 → 2026-04-07</span></div>
+          <div class="salary-row"><span>天数</span><span class="salary-row-val">3 天</span></div>
+          <div class="salary-row"><span>事由</span><span class="salary-row-val">回老家处理家庭事务</span></div>
+        </div>
+        <div style="font-size:.9rem;font-weight:700;margin-bottom:12px">审批流程</div>
+        <div class="approval-timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot done">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-label">提交申请</div>
+              <div class="timeline-meta">张明 · 2026-04-01 09:30</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot done">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-label">直属主管审批</div>
+              <div class="timeline-meta">李经理 · 2026-04-01 14:20 · 已同意</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot done">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-label">HR 确认</div>
+              <div class="timeline-meta">王HR · 2026-04-01 16:05 · 已确认</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leave Detail 2 (Pending) -->
+  <div class="modal-backdrop" id="leave-detail-2" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">假期详情</div>
+        <button class="modal-close" onclick="closeModal('leave-detail-2')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="background:var(--bg);border-radius:var(--radius-xs);padding:18px;margin-bottom:20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <span style="font-size:1.1rem;font-weight:700">事假</span>
+            <span class="expense-mini-status s-pending">Pending</span>
+          </div>
+          <div class="salary-row"><span>申请人</span><span class="salary-row-val">张明</span></div>
+          <div class="salary-row"><span>日期</span><span class="salary-row-val">2026-03-20（上午半天）</span></div>
+          <div class="salary-row"><span>天数</span><span class="salary-row-val">0.5 天</span></div>
+          <div class="salary-row"><span>事由</span><span class="salary-row-val">搬家需要处理水电过户</span></div>
+        </div>
+        <div style="font-size:.9rem;font-weight:700;margin-bottom:12px">审批流程</div>
+        <div class="approval-timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot done">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-label">提交申请</div>
+              <div class="timeline-meta">张明 · 2026-03-18 11:00</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot current">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="4"/></svg>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-label">直属主管审批</div>
+              <div class="timeline-meta">等待 李经理 审批</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot pending">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="4"/></svg>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-label">HR 确认</div>
+              <div class="timeline-meta">待处理</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leave Detail 3 (Approved, long) -->
+  <div class="modal-backdrop" id="leave-detail-3" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">假期详情</div>
+        <button class="modal-close" onclick="closeModal('leave-detail-3')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="background:var(--bg);border-radius:var(--radius-xs);padding:18px;margin-bottom:20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <span style="font-size:1.1rem;font-weight:700">年假</span>
+            <span class="expense-mini-status s-approved">Approved</span>
+          </div>
+          <div class="salary-row"><span>申请人</span><span class="salary-row-val">张明</span></div>
+          <div class="salary-row"><span>日期</span><span class="salary-row-val">2026-02-10 → 2026-02-14</span></div>
+          <div class="salary-row"><span>天数</span><span class="salary-row-val">5 天</span></div>
+          <div class="salary-row"><span>事由</span><span class="salary-row-val">春节假期延长，回家探亲</span></div>
+        </div>
+        <div style="font-size:.9rem;font-weight:700;margin-bottom:12px">审批流程</div>
+        <div class="approval-timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot done">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-label">提交申请</div>
+              <div class="timeline-meta">张明 · 2026-02-05 10:15</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot done">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-label">直属主管审批</div>
+              <div class="timeline-meta">李经理 · 2026-02-05 15:40 · 已同意</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot done">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-label">HR 确认</div>
+              <div class="timeline-meta">王HR · 2026-02-06 09:30 · 已确认</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leave Detail 4 (Rejected) -->
+  <div class="modal-backdrop" id="leave-detail-4" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">假期详情</div>
+        <button class="modal-close" onclick="closeModal('leave-detail-4')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="background:var(--bg);border-radius:var(--radius-xs);padding:18px;margin-bottom:20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <span style="font-size:1.1rem;font-weight:700">病假</span>
+            <span class="expense-mini-status s-rejected">Rejected</span>
+          </div>
+          <div class="salary-row"><span>申请人</span><span class="salary-row-val">张明</span></div>
+          <div class="salary-row"><span>日期</span><span class="salary-row-val">2026-01-15 → 2026-01-16</span></div>
+          <div class="salary-row"><span>天数</span><span class="salary-row-val">2 天</span></div>
+          <div class="salary-row"><span>事由</span><span class="salary-row-val">身体不适需要休息</span></div>
+        </div>
+        <div style="font-size:.9rem;font-weight:700;margin-bottom:12px">审批流程</div>
+        <div class="approval-timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot done">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-label">提交申请</div>
+              <div class="timeline-meta">张明 · 2026-01-14 20:00</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:#ff3b30">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-label">直属主管审批</div>
+              <div class="timeline-meta">李经理 · 2026-01-15 09:10 · 已驳回</div>
+              <div class="timeline-note">驳回原因：病假需提供医院证明，请补充诊断书或门诊病历后重新提交。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Salary Detail Feb -->
+  <div class="modal-backdrop" id="salary-detail-feb" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">2026年2月工资单</div>
+        <button class="modal-close" onclick="closeModal('salary-detail-feb')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="text-align:center;padding:8px 0 20px">
+          <div style="font-size:.72rem;color:var(--text-3);font-family:var(--font-en);text-transform:uppercase;letter-spacing:.05em">Net Pay</div>
+          <div style="font-size:2.2rem;font-weight:900;font-family:var(--font-en);letter-spacing:-.04em">¥27,800</div>
+          <div style="font-size:.8rem;color:var(--text-3);margin-top:4px">发放日期: 2026-02-25</div>
+        </div>
+        <div class="salary-summary-bars" style="margin-top:0;margin-bottom:16px">
+          <div class="salary-bar-col">
+            <div class="salary-bar-label">应发合计</div>
+            <div class="salary-bar-track"><div class="salary-bar-fill earnings" style="width:100%"></div></div>
+            <div class="salary-bar-value" style="color:var(--green-dark)">¥31,600</div>
+          </div>
+          <div class="salary-bar-col">
+            <div class="salary-bar-label">扣除合计</div>
+            <div class="salary-bar-track"><div class="salary-bar-fill deductions" style="width:30%"></div></div>
+            <div class="salary-bar-value">¥3,800</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:14px">
+          <div class="salary-row"><span>基本工资</span><span class="salary-row-val">¥25,000</span></div>
+          <div class="salary-row"><span>绩效奖金</span><span class="salary-row-val">¥4,300</span></div>
+          <div class="salary-row"><span>交通补贴</span><span class="salary-row-val">¥1,500</span></div>
+          <div class="salary-row"><span>餐饮补贴</span><span class="salary-row-val">¥800</span></div>
+          <div class="salary-divider"></div>
+          <div class="salary-row"><span>养老保险</span><span class="salary-row-val">-¥1,600</span></div>
+          <div class="salary-row"><span>医疗保险</span><span class="salary-row-val">-¥400</span></div>
+          <div class="salary-row"><span>住房公积金</span><span class="salary-row-val">-¥1,200</span></div>
+          <div class="salary-row"><span>个人所得税</span><span class="salary-row-val">-¥600</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Salary Detail Jan -->
+  <div class="modal-backdrop" id="salary-detail-jan" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">2026年1月工资单</div>
+        <button class="modal-close" onclick="closeModal('salary-detail-jan')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="text-align:center;padding:8px 0 20px">
+          <div style="font-size:.72rem;color:var(--text-3);font-family:var(--font-en);text-transform:uppercase;letter-spacing:.05em">Net Pay</div>
+          <div style="font-size:2.2rem;font-weight:900;font-family:var(--font-en);letter-spacing:-.04em">¥27,800</div>
+          <div style="font-size:.8rem;color:var(--text-3);margin-top:4px">发放日期: 2026-01-25</div>
+        </div>
+        <div class="salary-summary-bars" style="margin-top:0;margin-bottom:16px">
+          <div class="salary-bar-col">
+            <div class="salary-bar-label">应发合计</div>
+            <div class="salary-bar-track"><div class="salary-bar-fill earnings" style="width:100%"></div></div>
+            <div class="salary-bar-value" style="color:var(--green-dark)">¥31,600</div>
+          </div>
+          <div class="salary-bar-col">
+            <div class="salary-bar-label">扣除合计</div>
+            <div class="salary-bar-track"><div class="salary-bar-fill deductions" style="width:30%"></div></div>
+            <div class="salary-bar-value">¥3,800</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:14px">
+          <div class="salary-row"><span>基本工资</span><span class="salary-row-val">¥25,000</span></div>
+          <div class="salary-row"><span>绩效奖金</span><span class="salary-row-val">¥4,300</span></div>
+          <div class="salary-row"><span>交通补贴</span><span class="salary-row-val">¥1,500</span></div>
+          <div class="salary-row"><span>餐饮补贴</span><span class="salary-row-val">¥800</span></div>
+          <div class="salary-divider"></div>
+          <div class="salary-row"><span>养老保险</span><span class="salary-row-val">-¥1,600</span></div>
+          <div class="salary-row"><span>医疗保险</span><span class="salary-row-val">-¥400</span></div>
+          <div class="salary-row"><span>住房公积金</span><span class="salary-row-val">-¥1,200</span></div>
+          <div class="salary-row"><span>个人所得税</span><span class="salary-row-val">-¥600</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Salary Detail Dec (with bonus) -->
+  <div class="modal-backdrop" id="salary-detail-dec" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">2025年12月工资单</div>
+        <button class="modal-close" onclick="closeModal('salary-detail-dec')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="text-align:center;padding:8px 0 20px">
+          <div style="font-size:.72rem;color:var(--text-3);font-family:var(--font-en);text-transform:uppercase;letter-spacing:.05em">Net Pay</div>
+          <div style="font-size:2.2rem;font-weight:900;font-family:var(--font-en);letter-spacing:-.04em">¥35,200</div>
+          <div style="font-size:.8rem;color:var(--text-3);margin-top:4px">发放日期: 2025-12-25</div>
+        </div>
+        <div class="salary-summary-bars" style="margin-top:0;margin-bottom:16px">
+          <div class="salary-bar-col">
+            <div class="salary-bar-label">应发合计</div>
+            <div class="salary-bar-track"><div class="salary-bar-fill earnings" style="width:100%"></div></div>
+            <div class="salary-bar-value" style="color:var(--green-dark)">¥41,600</div>
+          </div>
+          <div class="salary-bar-col">
+            <div class="salary-bar-label">扣除合计</div>
+            <div class="salary-bar-track"><div class="salary-bar-fill deductions" style="width:38%"></div></div>
+            <div class="salary-bar-value">¥6,400</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:14px">
+          <div class="salary-row"><span>基本工资</span><span class="salary-row-val">¥25,000</span></div>
+          <div class="salary-row"><span>绩效奖金</span><span class="salary-row-val">¥4,300</span></div>
+          <div class="salary-row"><span style="font-weight:600;color:var(--text)">年终奖</span><span class="salary-row-val" style="color:var(--green-dark)">¥10,000</span></div>
+          <div class="salary-row"><span>交通补贴</span><span class="salary-row-val">¥1,500</span></div>
+          <div class="salary-row"><span>餐饮补贴</span><span class="salary-row-val">¥800</span></div>
+          <div class="salary-divider"></div>
+          <div class="salary-row"><span>养老保险</span><span class="salary-row-val">-¥1,600</span></div>
+          <div class="salary-row"><span>医疗保险</span><span class="salary-row-val">-¥400</span></div>
+          <div class="salary-row"><span>住房公积金</span><span class="salary-row-val">-¥1,200</span></div>
+          <div class="salary-row"><span>个人所得税</span><span class="salary-row-val">-¥3,200</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Expense Create Modal -->
+  <div class="modal-backdrop" id="expense-create-modal" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">新建报销</div>
+        <button class="modal-close" onclick="closeModal('expense-create-modal')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">报销类型</label>
+          <select class="form-select">
+            <option value="">请选择报销类型</option>
+            <option value="travel">差旅</option>
+            <option value="office">办公用品</option>
+            <option value="meal">餐饮</option>
+            <option value="transport">交通</option>
+            <option value="comm">通讯</option>
+            <option value="other">其他</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">报销明细</label>
+          <div id="expense-items">
+            <div class="dynamic-item">
+              <button class="dynamic-item-remove" onclick="this.parentElement.remove();updateExpenseTotal()" title="删除">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </button>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">日期</label>
+                  <input type="date" class="form-input expense-item-date" value="2026-04-01">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">金额</label>
+                  <input type="number" class="form-input expense-item-amount" placeholder="0.00" value="580" oninput="updateExpenseTotal()">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">说明</label>
+                <input type="text" class="form-input" placeholder="费用说明" value="出租车费（机场往返）">
+              </div>
+            </div>
+            <div class="dynamic-item">
+              <button class="dynamic-item-remove" onclick="this.parentElement.remove();updateExpenseTotal()" title="删除">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </button>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">日期</label>
+                  <input type="date" class="form-input expense-item-date" value="2026-04-01">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">金额</label>
+                  <input type="number" class="form-input expense-item-amount" placeholder="0.00" value="320" oninput="updateExpenseTotal()">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">说明</label>
+                <input type="text" class="form-input" placeholder="费用说明" value="酒店住宿一晚">
+              </div>
+            </div>
+          </div>
+          <button class="add-item-btn" onclick="addExpenseItem()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            添加明细
+          </button>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">附件</label>
+          <div class="upload-area">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <div class="upload-area-text">点击或拖拽上传发票/收据</div>
+            <div class="upload-area-hint">支持 JPG, PNG, PDF，最大 10MB</div>
+          </div>
+        </div>
+
+        <div class="total-display">
+          <span class="total-label">合计</span>
+          <span class="total-value" id="expense-total">¥900</span>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn-secondary" onclick="closeModal('expense-create-modal')">保存草稿</button>
+          <button class="btn-primary" onclick="closeModal('expense-create-modal')">提交报销</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Expense Detail 1 (Pending) -->
+  <div class="modal-backdrop" id="expense-detail-1" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">报销详情</div>
+        <button class="modal-close" onclick="closeModal('expense-detail-1')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div>
+            <div style="font-size:.7rem;color:var(--text-3);font-family:var(--font-en);font-weight:500">EXP-2026-042</div>
+            <div style="font-size:1.5rem;font-weight:800;font-family:var(--font-en);margin-top:4px">¥3,200</div>
+          </div>
+          <span class="expense-mini-status s-pending" style="font-size:.75rem;padding:4px 12px">Pending</span>
+        </div>
+        <div style="font-size:.82rem;color:var(--text-2);margin-bottom:16px">类型: 差旅 · 提交日期: 2026-03-28</div>
+
+        <div style="font-size:.9rem;font-weight:700;margin-bottom:10px">费用明细</div>
+        <div class="line-item">
+          <div class="line-item-body">
+            <div class="line-item-desc">往返高铁票（北京-上海）</div>
+            <div class="line-item-date">2026-03-25</div>
+          </div>
+          <div class="line-item-amount">¥1,100</div>
+        </div>
+        <div class="line-item">
+          <div class="line-item-body">
+            <div class="line-item-desc">酒店住宿 2 晚</div>
+            <div class="line-item-date">2026-03-25 ~ 2026-03-27</div>
+          </div>
+          <div class="line-item-amount">¥1,600</div>
+        </div>
+        <div class="line-item">
+          <div class="line-item-body">
+            <div class="line-item-desc">市内交通</div>
+            <div class="line-item-date">2026-03-25 ~ 2026-03-27</div>
+          </div>
+          <div class="line-item-amount">¥300</div>
+        </div>
+        <div class="line-item">
+          <div class="line-item-body">
+            <div class="line-item-desc">客户餐饮</div>
+            <div class="line-item-date">2026-03-26</div>
+          </div>
+          <div class="line-item-amount">¥200</div>
+        </div>
+
+        <div class="total-display">
+          <span class="total-label">合计</span>
+          <span class="total-value">¥3,200</span>
+        </div>
+
+        <div style="font-size:.9rem;font-weight:700;margin:20px 0 10px">审批流程</div>
+        <div class="approval-timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot done">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-label">提交报销</div>
+              <div class="timeline-meta">张明 · 2026-03-28 10:00</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot current">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="4"/></svg>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-label">主管审批</div>
+              <div class="timeline-meta">等待 李经理 审批</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot pending">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="4"/></svg>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-label">财务确认</div>
+              <div class="timeline-meta">待处理</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-group" style="margin-top:20px">
+          <button class="btn-danger-text" onclick="closeModal('expense-detail-1')" style="flex:1">撤回报销</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Expense Detail 2 (Approved) -->
+  <div class="modal-backdrop" id="expense-detail-2" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">报销详情</div>
+        <button class="modal-close" onclick="closeModal('expense-detail-2')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div>
+            <div style="font-size:.7rem;color:var(--text-3);font-family:var(--font-en);font-weight:500">EXP-2026-038</div>
+            <div style="font-size:1.5rem;font-weight:800;font-family:var(--font-en);margin-top:4px">¥680</div>
+          </div>
+          <span class="expense-mini-status s-approved" style="font-size:.75rem;padding:4px 12px">Approved</span>
+        </div>
+        <div style="font-size:.82rem;color:var(--text-2);margin-bottom:16px">类型: 办公用品 · 提交日期: 2026-03-15</div>
+        <div style="font-size:.9rem;font-weight:700;margin-bottom:10px">费用明细</div>
+        <div class="line-item">
+          <div class="line-item-body">
+            <div class="line-item-desc">机械键盘</div>
+            <div class="line-item-date">2026-03-14</div>
+          </div>
+          <div class="line-item-amount">¥450</div>
+        </div>
+        <div class="line-item">
+          <div class="line-item-body">
+            <div class="line-item-desc">鼠标垫 + USB Hub</div>
+            <div class="line-item-date">2026-03-14</div>
+          </div>
+          <div class="line-item-amount">¥230</div>
+        </div>
+        <div class="total-display">
+          <span class="total-label">合计</span>
+          <span class="total-value">¥680</span>
+        </div>
+        <div style="font-size:.9rem;font-weight:700;margin:20px 0 10px">审批流程</div>
+        <div class="approval-timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="timeline-content">
+              <div class="timeline-label">提交报销</div>
+              <div class="timeline-meta">张明 · 2026-03-15 09:20</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="timeline-content">
+              <div class="timeline-label">主管审批</div>
+              <div class="timeline-meta">李经理 · 2026-03-15 14:00 · 已同意</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="timeline-content">
+              <div class="timeline-label">财务确认</div>
+              <div class="timeline-meta">赵财务 · 2026-03-16 10:30 · 已确认打款</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Expense Detail 3 (Approved) -->
+  <div class="modal-backdrop" id="expense-detail-3" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">报销详情</div>
+        <button class="modal-close" onclick="closeModal('expense-detail-3')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div>
+            <div style="font-size:.7rem;color:var(--text-3);font-family:var(--font-en);font-weight:500">EXP-2026-031</div>
+            <div style="font-size:1.5rem;font-weight:800;font-family:var(--font-en);margin-top:4px">¥5,400</div>
+          </div>
+          <span class="expense-mini-status s-approved" style="font-size:.75rem;padding:4px 12px">Approved</span>
+        </div>
+        <div style="font-size:.82rem;color:var(--text-2);margin-bottom:16px">类型: 差旅 · 提交日期: 2026-03-05</div>
+        <div style="font-size:.9rem;font-weight:700;margin-bottom:10px">费用明细</div>
+        <div class="line-item">
+          <div class="line-item-body"><div class="line-item-desc">机票（北京-深圳往返）</div><div class="line-item-date">2026-03-01 ~ 2026-03-03</div></div>
+          <div class="line-item-amount">¥2,800</div>
+        </div>
+        <div class="line-item">
+          <div class="line-item-body"><div class="line-item-desc">酒店住宿 2 晚</div><div class="line-item-date">2026-03-01 ~ 2026-03-03</div></div>
+          <div class="line-item-amount">¥1,800</div>
+        </div>
+        <div class="line-item">
+          <div class="line-item-body"><div class="line-item-desc">市内交通及餐饮</div><div class="line-item-date">2026-03-01 ~ 2026-03-03</div></div>
+          <div class="line-item-amount">¥800</div>
+        </div>
+        <div class="total-display"><span class="total-label">合计</span><span class="total-value">¥5,400</span></div>
+        <div style="font-size:.9rem;font-weight:700;margin:20px 0 10px">审批流程</div>
+        <div class="approval-timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="timeline-content"><div class="timeline-label">提交报销</div><div class="timeline-meta">张明 · 2026-03-05 11:00</div></div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="timeline-content"><div class="timeline-label">主管审批</div><div class="timeline-meta">李经理 · 2026-03-06 09:30 · 已同意</div></div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="timeline-content"><div class="timeline-label">财务确认</div><div class="timeline-meta">赵财务 · 2026-03-07 15:00 · 已确认打款</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Expense Detail 4 (Rejected) -->
+  <div class="modal-backdrop" id="expense-detail-4" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">报销详情</div>
+        <button class="modal-close" onclick="closeModal('expense-detail-4')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div>
+            <div style="font-size:.7rem;color:var(--text-3);font-family:var(--font-en);font-weight:500">EXP-2026-025</div>
+            <div style="font-size:1.5rem;font-weight:800;font-family:var(--font-en);margin-top:4px">¥1,200</div>
+          </div>
+          <span class="expense-mini-status s-rejected" style="font-size:.75rem;padding:4px 12px">Rejected</span>
+        </div>
+        <div style="font-size:.82rem;color:var(--text-2);margin-bottom:16px">类型: 餐饮 · 提交日期: 2026-02-20</div>
+        <div style="font-size:.9rem;font-weight:700;margin-bottom:10px">费用明细</div>
+        <div class="line-item">
+          <div class="line-item-body"><div class="line-item-desc">团队聚餐</div><div class="line-item-date">2026-02-18</div></div>
+          <div class="line-item-amount">¥1,200</div>
+        </div>
+        <div class="total-display"><span class="total-label">合计</span><span class="total-value">¥1,200</span></div>
+        <div style="font-size:.9rem;font-weight:700;margin:20px 0 10px">审批流程</div>
+        <div class="approval-timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="timeline-content"><div class="timeline-label">提交报销</div><div class="timeline-meta">张明 · 2026-02-20 14:00</div></div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:#ff3b30">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-label">主管审批</div>
+              <div class="timeline-meta">李经理 · 2026-02-21 10:30 · 已驳回</div>
+              <div class="timeline-note">驳回原因：餐饮报销需提前审批，且金额超出部门标准（人均 ¥100）。请补充参与人员名单后重新提交。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticket Create Modal -->
+  <div class="modal-backdrop" id="ticket-create-modal" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">创建工单</div>
+        <button class="modal-close" onclick="closeModal('ticket-create-modal')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">类别</label>
+          <select class="form-select">
+            <option value="">请选择工单类别</option>
+            <option value="it">IT支持</option>
+            <option value="admin">行政</option>
+            <option value="hr">人事</option>
+            <option value="finance">财务</option>
+            <option value="other">其他</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">优先级</label>
+          <div class="prio-pills">
+            <button class="prio-pill" onclick="selectPrio(this)">低</button>
+            <button class="prio-pill selected" onclick="selectPrio(this)">中</button>
+            <button class="prio-pill" onclick="selectPrio(this)">高</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">标题</label>
+          <input type="text" class="form-input" placeholder="简要描述问题">
+        </div>
+        <div class="form-group">
+          <label class="form-label">详细描述</label>
+          <textarea class="form-textarea" placeholder="请详细描述你遇到的问题..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">附件</label>
+          <div class="upload-area">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <div class="upload-area-text">点击或拖拽上传截图</div>
+            <div class="upload-area-hint">支持 JPG, PNG, PDF，最大 10MB</div>
+          </div>
+        </div>
+        <div class="btn-group">
+          <button class="btn-primary" onclick="closeModal('ticket-create-modal')">提交工单</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticket Detail 1 (Open, high prio) -->
+  <div class="modal-backdrop" id="ticket-detail-1" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">#TK-0042</div>
+        <button class="modal-close" onclick="closeModal('ticket-detail-1')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom:20px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="width:4px;height:20px;border-radius:2px;background:#ff3b30"></div>
+            <span style="font-size:1.05rem;font-weight:700">VPN连接异常，频繁断线</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span class="ticket-status ts-open">Open</span>
+            <span style="font-size:.72rem;color:var(--text-3);font-family:var(--font-en);padding:3px 0">高优先级 · IT支持 · 2026-03-30</span>
+          </div>
+        </div>
+        <div style="background:var(--bg);border-radius:var(--radius-xs);padding:16px;margin-bottom:20px;font-size:.85rem;color:var(--text-2);line-height:1.6">
+          每天下午2-4点期间VPN频繁断线，重连后约5分钟又会断开。使用的是公司统一配置的GlobalProtect客户端。已尝试切换网络和重启电脑，问题仍然存在。影响远程办公效率，急需解决。
+        </div>
+
+        <div style="font-size:.9rem;font-weight:700;margin-bottom:12px">评论</div>
+        <div class="comments-section">
+          <div class="comment">
+            <div class="comment-avatar">刘</div>
+            <div class="comment-body">
+              <div class="comment-author">刘工程师 <span class="comment-time">Mar 30, 15:20</span></div>
+              <div class="comment-text">已收到，这个问题可能与最近的网络调整有关。请问你使用的是哪个VPN节点？可以在设置里截图发一下吗？</div>
+            </div>
+          </div>
+          <div class="comment">
+            <div class="comment-avatar">张</div>
+            <div class="comment-body">
+              <div class="comment-author">张明 <span class="comment-time">Mar 30, 16:05</span></div>
+              <div class="comment-text">用的是 bj-vpn-02 节点，截图已经发到你邮箱了。顺便说一下，同事小王也有类似问题。</div>
+            </div>
+          </div>
+          <div class="comment">
+            <div class="comment-avatar">刘</div>
+            <div class="comment-body">
+              <div class="comment-author">刘工程师 <span class="comment-time">Mar 31, 09:10</span></div>
+              <div class="comment-text">确认是 bj-vpn-02 节点的问题，已经在排查了。临时方案：请切换到 bj-vpn-03 节点使用，应该可以正常连接。预计今天下午修复。</div>
+            </div>
+          </div>
+        </div>
+        <div class="comment-input-wrap">
+          <input type="text" class="comment-input" placeholder="输入回复...">
+          <button class="comment-send">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticket Detail 2 (In Progress) -->
+  <div class="modal-backdrop" id="ticket-detail-2" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">#TK-0039</div>
+        <button class="modal-close" onclick="closeModal('ticket-detail-2')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom:20px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="width:4px;height:20px;border-radius:2px;background:#ff9500"></div>
+            <span style="font-size:1.05rem;font-weight:700">申请更换27寸显示器</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span class="ticket-status ts-progress">In Progress</span>
+            <span style="font-size:.72rem;color:var(--text-3);font-family:var(--font-en);padding:3px 0">中优先级 · 行政 · 2026-03-22</span>
+          </div>
+        </div>
+        <div style="background:var(--bg);border-radius:var(--radius-xs);padding:16px;margin-bottom:20px;font-size:.85rem;color:var(--text-2);line-height:1.6">
+          目前使用的24寸显示器在做前端开发时屏幕空间不够用，需要频繁切换窗口。申请更换为27寸 4K 显示器，型号不限，希望能支持 Type-C 一线连接。
+        </div>
+        <div style="font-size:.9rem;font-weight:700;margin-bottom:12px">评论</div>
+        <div class="comments-section">
+          <div class="comment">
+            <div class="comment-avatar">陈</div>
+            <div class="comment-body">
+              <div class="comment-author">陈行政 <span class="comment-time">Mar 23, 10:00</span></div>
+              <div class="comment-text">已收到申请，需要走资产采购流程。目前库存有 Dell U2723QE，支持 Type-C 90W 供电，可以满足需求。预计本周五到货。</div>
+            </div>
+          </div>
+          <div class="comment">
+            <div class="comment-avatar">张</div>
+            <div class="comment-body">
+              <div class="comment-author">张明 <span class="comment-time">Mar 23, 11:30</span></div>
+              <div class="comment-text">好的，这个型号可以。到货后麻烦通知我，我自己来换就行。</div>
+            </div>
+          </div>
+        </div>
+        <div class="comment-input-wrap">
+          <input type="text" class="comment-input" placeholder="输入回复...">
+          <button class="comment-send">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticket Detail 3 (Closed) -->
+  <div class="modal-backdrop" id="ticket-detail-3" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">#TK-0035</div>
+        <button class="modal-close" onclick="closeModal('ticket-detail-3')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom:20px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="width:4px;height:20px;border-radius:2px;background:var(--green)"></div>
+            <span style="font-size:1.05rem;font-weight:700">新员工系统账号开通</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span class="ticket-status ts-closed">Closed</span>
+            <span style="font-size:.72rem;color:var(--text-3);font-family:var(--font-en);padding:3px 0">低优先级 · 人事 · 2026-03-10</span>
+          </div>
+        </div>
+        <div style="background:var(--bg);border-radius:var(--radius-xs);padding:16px;margin-bottom:20px;font-size:.85rem;color:var(--text-2);line-height:1.6">
+          帮新入职的实习生赵小明开通公司邮箱、Jira、Confluence 和 GitLab 账号。部门：技术部，直属主管：张明。
+        </div>
+        <div style="font-size:.9rem;font-weight:700;margin-bottom:12px">评论</div>
+        <div class="comments-section">
+          <div class="comment">
+            <div class="comment-avatar">刘</div>
+            <div class="comment-body">
+              <div class="comment-author">刘工程师 <span class="comment-time">Mar 10, 14:00</span></div>
+              <div class="comment-text">所有账号已开通，初始密码已发送到他的个人邮箱。请提醒他首次登录后修改密码。</div>
+            </div>
+          </div>
+          <div class="comment">
+            <div class="comment-avatar">张</div>
+            <div class="comment-body">
+              <div class="comment-author">张明 <span class="comment-time">Mar 10, 15:20</span></div>
+              <div class="comment-text">收到，已转达。可以关闭这个工单了，谢谢！</div>
+            </div>
+          </div>
+        </div>
+        <div class="comment-input-wrap">
+          <input type="text" class="comment-input" placeholder="输入回复...">
+          <button class="comment-send">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Edit Modal -->
+  <div class="modal-backdrop" id="profile-edit-modal" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">编辑个人信息</div>
+        <button class="modal-close" onclick="closeModal('profile-edit-modal')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">姓名</label>
+          <input type="text" class="form-input" value="张明">
+        </div>
+        <div class="form-group">
+          <label class="form-label">手机号</label>
+          <input type="tel" class="form-input" value="+86 138-0000-1234">
+        </div>
+        <div class="form-group">
+          <label class="form-label">邮箱</label>
+          <input type="email" class="form-input" value="zhangming@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">住址</label>
+          <textarea class="form-textarea" style="min-height:60px">北京市朝阳区建国路88号SOHO现代城A座1205室</textarea>
+        </div>
+        <div class="btn-group">
+          <button class="btn-secondary" onclick="closeModal('profile-edit-modal')">取消</button>
+          <button class="btn-primary" onclick="closeModal('profile-edit-modal')">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bank Edit Modal -->
+  <div class="modal-backdrop" id="bank-edit-modal" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">编辑银行信息</div>
+        <button class="modal-close" onclick="closeModal('bank-edit-modal')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">开户行</label>
+          <select class="form-select">
+            <option value="icbc" selected>中国工商银行</option>
+            <option value="ccb">中国建设银行</option>
+            <option value="boc">中国银行</option>
+            <option value="abc">中国农业银行</option>
+            <option value="cmb">招商银行</option>
+            <option value="other">其他</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">银行账号</label>
+          <input type="text" class="form-input" value="6222 0200 0000 0000 5678" style="font-family:var(--font-en)">
+        </div>
+        <div class="form-group">
+          <label class="form-label">开户支行</label>
+          <input type="text" class="form-input" value="北京朝阳支行">
+        </div>
+        <div class="btn-group">
+          <button class="btn-secondary" onclick="closeModal('bank-edit-modal')">取消</button>
+          <button class="btn-primary" onclick="closeModal('bank-edit-modal')">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div class="modal-backdrop" id="password-modal" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">修改密码</div>
+        <button class="modal-close" onclick="closeModal('password-modal')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">当前密码</label>
+          <input type="password" class="form-input" placeholder="请输入当前密码">
+        </div>
+        <div class="form-group">
+          <label class="form-label">新密码</label>
+          <input type="password" class="form-input" placeholder="请输入新密码">
+          <div class="form-hint">至少 8 位，包含大小写字母和数字</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">确认新密码</label>
+          <input type="password" class="form-input" placeholder="请再次输入新密码">
+        </div>
+        <div class="btn-group">
+          <button class="btn-secondary" onclick="closeModal('password-modal')">取消</button>
+          <button class="btn-primary" onclick="closeModal('password-modal')">确认修改</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Onboarding Step Modal -->
+  <div class="modal-backdrop" id="onboarding-modal" onclick="if(event.target===this)closeModal(this.id)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">入职流程 — 步骤 4/6</div>
+        <button class="modal-close" onclick="closeModal('onboarding-modal')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+          <div class="step-dot done">1</div>
+          <div class="step-line done"></div>
+          <div class="step-dot done">2</div>
+          <div class="step-line done"></div>
+          <div class="step-dot done">3</div>
+          <div class="step-line done"></div>
+          <div class="step-dot current">4</div>
+          <div class="step-line"></div>
+          <div class="step-dot future">5</div>
+          <div class="step-line"></div>
+          <div class="step-dot future">6</div>
+        </div>
+
+        <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;margin-bottom:20px">
+          <div style="font-size:.72rem;color:var(--text-3);font-family:var(--font-en);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Step 4</div>
+          <div style="font-size:1rem;font-weight:700">紧急联系人</div>
+          <div style="font-size:.8rem;color:var(--text-2);margin-top:4px">请填写一位紧急联系人信息，以便在紧急情况下联系</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">联系人姓名</label>
+          <input type="text" class="form-input" placeholder="请输入紧急联系人姓名">
+        </div>
+        <div class="form-group">
+          <label class="form-label">关系</label>
+          <select class="form-select">
+            <option value="">请选择关系</option>
+            <option value="spouse">配偶</option>
+            <option value="parent">父母</option>
+            <option value="sibling">兄弟姐妹</option>
+            <option value="friend">朋友</option>
+            <option value="other">其他</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">联系电话</label>
+          <input type="tel" class="form-input" placeholder="+86">
+        </div>
+        <div class="form-group">
+          <label class="form-label">住址（选填）</label>
+          <input type="text" class="form-input" placeholder="联系人住址">
+        </div>
+
+        <div class="btn-group">
+          <button class="btn-secondary" onclick="closeModal('onboarding-modal')">上一步</button>
+          <button class="btn-primary" onclick="closeModal('onboarding-modal')">下一步</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== Page Switching =====
+    function switchPage(name, desktopEl, tabEl) {
+      // Close FAB menu if open
+      closeFab();
+
+      // Hide all pages, show target
+      document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+      var target = document.getElementById('page-' + name);
+      if (target) target.classList.add('active');
+
+      // Desktop nav active
+      document.querySelectorAll('.desktop-nav-item').forEach(function(i) { i.classList.remove('active'); });
+      if (desktopEl) {
+        desktopEl.classList.add('active');
+      } else {
+        // Match by page name in the onclick attribute
+        var navItems = document.querySelectorAll('.desktop-nav-item');
+        for (var i = 0; i < navItems.length; i++) {
+          var onclick = navItems[i].getAttribute('onclick');
+          if (onclick && onclick.indexOf("'" + name + "'") !== -1) {
+            navItems[i].classList.add('active');
+            break;
+          }
+        }
+      }
+
+      // Tab bar active
+      document.querySelectorAll('.tabbar-item').forEach(function(i) { i.classList.remove('active'); });
+      if (tabEl) {
+        tabEl.classList.add('active');
+      } else {
+        var tabItems = document.querySelectorAll('.tabbar-item');
+        for (var j = 0; j < tabItems.length; j++) {
+          var tabOnclick = tabItems[j].getAttribute('onclick');
+          if (tabOnclick && tabOnclick.indexOf("'" + name + "'") !== -1) {
+            tabItems[j].classList.add('active');
+            break;
+          }
+        }
+      }
+
+      // Scroll to top
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    // ===== FAB Menu =====
+    var fabOpen = false;
+    function toggleFab() {
+      fabOpen = !fabOpen;
+      document.getElementById('fab-btn').classList.toggle('open', fabOpen);
+      document.getElementById('fab-menu').classList.toggle('open', fabOpen);
+      document.getElementById('fab-overlay').classList.toggle('open', fabOpen);
+    }
+    function closeFab() {
+      fabOpen = false;
+      document.getElementById('fab-btn').classList.remove('open');
+      document.getElementById('fab-menu').classList.remove('open');
+      document.getElementById('fab-overlay').classList.remove('open');
+    }
+
+    // ===== Modal System =====
+    function openModal(id) {
+      var modal = document.getElementById(id);
+      if (modal) {
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+    function closeModal(id) {
+      var modal = document.getElementById(id);
+      if (modal) {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    }
+
+    // ===== Leave Days Calculation =====
+    function updateLeaveDays() {
+      var from = document.getElementById('leave-from').value;
+      var to = document.getElementById('leave-to').value;
+      var halfStart = document.getElementById('half-start').checked;
+      var halfEnd = document.getElementById('half-end').checked;
+
+      if (from && to) {
+        var d1 = new Date(from);
+        var d2 = new Date(to);
+        var diff = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
+        if (diff < 1) diff = 1;
+        if (halfStart) diff -= 0.5;
+        if (halfEnd) diff -= 0.5;
+        if (diff < 0.5) diff = 0.5;
+        document.getElementById('leave-days-display').textContent = diff + ' 天';
+      }
+    }
+
+    // ===== Expense Items =====
+    function addExpenseItem() {
+      var container = document.getElementById('expense-items');
+      var item = document.createElement('div');
+      item.className = 'dynamic-item';
+      item.innerHTML = '<button class="dynamic-item-remove" onclick="this.parentElement.remove();updateExpenseTotal()" title="删除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>'
+        + '<div class="form-row"><div class="form-group"><label class="form-label">日期</label><input type="date" class="form-input expense-item-date" value="2026-04-02"></div>'
+        + '<div class="form-group"><label class="form-label">金额</label><input type="number" class="form-input expense-item-amount" placeholder="0.00" oninput="updateExpenseTotal()"></div></div>'
+        + '<div class="form-group"><label class="form-label">说明</label><input type="text" class="form-input" placeholder="费用说明"></div>';
+      container.appendChild(item);
+    }
+
+    function updateExpenseTotal() {
+      var inputs = document.querySelectorAll('.expense-item-amount');
+      var total = 0;
+      inputs.forEach(function(inp) {
+        var v = parseFloat(inp.value);
+        if (!isNaN(v)) total += v;
+      });
+      var el = document.getElementById('expense-total');
+      if (el) el.textContent = '¥' + total.toLocaleString();
+    }
+
+    // ===== Priority Pills =====
+    function selectPrio(el) {
+      var pills = el.parentElement.querySelectorAll('.prio-pill');
+      pills.forEach(function(p) { p.classList.remove('selected'); });
+      el.classList.add('selected');
+    }
+  </script>
+</body>
+</html>
