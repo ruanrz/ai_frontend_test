@@ -1130,6 +1130,153 @@ select { appearance: auto; }
   border-top: 1px solid var(--border);
 }
 
+/* ── Upload Zone ──────────────────────────────────────────── */
+.upload-zone {
+  border: 2px dashed #d9d9dd;
+  border-radius: 6px;
+  background: #fafafa;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+  margin-bottom: 18px;
+}
+.upload-zone:hover {
+  border-color: #1863dc;
+  background: rgba(24,99,220,0.02);
+}
+.upload-zone__icon {
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.upload-zone__text {
+  font-size: 13px;
+  color: var(--secondary);
+  margin-bottom: 4px;
+}
+.upload-zone__hint {
+  font-size: 11px;
+  color: var(--muted);
+}
+.upload-zone input[type="file"] {
+  display: none;
+}
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  color: var(--secondary);
+}
+.file-item__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  margin-right: 8px;
+}
+.file-item__remove {
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: color var(--transition), background var(--transition);
+}
+.file-item__remove:hover {
+  color: var(--black);
+  background: var(--bg-page);
+}
+
+/* ── Expense Line Items ──────────────────────────────────── */
+.expense-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.expense-item {
+  display: grid;
+  grid-template-columns: 1fr 140px 120px 32px;
+  gap: 8px;
+  align-items: center;
+  background: #fafafa;
+  border: 1px solid #d9d9dd;
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+.expense-item__remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color var(--transition), background var(--transition);
+  font-size: 16px;
+}
+.expense-item__remove:hover {
+  color: var(--black);
+  background: var(--bg-page);
+}
+.expense-item__remove:disabled,
+.expense-item__remove[disabled] {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.expense-item__remove:disabled:hover,
+.expense-item__remove[disabled]:hover {
+  background: none;
+  color: var(--muted);
+}
+.btn-add-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--secondary);
+  background: none;
+  cursor: pointer;
+  transition: all var(--transition);
+  margin-bottom: 16px;
+}
+.btn-add-item:hover {
+  color: var(--blue);
+  border-color: var(--blue);
+}
+.expense-total {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0 4px;
+  font-size: 13px;
+  color: var(--secondary);
+}
+.expense-total__amount {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1863dc;
+}
+
 /* ========================================================================
    MONTH GROUP (Expenses)
    ======================================================================== */
@@ -1242,6 +1389,31 @@ select { appearance: auto; }
   .modal { width: 95vw; padding: 24px; }
   .page-header__row { flex-direction: column; align-items: flex-start; }
 }
+
+/* ── Approval Timeline ─────────────────────────────────────── */
+.approval-timeline { margin-top: 20px; padding-top: 16px; border-top: 1px solid #d9d9dd; }
+.approval-title { font-family: 'Source Serif 4', Georgia, serif; font-size: 14px; font-weight: 600; color: #000; margin-bottom: 16px; }
+.approval-step { display: flex; gap: 12px; }
+.step-indicator { display: flex; flex-direction: column; align-items: center; width: 22px; flex-shrink: 0; }
+.step-dot { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; border: 2px solid #d9d9dd; color: #93939f; background: #fff; }
+.step-line { width: 2px; flex: 1; min-height: 22px; background: #d9d9dd; }
+.step-content { padding-bottom: 18px; }
+.step-label { font-size: 14px; font-weight: 500; color: #000; }
+.step-person { font-size: 12px; color: #93939f; margin-top: 2px; }
+.step-date { font-size: 11px; color: #93939f; font-family: 'JetBrains Mono', monospace; margin-top: 1px; }
+.step-done .step-dot { background: #059669; border-color: #059669; color: #fff; }
+.step-done .step-line { background: #059669; }
+.step-current .step-dot { border-color: #1863dc; color: #1863dc; }
+.step-rejected .step-dot { background: #dc2626; border-color: #dc2626; color: #fff; }
+.step-waiting .step-dot { background: #fafafa; }
+.step-skipped .step-dot { opacity: 0.4; } .step-skipped .step-content { opacity: 0.4; text-decoration: line-through; }
+
+/* ── Expandable cards ──────────────────────────────────────── */
+.leave-card--expandable, .expense-card--expandable { cursor: pointer; transition: background var(--transition); }
+.leave-card--expandable:hover, .expense-card--expandable:hover { background: var(--bg-page); }
+.card-detail { display: none; padding: 12px 0 4px; border-top: 1px solid var(--border); margin-top: 12px; }
+.leave-card.expanded .card-detail, .expense-card.expanded .card-detail { display: block; }
+.card-detail-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
 </style>
 </head>
 <body>
@@ -1361,6 +1533,18 @@ select { appearance: auto; }
       <label class="modal__label">Reason</label>
       <textarea id="leaveFormReason" placeholder="Describe the reason for your leave request..."></textarea>
     </div>
+    <div class="modal__field">
+      <label class="modal__label">Attachments</label>
+      <div class="upload-zone" onclick="document.getElementById('leaveFiles').click()">
+        <div class="upload-zone__icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+        <div class="upload-zone__text">Click to select or drag files here</div>
+        <div class="upload-zone__hint">PDF, JPG, PNG up to 10MB</div>
+        <input type="file" id="leaveFiles" multiple accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileSelect(this, 'leaveFileList')">
+      </div>
+      <div class="file-list" id="leaveFileList"></div>
+    </div>
     <div class="modal__actions">
       <button class="btn btn-ghost" onclick="closeModal('modal-leave')">Cancel</button>
       <button class="btn btn-primary" onclick="submitLeave()">Submit Request</button>
@@ -1372,30 +1556,43 @@ select { appearance: auto; }
 <div class="modal-overlay" id="modal-expense">
   <div class="modal">
     <div class="modal__title">New Expense Claim</div>
-    <div class="modal__field">
-      <label class="modal__label">Description</label>
-      <input type="text" id="expenseFormDesc" placeholder="Brief description of the expense...">
-    </div>
     <div class="modal__row">
       <div class="modal__field">
-        <label class="modal__label">Category</label>
-        <select id="expenseFormCat">
-          <option value="">Select category...</option>
-          <option value="Travel">Travel</option>
-          <option value="Equipment">Equipment</option>
-          <option value="Meals">Meals</option>
-          <option value="Transportation">Transportation</option>
-          <option value="Communication">Communication</option>
-        </select>
+        <label class="modal__label">Claim Title</label>
+        <input type="text" id="expenseFormTitle" placeholder="e.g. March business trip">
       </div>
       <div class="modal__field">
-        <label class="modal__label">Amount (CNY)</label>
-        <input type="number" id="expenseFormAmount" placeholder="0.00">
+        <label class="modal__label">Date</label>
+        <input type="date" id="expenseFormDate">
       </div>
     </div>
     <div class="modal__field">
-      <label class="modal__label">Date</label>
-      <input type="date" id="expenseFormDate">
+      <label class="modal__label">Line Items</label>
+      <div class="expense-items" id="expenseItems"></div>
+      <button type="button" class="btn-add-item" onclick="addExpenseItem()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Add Item
+      </button>
+    </div>
+    <div class="modal__field">
+      <label class="modal__label">Notes</label>
+      <textarea id="expenseFormNotes" placeholder="Any additional notes..."></textarea>
+    </div>
+    <div class="modal__field">
+      <label class="modal__label">Attachments</label>
+      <div class="upload-zone" onclick="document.getElementById('expFiles').click()">
+        <div class="upload-zone__icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+        <div class="upload-zone__text">Click to select or drag files here</div>
+        <div class="upload-zone__hint">PDF, JPG, PNG up to 10MB</div>
+        <input type="file" id="expFiles" multiple accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileSelect(this, 'expFileList')">
+      </div>
+      <div class="file-list" id="expFileList"></div>
+    </div>
+    <div class="expense-total">
+      <span>Total:</span>
+      <span class="expense-total__amount" id="expTotal">&yen;0.00</span>
     </div>
     <div class="modal__actions">
       <button class="btn btn-ghost" onclick="closeModal('modal-expense')">Cancel</button>
@@ -1435,6 +1632,18 @@ select { appearance: auto; }
     <div class="modal__field">
       <label class="modal__label">Description</label>
       <textarea id="ticketFormDesc" placeholder="Provide detailed information about the issue..."></textarea>
+    </div>
+    <div class="modal__field">
+      <label class="modal__label">Attachments</label>
+      <div class="upload-zone" onclick="document.getElementById('ticketFiles').click()">
+        <div class="upload-zone__icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+        <div class="upload-zone__text">Click to select or drag files here</div>
+        <div class="upload-zone__hint">PDF, JPG, PNG up to 10MB</div>
+        <input type="file" id="ticketFiles" multiple accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileSelect(this, 'ticketFileList')">
+      </div>
+      <div class="file-list" id="ticketFileList"></div>
     </div>
     <div class="modal__actions">
       <button class="btn btn-ghost" onclick="closeModal('modal-ticket')">Cancel</button>
@@ -1620,6 +1829,13 @@ function renderPage(page) {
 // ========================================================================
 function openModal(id) {
   document.getElementById(id).classList.add('open');
+  if (id === 'modal-expense') {
+    const container = document.getElementById('expenseItems');
+    if (container && container.children.length === 0) {
+      window._expenseItemCount = 0;
+      addExpenseItem();
+    }
+  }
 }
 
 function closeModal(id) {
@@ -1670,6 +1886,7 @@ function submitLeave() {
   document.getElementById('leaveFormFrom').value = '';
   document.getElementById('leaveFormTo').value = '';
   document.getElementById('leaveFormReason').value = '';
+  document.getElementById('leaveFileList').innerHTML = '';
 
   // Re-render
   const container = document.getElementById('page-leave');
@@ -1678,31 +1895,105 @@ function submitLeave() {
 }
 
 function submitExpense() {
-  const desc   = document.getElementById('expenseFormDesc').value;
-  const cat    = document.getElementById('expenseFormCat').value;
-  const amount = parseFloat(document.getElementById('expenseFormAmount').value);
-  const date   = document.getElementById('expenseFormDate').value;
+  const title = document.getElementById('expenseFormTitle').value;
+  const date  = document.getElementById('expenseFormDate').value;
 
-  if (!desc || !cat || !amount || !date) {
-    alert('Please fill in all required fields.');
+  if (!title || !date) {
+    alert('Please fill in claim title and date.');
+    return;
+  }
+
+  // Collect line items
+  const items = document.querySelectorAll('#expenseItems .expense-item');
+  let totalAmount = 0;
+  let valid = true;
+  items.forEach(function(item) {
+    const desc = item.querySelector('.exp-item-desc').value;
+    const amt  = parseFloat(item.querySelector('.exp-item-amount').value) || 0;
+    if (!desc || amt <= 0) valid = false;
+    totalAmount += amt;
+  });
+
+  if (!valid || items.length === 0) {
+    alert('Please fill in all line item fields.');
     return;
   }
 
   EXPENSES.unshift({
     id: 'EC-' + (2406 + EXPENSES.length),
-    date, category: cat, description: desc,
-    amount, status: 'Pending',
+    date, category: 'Multiple', description: title,
+    amount: totalAmount, status: 'Pending',
   });
 
   closeModal('modal-expense');
-  document.getElementById('expenseFormDesc').value = '';
-  document.getElementById('expenseFormCat').value = '';
-  document.getElementById('expenseFormAmount').value = '';
+  document.getElementById('expenseFormTitle').value = '';
   document.getElementById('expenseFormDate').value = '';
+  document.getElementById('expenseItems').innerHTML = '';
+  document.getElementById('expenseFormNotes').value = '';
+  document.getElementById('expFileList').innerHTML = '';
+  var totalEl = document.getElementById('expTotal');
+  if (totalEl) totalEl.textContent = '\u00A50.00';
 
   const container = document.getElementById('page-expenses');
   container.dataset.rendered = '';
   renderPage('expenses');
+}
+
+/* ── File Upload Handler ──────────────────────────────────── */
+function handleFileSelect(input, listId) {
+  var list = document.getElementById(listId);
+  Array.from(input.files).forEach(function(file) {
+    var item = document.createElement('div');
+    item.className = 'file-item';
+    item.innerHTML = '<span class="file-item__name">' + file.name + '</span>' +
+      '<span class="file-item__remove" onclick="this.parentElement.remove()">\u00d7</span>';
+    list.appendChild(item);
+  });
+  input.value = '';
+}
+
+/* ── Expense Line Item Management ─────────────────────────── */
+function addExpenseItem() {
+  var container = document.getElementById('expenseItems');
+  var categories = ['Travel', 'Equipment', 'Meals', 'Transport', 'Communication', 'Other'];
+  window._expenseItemCount = (window._expenseItemCount || 0) + 1;
+
+  var div = document.createElement('div');
+  div.className = 'expense-item';
+  div.innerHTML =
+    '<input type="text" class="exp-item-desc" placeholder="Description" style="width:100%">' +
+    '<select class="exp-item-cat">' +
+      categories.map(function(c) { return '<option value="' + c + '">' + c + '</option>'; }).join('') +
+    '</select>' +
+    '<input type="number" class="exp-item-amount" placeholder="0.00" min="0" step="0.01" oninput="updateExpenseTotal()" style="width:100%">' +
+    '<button type="button" class="expense-item__remove" onclick="removeExpenseItem(this)">\u00d7</button>';
+  container.appendChild(div);
+  updateRemoveButtons();
+}
+
+function removeExpenseItem(btn) {
+  var container = document.getElementById('expenseItems');
+  if (container.children.length <= 1) return;
+  btn.closest('.expense-item').remove();
+  updateRemoveButtons();
+  updateExpenseTotal();
+}
+
+function updateRemoveButtons() {
+  var container = document.getElementById('expenseItems');
+  var btns = container.querySelectorAll('.expense-item__remove');
+  btns.forEach(function(b) {
+    b.disabled = container.children.length <= 1;
+  });
+}
+
+function updateExpenseTotal() {
+  var total = 0;
+  document.querySelectorAll('#expenseItems .exp-item-amount').forEach(function(input) {
+    total += parseFloat(input.value) || 0;
+  });
+  var el = document.getElementById('expTotal');
+  if (el) el.textContent = '\u00A5' + total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function submitTicket() {
@@ -1728,6 +2019,7 @@ function submitTicket() {
   document.getElementById('ticketFormCat').value = '';
   document.getElementById('ticketFormPriority').value = 'Medium';
   document.getElementById('ticketFormDesc').value = '';
+  document.getElementById('ticketFileList').innerHTML = '';
 
   const container = document.getElementById('page-tickets');
   container.dataset.rendered = '';
@@ -1894,7 +2186,7 @@ function renderLeave(el) {
     <div class="section-heading">Requests</div>
     <div id="leaveList">
       ${LEAVES.map(lv => `
-        <div class="leave-card">
+        <div class="leave-card leave-card--expandable" onclick="this.classList.toggle('expanded')">
           <div class="leave-card__info">
             <div class="leave-card__type" style="display:flex;align-items:center;gap:8px;">
               ${leaveTypeTag(lv.type)}
@@ -1902,6 +2194,10 @@ function renderLeave(el) {
             </div>
             <div class="leave-card__dates">
               ${fmtDateShort(lv.from)}${lv.from !== lv.to ? ' \u2014 ' + fmtDateShort(lv.to) : ''} &middot; Approver: ${lv.approver}
+            </div>
+            <div class="card-detail">
+              <div class="card-detail-row"><span>Duration</span><span>${lv.days} day${lv.days > 1 ? 's' : ''}</span></div>
+              ${renderApprovalTimeline(lv.status, lv.approver, lv.from)}
             </div>
           </div>
           <div class="leave-card__days">
@@ -2063,11 +2359,16 @@ function renderExpenses(el) {
       <div class="month-group">
         <div class="month-group__label">${month}</div>
         ${items.map(ex => `
-          <div class="expense-card">
+          <div class="expense-card expense-card--expandable" onclick="this.classList.toggle('expanded')">
             <div class="expense-card__icon">${getCategoryIcon(ex.category)}</div>
             <div class="expense-card__info">
               <div class="expense-card__title">${ex.description}</div>
               <div class="expense-card__meta">${ex.category} &middot; ${ex.id}</div>
+              <div class="card-detail">
+                <div class="card-detail-row"><span>Amount</span><span>${fmtCNY(ex.amount)}</span></div>
+                <div class="card-detail-row"><span>Date</span><span>${fmtDateShort(ex.date)}</span></div>
+                ${renderApprovalTimeline(ex.status, null, ex.date)}
+              </div>
             </div>
             <div style="text-align:right;">
               <div class="expense-card__amount tnum">${fmtCNY(ex.amount)}</div>
@@ -2260,6 +2561,27 @@ function switchProfileTab(tab) {
   document.querySelectorAll('#profileTabContent .profile-section').forEach(s => {
     s.style.display = s.dataset.tab === tab ? 'block' : 'none';
   });
+}
+
+// ========================================================================
+// APPROVAL WORKFLOW TIMELINE
+// ========================================================================
+function getApprovalSteps(status, approver, date) {
+  const steps = [
+    { label: 'Submitted', person: 'Zhang Rui', date: date, status: 'done' },
+    { label: 'Manager Review', person: approver || 'Li Wei', date: '', status: 'pending' },
+    { label: 'HR Approval', person: 'HR Department', date: '', status: 'waiting' },
+    { label: 'Completed', person: '', date: '', status: 'waiting' }
+  ];
+  if (status === 'Approved') { steps[1].status='done'; steps[1].date=date; steps[2].status='done'; steps[2].date=date; steps[3].status='done'; steps[3].date=date; }
+  else if (status === 'Pending') { steps[1].status='current'; }
+  else if (status === 'Rejected') { steps[1].status='rejected'; steps[1].date=date; steps[2].status='skipped'; steps[3].status='skipped'; }
+  else if (status === 'Draft') { steps[0].status='current'; steps[1].status='waiting'; }
+  return steps;
+}
+function renderApprovalTimeline(status, approver, date) {
+  const steps = getApprovalSteps(status, approver, date);
+  return `<div class="approval-timeline"><div class="approval-title">Approval Workflow</div><div class="approval-steps">${steps.map((s,i)=>`<div class="approval-step step-${s.status}"><div class="step-indicator"><div class="step-dot">${s.status==='done'?'✓':s.status==='rejected'?'✕':s.status==='current'?'●':''}</div>${i<steps.length-1?'<div class="step-line"></div>':''}</div><div class="step-content"><div class="step-label">${s.label}</div>${s.person?`<div class="step-person">${s.person}</div>`:''}${s.date?`<div class="step-date">${s.date}</div>`:''}</div></div>`).join('')}</div></div>`;
 }
 
 // ========================================================================

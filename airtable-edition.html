@@ -673,6 +673,111 @@ tr:hover .row-actions{opacity:1}
 .view-option:hover{background:#f0f2f5}
 .view-option.active{color:#1b61c9;font-weight:600}
 .view-option svg{width:14px;height:14px}
+
+/* ================================================================
+   ATTACHMENT UPLOAD ZONE
+   ================================================================ */
+.upload-zone{
+  border:2px dashed #e0e2e6;border-radius:8px;
+  background:#f8fafc;padding:24px;text-align:center;
+  cursor:pointer;transition:border-color .15s,background .15s;
+  margin-top:4px;
+}
+.upload-zone:hover{border-color:#1b61c9;background:#f0f4fa}
+.upload-zone svg{margin:0 auto 8px;display:block;color:#9aa5b1}
+.upload-zone-text{font-size:13px;color:#4d5b66}
+.upload-zone-text span{color:#1b61c9;font-weight:500}
+.upload-zone-hint{font-size:11px;color:#9aa5b1;margin-top:4px}
+.upload-zone input[type="file"]{display:none}
+.file-list{margin-top:8px;display:flex;flex-direction:column;gap:4px}
+.file-item{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 10px;border-radius:6px;
+  background:#f0f2f5;font-size:13px;color:#4d5b66;
+}
+.file-item .file-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-item .file-remove{
+  width:20px;height:20px;border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+  color:#9aa5b1;cursor:pointer;transition:background .12s,color .12s;
+  flex-shrink:0;
+}
+.file-item .file-remove:hover{background:#e0e2e6;color:#4d5b66}
+
+/* ================================================================
+   EXPENSE LINE ITEMS
+   ================================================================ */
+.expense-items-wrap{margin-bottom:12px}
+.expense-item{
+  display:grid;grid-template-columns:32px 1fr 140px 100px 32px;gap:8px;
+  align-items:center;padding:10px 12px;margin-bottom:6px;
+  background:#f8fafc;border:1px solid #e0e2e6;border-radius:8px;
+}
+.expense-item .item-num{
+  font-size:12px;font-weight:600;color:#9aa5b1;text-align:center;
+}
+.expense-item input,
+.expense-item select{
+  width:100%;padding:7px 10px;border-radius:6px;
+  border:1px solid #e0e2e6;background:#fff;
+  color:#181d26;font-size:13px;
+  transition:border-color .12s,box-shadow .12s;
+}
+.expense-item input:focus,
+.expense-item select:focus{
+  outline:none;border-color:#1b61c9;
+  box-shadow:0 0 0 3px rgba(27,97,201,.15);
+}
+.expense-item input::placeholder{color:#9aa5b1}
+.expense-item select{
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%239aa5b1' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center;
+  padding-right:28px;
+}
+.expense-item .item-remove{
+  width:28px;height:28px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  color:#9aa5b1;cursor:pointer;transition:background .12s,color .12s;
+}
+.expense-item .item-remove:hover{background:#f0f2f5;color:#4d5b66}
+.expense-item .item-remove.disabled{opacity:0.3;pointer-events:none}
+.add-item-btn{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:13px;font-weight:500;color:#1b61c9;cursor:pointer;
+  padding:6px 14px;border:1px solid #1b61c9;border-radius:8px;
+  background:#fff;transition:all .12s;
+}
+.add-item-btn:hover{background:rgba(27,97,201,.04)}
+.expense-total-row{
+  display:flex;justify-content:flex-end;align-items:center;
+  padding:12px 0;gap:10px;margin-top:8px;
+  border-top:1px solid #e0e2e6;
+}
+.expense-total-label{font-size:14px;font-weight:500;color:#4d5b66}
+.expense-total-value{font-size:20px;font-weight:600;color:#1b61c9;font-feature-settings:"tnum"}
+
+/* ================================================================
+   APPROVAL WORKFLOW TIMELINE
+   ================================================================ */
+.approval-timeline { margin-top: 16px; padding-top: 14px; border-top: 1px solid #e0e2e6; }
+.approval-title { font-size: 12px; font-weight: 600; color: #9aa5b1; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.05em; }
+.approval-step { display: flex; gap: 12px; }
+.step-indicator { display: flex; flex-direction: column; align-items: center; width: 24px; flex-shrink: 0; }
+.step-dot { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border: 2px solid #e0e2e6; color: #9aa5b1; background: #fff; }
+.step-line { width: 2px; flex: 1; min-height: 22px; background: #e0e2e6; }
+.step-content { padding-bottom: 18px; }
+.step-label { font-size: 13px; font-weight: 500; color: #181d26; }
+.step-person { font-size: 12px; color: #9aa5b1; margin-top: 2px; }
+.step-date { font-size: 11px; color: #9aa5b1; font-feature-settings: "tnum"; margin-top: 1px; }
+.step-done .step-dot { background: #059669; border-color: #059669; color: #fff; }
+.step-done .step-line { background: #059669; }
+.step-current .step-dot { border-color: #1b61c9; color: #1b61c9; animation: airtable-pulse 2s ease infinite; }
+@keyframes airtable-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(27,97,201,0.3)}50%{box-shadow:0 0 0 5px rgba(27,97,201,0)} }
+.step-rejected .step-dot { background: #dc2626; border-color: #dc2626; color: #fff; }
+.step-rejected .step-line { background: #dc2626; }
+.step-waiting .step-dot { background: #f8fafc; }
+.step-skipped .step-dot { opacity: 0.4; } .step-skipped .step-content { opacity: 0.4; text-decoration: line-through; }
 </style>
 </head>
 <body>
@@ -952,6 +1057,42 @@ tr:hover .row-actions{opacity:1}
       <div class="status-bar-item">Employee Portal v1.0</div>
     </div>
 
+  </div>
+</div>
+
+<!-- ============================================================
+     LEAVE DETAIL OVERLAY
+     ============================================================ -->
+<div class="ticket-detail-overlay" id="leave-detail-overlay" onclick="closeLeaveDetail()">
+  <div class="ticket-detail-panel" onclick="event.stopPropagation()">
+    <div class="ticket-detail-header">
+      <div>
+        <div style="font-size:18px;font-weight:700;color:#181d26" id="ld-title">Leave Detail</div>
+        <div style="font-size:12px;color:#9aa5b1;margin-top:4px" id="ld-id">LV-0000</div>
+      </div>
+      <button class="modal-close" onclick="closeLeaveDetail()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="ticket-detail-body" id="ld-body"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     EXPENSE DETAIL OVERLAY
+     ============================================================ -->
+<div class="ticket-detail-overlay" id="expense-detail-overlay" onclick="closeExpenseDetail()">
+  <div class="ticket-detail-panel" onclick="event.stopPropagation()">
+    <div class="ticket-detail-header">
+      <div>
+        <div style="font-size:18px;font-weight:700;color:#181d26" id="ed-title">Expense Detail</div>
+        <div style="font-size:12px;color:#9aa5b1;margin-top:4px" id="ed-id">EC-0000</div>
+      </div>
+      <button class="modal-close" onclick="closeExpenseDetail()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="ticket-detail-body" id="ed-body"></div>
   </div>
 </div>
 
@@ -1343,7 +1484,7 @@ function renderLeaveTable() {
     </tr></thead><tbody>`;
 
   sorted.forEach((l, i) => {
-    html += `<tr class="row-expandable">
+    html += `<tr class="row-expandable" onclick="openLeaveDetail('${l.id}')">
       <td class="row-num">${i + 1}</td>
       <td style="color:#1b61c9;font-weight:500">${escHtml(l.id)}</td>
       <td>
@@ -1381,7 +1522,7 @@ function renderLeaveKanban() {
     }
     items.forEach(l => {
       const c = typeColor(l.type);
-      html += `<div class="kanban-card" style="border-left:3px solid ${c}">
+      html += `<div class="kanban-card" onclick="openLeaveDetail('${l.id}')" style="border-left:3px solid ${c};cursor:pointer">
         <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
           <span style="width:8px;height:8px;border-radius:50%;background:${c};flex-shrink:0"></span>
           <div class="kanban-card-title" style="margin-bottom:0">${escHtml(l.type)}</div>
@@ -1530,7 +1671,7 @@ function renderExpenses() {
     <div class="group-rows" id="${gid}">
     <table class="at-table"><tbody>`;
     items.forEach(e => {
-      html += `<tr>
+      html += `<tr style="cursor:pointer" onclick="openExpenseDetail('${e.id}')">
         <td class="row-num">${rowNum++}</td>
         <td style="color:#1b61c9;font-weight:500">${escHtml(e.id)}</td>
         <td>${e.date}</td>
@@ -1566,7 +1707,7 @@ function renderExpenseKanban() {
       html += '<div style="text-align:center;padding:24px 12px;color:#9aa5b1;font-size:12px">No records</div>';
     }
     items.forEach(e => {
-      html += `<div class="kanban-card">
+      html += `<div class="kanban-card" onclick="openExpenseDetail('${e.id}')" style="cursor:pointer">
         <div class="kanban-card-title">${escHtml(e.desc)}</div>
         <div class="kanban-card-meta">
           <span class="kanban-card-tag" style="color:#1b61c9;font-weight:500">${e.id}</span>
@@ -1767,32 +1908,27 @@ function openModal(type) {
         <label class="form-label"><span class="field-icon fi-long">T</span> Reason</label>
         <textarea class="form-control" id="f-leave-reason" placeholder="Provide a reason for your leave request..." rows="3"></textarea>
         <div class="form-hint">Optional. Helps your manager understand the context.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label"><span class="field-icon fi-text">Aa</span> Attachments</label>
+        <div class="upload-zone" onclick="document.getElementById('f-leave-files').click()" id="f-leave-dropzone">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+          <div class="upload-zone-text"><span>Click to browse</span> or drag files here</div>
+          <div class="upload-zone-hint">PDF, JPG, PNG up to 10MB</div>
+          <input type="file" id="f-leave-files" multiple accept=".pdf,.jpg,.jpeg,.png" onchange="handleFiles(this,'f-leave-file-list')"/>
+        </div>
+        <div class="file-list" id="f-leave-file-list"></div>
       </div>`;
 
   } else if (type === 'expense') {
     title.textContent  = 'New Expense Claim';
     submit.textContent = 'Submit Claim';
+    document.querySelector('#modal-backdrop .modal').style.maxWidth = '640px';
     body.innerHTML = `
       <div class="form-group">
-        <label class="form-label"><span class="field-icon fi-text">Aa</span> <span class="form-required">Description</span></label>
-        <input type="text" class="form-control" id="f-exp-desc" placeholder="What was this expense for?"/>
-        <div class="form-error">Please provide a description</div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label"><span class="field-icon fi-select">S</span> <span class="form-required">Category</span></label>
-          <select class="form-control" id="f-exp-cat">
-            <option value="">Select category...</option>
-            <option>Travel</option><option>Equipment</option><option>Meals</option>
-            <option>Transport</option><option>Communication</option><option>Other</option>
-          </select>
-          <div class="form-error">Please select a category</div>
-        </div>
-        <div class="form-group">
-          <label class="form-label"><span class="field-icon fi-number">N</span> <span class="form-required">Amount (&yen;)</span></label>
-          <input type="number" class="form-control" id="f-exp-amt" placeholder="0.00" min="0" step="0.01"/>
-          <div class="form-error">Please enter the amount</div>
-        </div>
+        <label class="form-label"><span class="field-icon fi-text">Aa</span> <span class="form-required">Claim Title</span></label>
+        <input type="text" class="form-control" id="f-exp-title" placeholder="e.g. Business trip to Shanghai"/>
+        <div class="form-error">Please provide a title</div>
       </div>
       <div class="form-group">
         <label class="form-label"><span class="field-icon fi-date">D</span> <span class="form-required">Date</span></label>
@@ -1800,9 +1936,40 @@ function openModal(type) {
         <div class="form-error">Please select a date</div>
       </div>
       <div class="form-group">
+        <label class="form-label"><span class="field-icon fi-number">N</span> <span class="form-required">Line Items</span></label>
+        <div class="expense-items-wrap" id="at-exp-items">
+          <div class="expense-item" data-idx="0">
+            <span class="item-num">#1</span>
+            <input type="text" placeholder="Description" class="ei-desc"/>
+            <select class="ei-cat">
+              <option value="">Category...</option>
+              <option>Travel</option><option>Equipment</option><option>Meals</option>
+              <option>Transport</option><option>Communication</option><option>Other</option>
+            </select>
+            <input type="number" placeholder="&yen;0.00" step="0.01" min="0" class="ei-amt" oninput="updateExpenseTotal()"/>
+            <span class="item-remove disabled" onclick="removeExpenseItem(0)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span>
+          </div>
+        </div>
+        <button class="add-item-btn" type="button" onclick="addExpenseItem()">+ Add Line Item</button>
+      </div>
+      <div class="form-group">
         <label class="form-label"><span class="field-icon fi-long">T</span> Notes</label>
         <textarea class="form-control" id="f-exp-notes" placeholder="Any additional notes or receipt details..." rows="3"></textarea>
         <div class="form-hint">Attach receipt references or additional context.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label"><span class="field-icon fi-text">Aa</span> Attachments</label>
+        <div class="upload-zone" onclick="document.getElementById('f-exp-files').click()" id="f-exp-dropzone">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+          <div class="upload-zone-text"><span>Click to browse</span> or drag files here</div>
+          <div class="upload-zone-hint">PDF, JPG, PNG up to 10MB</div>
+          <input type="file" id="f-exp-files" multiple accept=".pdf,.jpg,.jpeg,.png" onchange="handleFiles(this,'f-exp-file-list')"/>
+        </div>
+        <div class="file-list" id="f-exp-file-list"></div>
+      </div>
+      <div class="expense-total-row">
+        <span class="expense-total-label">Total</span>
+        <span class="expense-total-value" id="at-exp-total">&yen;0.00</span>
       </div>`;
 
   } else if (type === 'ticket') {
@@ -1836,10 +2003,37 @@ function openModal(type) {
         <label class="form-label"><span class="field-icon fi-long">T</span> Description</label>
         <textarea class="form-control" id="f-tk-desc" placeholder="Describe the issue in detail. Include steps to reproduce if applicable..." rows="4"></textarea>
         <div class="form-hint">The more detail you provide, the faster the team can help.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label"><span class="field-icon fi-text">Aa</span> Attachments</label>
+        <div class="upload-zone" onclick="document.getElementById('f-tk-files').click()" id="f-tk-dropzone">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+          <div class="upload-zone-text"><span>Click to browse</span> or drag files here</div>
+          <div class="upload-zone-hint">PDF, JPG, PNG up to 10MB</div>
+          <input type="file" id="f-tk-files" multiple accept=".pdf,.jpg,.jpeg,.png" onchange="handleFiles(this,'f-tk-file-list')"/>
+        </div>
+        <div class="file-list" id="f-tk-file-list"></div>
       </div>`;
   }
 
   document.getElementById('modal-backdrop').classList.add('open');
+  /* Setup drag-and-drop for dynamically created upload zones */
+  requestAnimationFrame(() => {
+    body.querySelectorAll('.upload-zone').forEach(zone => {
+      zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor = '#1b61c9'; });
+      zone.addEventListener('dragleave', () => { zone.style.borderColor = ''; });
+      zone.addEventListener('drop', e => {
+        e.preventDefault();
+        zone.style.borderColor = '';
+        const input = zone.querySelector('input[type="file"]');
+        const listId = input.getAttribute('onchange').match(/'([^']+)'\)/)[1];
+        const dt = new DataTransfer();
+        Array.from(e.dataTransfer.files).forEach(f => dt.items.add(f));
+        input.files = dt.files;
+        handleFiles(input, listId);
+      });
+    });
+  });
   /* Auto-focus the first input */
   requestAnimationFrame(() => {
     const first = body.querySelector('input,select,textarea');
@@ -1849,7 +2043,88 @@ function openModal(type) {
 
 function closeModal() {
   document.getElementById('modal-backdrop').classList.remove('open');
+  document.querySelector('#modal-backdrop .modal').style.maxWidth = '';
   currentModalType = null;
+}
+
+/* ================================================================
+   FILE UPLOAD HANDLING
+   ================================================================ */
+function handleFiles(input, listId) {
+  const list = document.getElementById(listId);
+  Array.from(input.files).forEach(file => {
+    const item = document.createElement('div');
+    item.className = 'file-item';
+    item.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>'
+      + '<span class="file-name">' + file.name + '</span>'
+      + '<span class="file-remove" onclick="this.parentElement.remove()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span>';
+    list.appendChild(item);
+  });
+  input.value = '';
+}
+
+/* ================================================================
+   EXPENSE LINE ITEMS
+   ================================================================ */
+function buildExpenseItemHTML_AT(idx) {
+  return '<div class="expense-item" data-idx="' + idx + '">'
+    + '<span class="item-num">#' + (idx + 1) + '</span>'
+    + '<input type="text" placeholder="Description" class="ei-desc"/>'
+    + '<select class="ei-cat"><option value="">Category...</option>'
+    + '<option>Travel</option><option>Equipment</option><option>Meals</option>'
+    + '<option>Transport</option><option>Communication</option><option>Other</option></select>'
+    + '<input type="number" placeholder="&yen;0.00" step="0.01" min="0" class="ei-amt" oninput="updateExpenseTotal()"/>'
+    + '<span class="item-remove" onclick="removeExpenseItem(' + idx + ')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span>'
+    + '</div>';
+}
+
+function addExpenseItem() {
+  const wrap = document.getElementById('at-exp-items');
+  if (!wrap) return;
+  const items = wrap.querySelectorAll('.expense-item');
+  const idx = items.length;
+  const div = document.createElement('div');
+  div.innerHTML = buildExpenseItemHTML_AT(idx);
+  wrap.appendChild(div.firstChild);
+  renumberExpenseItems();
+}
+
+function removeExpenseItem(idx) {
+  const wrap = document.getElementById('at-exp-items');
+  if (!wrap) return;
+  const items = wrap.querySelectorAll('.expense-item');
+  if (items.length <= 1) return;
+  items[idx].remove();
+  renumberExpenseItems();
+  updateExpenseTotal();
+}
+
+function renumberExpenseItems() {
+  const wrap = document.getElementById('at-exp-items');
+  if (!wrap) return;
+  const items = wrap.querySelectorAll('.expense-item');
+  items.forEach((item, i) => {
+    item.setAttribute('data-idx', i);
+    item.querySelector('.item-num').textContent = '#' + (i + 1);
+    const removeBtn = item.querySelector('.item-remove');
+    removeBtn.setAttribute('onclick', 'removeExpenseItem(' + i + ')');
+    if (items.length <= 1) {
+      removeBtn.classList.add('disabled');
+    } else {
+      removeBtn.classList.remove('disabled');
+    }
+  });
+}
+
+function updateExpenseTotal() {
+  const wrap = document.getElementById('at-exp-items');
+  const totalEl = document.getElementById('at-exp-total');
+  if (!wrap || !totalEl) return;
+  let total = 0;
+  wrap.querySelectorAll('.ei-amt').forEach(input => {
+    total += parseFloat(input.value) || 0;
+  });
+  totalEl.textContent = '\u00a5' + total.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
 }
 
 function clearFormErrors() {
@@ -1884,18 +2159,25 @@ function submitModal() {
     showToast('Leave request ' + newId + ' created as Draft.', 'success');
 
   } else if (currentModalType === 'expense') {
-    const desc = document.getElementById('f-exp-desc').value;
-    const cat  = document.getElementById('f-exp-cat').value;
-    const amt  = parseFloat(document.getElementById('f-exp-amt').value);
-    const date = document.getElementById('f-exp-date').value;
+    const title = document.getElementById('f-exp-title').value;
+    const date  = document.getElementById('f-exp-date').value;
     let valid2 = true;
-    if (!desc) { setFieldError('f-exp-desc'); valid2 = false; }
-    if (!cat)  { setFieldError('f-exp-cat');  valid2 = false; }
-    if (!amt)  { setFieldError('f-exp-amt');  valid2 = false; }
-    if (!date) { setFieldError('f-exp-date'); valid2 = false; }
+    if (!title) { setFieldError('f-exp-title'); valid2 = false; }
+    if (!date)  { setFieldError('f-exp-date');  valid2 = false; }
+    const items = document.querySelectorAll('#at-exp-items .expense-item');
+    let totalAmt = 0;
+    let itemsValid = true;
+    items.forEach(item => {
+      const desc = item.querySelector('.ei-desc').value;
+      const cat = item.querySelector('.ei-cat').value;
+      const amt = parseFloat(item.querySelector('.ei-amt').value) || 0;
+      if (!desc || !cat || amt <= 0) itemsValid = false;
+      totalAmt += amt;
+    });
+    if (!itemsValid) { showToast('Please fill in all line item fields.', 'error'); valid2 = false; }
     if (!valid2) return;
     const newId = 'EC-' + (2400 + EXPENSES.length + 1);
-    EXPENSES.unshift({ id: newId, date, cat, desc, amt, status: 'Pending' });
+    EXPENSES.unshift({ id: newId, date, cat: 'Multiple', desc: title, amt: totalAmt, status: 'Pending' });
     closeModal();
     renderExpenseView();
     showToast('Expense claim ' + newId + ' submitted for approval.', 'success');
@@ -1974,6 +2256,130 @@ function closeTicketDetail() {
 }
 
 /* ================================================================
+   APPROVAL WORKFLOW TIMELINE
+   ================================================================ */
+function getApprovalSteps(status, approver, date) {
+  const steps = [
+    { label: 'Submitted', person: 'Zhang Rui', date: date, status: 'done' },
+    { label: 'Manager Review', person: approver || 'Li Wei', date: '', status: 'pending' },
+    { label: 'HR Approval', person: 'HR Department', date: '', status: 'waiting' },
+    { label: 'Completed', person: '', date: '', status: 'waiting' }
+  ];
+  if (status === 'Approved') { steps[1].status='done'; steps[1].date=date; steps[2].status='done'; steps[2].date=date; steps[3].status='done'; steps[3].date=date; }
+  else if (status === 'Pending') { steps[1].status='current'; }
+  else if (status === 'Rejected') { steps[1].status='rejected'; steps[1].date=date; steps[2].status='skipped'; steps[3].status='skipped'; }
+  else if (status === 'Draft') { steps[0].status='current'; steps[1].status='waiting'; }
+  return steps;
+}
+
+function renderApprovalTimeline(status, approver, date) {
+  const steps = getApprovalSteps(status, approver, date);
+  return `<div class="approval-timeline">
+    <div class="approval-title">Approval Workflow</div>
+    <div class="approval-steps">
+      ${steps.map((s,i) => `<div class="approval-step step-${s.status}">
+        <div class="step-indicator">
+          <div class="step-dot">${s.status==='done'?'✓':s.status==='rejected'?'✕':s.status==='current'?'●':''}</div>
+          ${i<steps.length-1?'<div class="step-line"></div>':''}
+        </div>
+        <div class="step-content">
+          <div class="step-label">${s.label}</div>
+          ${s.person?`<div class="step-person">${s.person}</div>`:''}
+          ${s.date?`<div class="step-date">${s.date}</div>`:''}
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function openLeaveDetail(id) {
+  const l = LEAVES.find(x => x.id === id);
+  if (!l) return;
+  document.getElementById('ld-title').textContent = l.type;
+  document.getElementById('ld-id').textContent = l.id + ' \u00b7 ' + l.from + (l.from !== l.to ? ' \u2014 ' + l.to : '');
+
+  document.getElementById('ld-body').innerHTML = `
+    <div class="ticket-detail-field">
+      <div class="ticket-detail-field-label">Status</div>
+      <div class="ticket-detail-field-value"><span class="${chipClass(l.status)}">${l.status}</span></div>
+    </div>
+    <div class="ticket-detail-field">
+      <div class="ticket-detail-field-label">Leave Type</div>
+      <div class="ticket-detail-field-value">
+        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${typeColor(l.type)};margin-right:6px;vertical-align:middle"></span>
+        ${escHtml(l.type)}
+      </div>
+    </div>
+    <div class="ticket-detail-field">
+      <div class="ticket-detail-field-label">From</div>
+      <div class="ticket-detail-field-value">${l.from}</div>
+    </div>
+    <div class="ticket-detail-field">
+      <div class="ticket-detail-field-label">To</div>
+      <div class="ticket-detail-field-value">${l.to}</div>
+    </div>
+    <div class="ticket-detail-field">
+      <div class="ticket-detail-field-label">Days</div>
+      <div class="ticket-detail-field-value" style="font-weight:600">${l.days} day${l.days > 1 ? 's' : ''}</div>
+    </div>
+    <div class="ticket-detail-field">
+      <div class="ticket-detail-field-label">Approver</div>
+      <div class="ticket-detail-field-value">${escHtml(l.approver)}</div>
+    </div>
+    <div class="ticket-detail-field">
+      <div class="ticket-detail-field-label">Employee</div>
+      <div class="ticket-detail-field-value">${escHtml(EMP.name)} (${EMP.id})</div>
+    </div>
+    ${renderApprovalTimeline(l.status, l.approver, l.from)}`;
+
+  document.getElementById('leave-detail-overlay').classList.add('open');
+}
+
+function closeLeaveDetail() {
+  document.getElementById('leave-detail-overlay').classList.remove('open');
+}
+
+function openExpenseDetail(id) {
+  const e = EXPENSES.find(x => x.id === id);
+  if (!e) return;
+  document.getElementById('ed-title').textContent = e.desc;
+  document.getElementById('ed-id').textContent = e.id + ' \u00b7 ' + e.date;
+
+  document.getElementById('ed-body').innerHTML = `
+    <div class="ticket-detail-field">
+      <div class="ticket-detail-field-label">Status</div>
+      <div class="ticket-detail-field-value"><span class="${chipClass(e.status)}">${e.status}</span></div>
+    </div>
+    <div class="ticket-detail-field">
+      <div class="ticket-detail-field-label">Category</div>
+      <div class="ticket-detail-field-value">${escHtml(e.cat)}</div>
+    </div>
+    <div class="ticket-detail-field">
+      <div class="ticket-detail-field-label">Amount</div>
+      <div class="ticket-detail-field-value" style="font-weight:700;font-size:16px">&yen;${fmt(e.amt)}</div>
+    </div>
+    <div class="ticket-detail-field">
+      <div class="ticket-detail-field-label">Date</div>
+      <div class="ticket-detail-field-value">${e.date}</div>
+    </div>
+    <div class="ticket-detail-field">
+      <div class="ticket-detail-field-label">Description</div>
+      <div class="ticket-detail-field-value">${escHtml(e.desc)}</div>
+    </div>
+    <div class="ticket-detail-field">
+      <div class="ticket-detail-field-label">Submitted By</div>
+      <div class="ticket-detail-field-value">${escHtml(EMP.name)} (${EMP.id})</div>
+    </div>
+    ${renderApprovalTimeline(e.status, 'Li Wei', e.date)}`;
+
+  document.getElementById('expense-detail-overlay').classList.add('open');
+}
+
+function closeExpenseDetail() {
+  document.getElementById('expense-detail-overlay').classList.remove('open');
+}
+
+/* ================================================================
    CATEGORY TAG CLASS HELPER
    ================================================================ */
 function catTagClass(cat) {
@@ -2036,6 +2442,10 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     if (document.getElementById('modal-backdrop').classList.contains('open')) {
       closeModal();
+    } else if (document.getElementById('leave-detail-overlay').classList.contains('open')) {
+      closeLeaveDetail();
+    } else if (document.getElementById('expense-detail-overlay').classList.contains('open')) {
+      closeExpenseDetail();
     } else if (document.getElementById('ticket-detail-overlay').classList.contains('open')) {
       closeTicketDetail();
     } else if (document.getElementById('slideover-backdrop').classList.contains('open')) {

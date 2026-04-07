@@ -1023,6 +1023,161 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
   border-top: 1px solid var(--border);
 }
 
+/* ── Upload Zone ──────────────────────────────────────────── */
+.upload-zone {
+  border: 2px dashed rgba(0,0,0,0.08);
+  border-radius: 12px;
+  background: #fafafa;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+  margin-bottom: 16px;
+}
+.upload-zone:hover {
+  border-color: #18E299;
+  background: rgba(24,226,153,0.03);
+}
+.upload-zone__icon {
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.upload-zone__text {
+  font-size: 13px;
+  color: var(--secondary);
+  margin-bottom: 4px;
+}
+.upload-zone__hint {
+  font-size: 11px;
+  color: var(--muted);
+}
+.upload-zone input[type="file"] {
+  display: none;
+}
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  color: var(--secondary);
+}
+.file-item__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  margin-right: 8px;
+}
+.file-item__remove {
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: color var(--transition), background var(--transition);
+}
+.file-item__remove:hover {
+  color: var(--primary);
+  background: var(--bg-page);
+}
+
+/* ── Expense Line Items ──────────────────────────────────── */
+.expense-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.expense-item {
+  display: grid;
+  grid-template-columns: 1fr 140px 120px 32px;
+  gap: 8px;
+  align-items: center;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+.expense-item__num {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  position: absolute;
+  left: -24px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.expense-item__remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color var(--transition), background var(--transition);
+  font-size: 16px;
+}
+.expense-item__remove:hover {
+  color: var(--primary);
+  background: var(--bg-page);
+}
+.expense-item__remove:disabled,
+.expense-item__remove[disabled] {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.expense-item__remove:disabled:hover,
+.expense-item__remove[disabled]:hover {
+  background: none;
+  color: var(--muted);
+}
+.btn-add-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--secondary);
+  background: none;
+  cursor: pointer;
+  transition: all var(--transition);
+  margin-bottom: 16px;
+}
+.btn-add-item:hover {
+  color: var(--green);
+  border-color: var(--green);
+}
+.expense-total {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0 4px;
+  font-size: 13px;
+  color: var(--secondary);
+}
+.expense-total__amount {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #18E299;
+}
+
 /* ── Responsive ────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
@@ -1072,6 +1227,31 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 .status-tooltip {
   position: relative;
 }
+
+/* ── Approval Timeline ─────────────────────────────────────── */
+.approval-timeline { margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(0,0,0,0.05); }
+.approval-title { font-size: 11px; font-weight: 600; color: #999; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.06em; }
+.approval-step { display: flex; gap: 12px; }
+.step-indicator { display: flex; flex-direction: column; align-items: center; width: 22px; flex-shrink: 0; }
+.step-dot { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; border: 2px solid rgba(0,0,0,0.08); color: #999; background: #fff; }
+.step-line { width: 2px; flex: 1; min-height: 20px; background: rgba(0,0,0,0.05); }
+.step-content { padding-bottom: 16px; }
+.step-label { font-size: 13px; font-weight: 500; color: #0d0d0d; }
+.step-person { font-size: 12px; color: #999; margin-top: 2px; }
+.step-date { font-size: 11px; color: #999; margin-top: 1px; }
+.step-done .step-dot { background: #059669; border-color: #059669; color: #fff; }
+.step-done .step-line { background: #059669; }
+.step-current .step-dot { border-color: #18E299; color: #059669; }
+.step-rejected .step-dot { background: #dc2626; border-color: #dc2626; color: #fff; }
+.step-waiting .step-dot { background: #fafafa; }
+.step-skipped .step-dot { opacity: 0.4; } .step-skipped .step-content { opacity: 0.4; text-decoration: line-through; }
+
+/* ── Expandable list items ────────────────────────────────── */
+.list-item--expandable { cursor: pointer; }
+.list-item--expandable:hover { background: var(--bg-page); }
+.list-item__detail { display: none; padding: 12px 0 4px 18px; border-top: 1px solid var(--border); margin-top: 10px; }
+.list-item.expanded .list-item__detail { display: block; }
+.list-item__detail-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--secondary); margin-bottom: 4px; }
 
   </style>
 </head>
@@ -1562,7 +1742,7 @@ function renderLeaveList(filter) {
     return `<div class="empty-state"><div class="empty-state__text">No leave requests found.</div></div>`;
   }
   return list.map(l => `
-    <div class="list-item">
+    <div class="list-item list-item--expandable" onclick="this.classList.toggle('expanded')">
       <div class="list-item__dot" style="background:${leaveColor(l.type)}"></div>
       <div class="list-item__content">
         <div class="list-item__title">${l.type}</div>
@@ -1570,6 +1750,10 @@ function renderLeaveList(filter) {
           <span>${l.id}</span>
           <span>${l.from}${l.from !== l.to ? ' \u2014 ' + l.to : ''}</span>
           <span>${l.days} day${l.days > 1 ? 's' : ''}</span>
+        </div>
+        <div class="list-item__detail">
+          <div class="list-item__detail-row"><span>Approver</span><span>${l.approver}</span></div>
+          ${renderApprovalTimeline(l.status, l.approver, l.from)}
         </div>
       </div>
       <div class="list-item__right">
@@ -1613,6 +1797,18 @@ function openLeaveForm() {
       <div class="form-group">
         <label class="form-label">Reason</label>
         <textarea class="form-textarea" id="leaveReason" placeholder="Please describe your reason for leave..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Attachments</label>
+        <div class="upload-zone" onclick="document.getElementById('leaveFiles').click()" id="leaveUploadZone">
+          <div class="upload-zone__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          <div class="upload-zone__text">Click to select or drag files here</div>
+          <div class="upload-zone__hint">PDF, JPG, PNG up to 10MB</div>
+          <input type="file" id="leaveFiles" multiple accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileSelect(this, 'leaveFileList')">
+        </div>
+        <div class="file-list" id="leaveFileList"></div>
       </div>
       <div class="form-actions">
         <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
@@ -1767,12 +1963,17 @@ function renderExpenseList(filter) {
     <div class="list-section">
       <div class="list-section__title">${cat}</div>
       ${groups[cat].map(e => `
-        <div class="list-item">
+        <div class="list-item list-item--expandable" onclick="this.classList.toggle('expanded')">
           <div class="list-item__content">
             <div class="list-item__title">${e.description}</div>
             <div class="list-item__meta">
               <span>${e.id}</span>
               <span>${e.date}</span>
+            </div>
+            <div class="list-item__detail">
+              <div class="list-item__detail-row"><span>Category</span><span>${e.category}</span></div>
+              <div class="list-item__detail-row"><span>Amount</span><span>${fmt(e.amount)}</span></div>
+              ${renderApprovalTimeline(e.status, null, e.date)}
             </div>
           </div>
           <div class="list-item__right">
@@ -1792,7 +1993,8 @@ function filterExpenses(status, btn) {
 }
 
 function openExpenseForm() {
-  const categories = ['Travel', 'Equipment', 'Meals', 'Transportation', 'Communication', 'Other'];
+  const categories = ['Travel', 'Equipment', 'Meals', 'Transport', 'Communication', 'Other'];
+  window._expenseItemCount = 0;
   openModal(`
     <div class="modal__header">
       <span class="modal__title">New Expense Claim</span>
@@ -1801,25 +2003,43 @@ function openExpenseForm() {
       </button>
     </div>
     <div class="modal__body">
-      <div class="form-group">
-        <label class="form-label">Description</label>
-        <input type="text" class="form-input" id="expDesc" placeholder="What was the expense for?">
-      </div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">Category</label>
-          <select class="form-select" id="expCategory">
-            ${categories.map(c => `<option value="${c}">${c}</option>`).join('')}
-          </select>
+          <label class="form-label">Claim Title</label>
+          <input type="text" class="form-input" id="expTitle" placeholder="e.g. March business trip">
         </div>
         <div class="form-group">
-          <label class="form-label">Amount (CNY)</label>
-          <input type="number" class="form-input" id="expAmount" placeholder="0.00" min="0" step="0.01">
+          <label class="form-label">Date</label>
+          <input type="date" class="form-input" id="expDate">
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">Date</label>
-        <input type="date" class="form-input" id="expDate">
+        <label class="form-label">Line Items</label>
+        <div class="expense-items" id="expenseItems"></div>
+        <button type="button" class="btn-add-item" onclick="addExpenseItem()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          Add Item
+        </button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea class="form-textarea" id="expNotes" placeholder="Any additional notes..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Attachments</label>
+        <div class="upload-zone" onclick="document.getElementById('expFiles').click()" id="expUploadZone">
+          <div class="upload-zone__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          <div class="upload-zone__text">Click to select or drag files here</div>
+          <div class="upload-zone__hint">PDF, JPG, PNG up to 10MB</div>
+          <input type="file" id="expFiles" multiple accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileSelect(this, 'expFileList')">
+        </div>
+        <div class="file-list" id="expFileList"></div>
+      </div>
+      <div class="expense-total">
+        <span>Total:</span>
+        <span class="expense-total__amount" id="expTotal">&yen;0.00</span>
       </div>
       <div class="form-actions">
         <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
@@ -1827,24 +2047,95 @@ function openExpenseForm() {
       </div>
     </div>
   `);
+  addExpenseItem();
 }
 
 function submitExpense() {
-  const desc = document.getElementById('expDesc').value;
-  const category = document.getElementById('expCategory').value;
-  const amount = parseFloat(document.getElementById('expAmount').value);
+  const title = document.getElementById('expTitle').value;
   const date = document.getElementById('expDate').value;
 
-  if (!desc || !amount || !date) { alert('Please fill in all required fields.'); return; }
+  if (!title || !date) { alert('Please fill in claim title and date.'); return; }
+
+  // Collect line items
+  const items = document.querySelectorAll('#expenseItems .expense-item');
+  let totalAmount = 0;
+  let valid = true;
+  items.forEach(item => {
+    const desc = item.querySelector('.exp-item-desc').value;
+    const amt = parseFloat(item.querySelector('.exp-item-amount').value) || 0;
+    if (!desc || amt <= 0) valid = false;
+    totalAmount += amt;
+  });
+
+  if (!valid || items.length === 0) { alert('Please fill in all line item fields.'); return; }
 
   const newId = 'EC-' + (2400 + EXPENSES.length + 1);
   EXPENSES.unshift({
-    id: newId, date, category, description: desc,
-    amount, status: 'Pending',
+    id: newId, date, category: 'Multiple', description: title,
+    amount: totalAmount, status: 'Pending',
   });
 
   closeModal();
   navigate('expenses');
+}
+
+/* ── File Upload Handler ──────────────────────────────────── */
+function handleFileSelect(input, listId) {
+  const list = document.getElementById(listId);
+  Array.from(input.files).forEach(file => {
+    const item = document.createElement('div');
+    item.className = 'file-item';
+    item.innerHTML = '<span class="file-item__name">' + file.name + '</span>' +
+      '<span class="file-item__remove" onclick="this.parentElement.remove()">&times;</span>';
+    list.appendChild(item);
+  });
+  input.value = '';
+}
+
+/* ── Expense Line Item Management ─────────────────────────── */
+function addExpenseItem() {
+  const container = document.getElementById('expenseItems');
+  const categories = ['Travel', 'Equipment', 'Meals', 'Transport', 'Communication', 'Other'];
+  window._expenseItemCount = (window._expenseItemCount || 0) + 1;
+  const idx = window._expenseItemCount;
+
+  const div = document.createElement('div');
+  div.className = 'expense-item';
+  div.dataset.idx = idx;
+  div.innerHTML =
+    '<input type="text" class="form-input exp-item-desc" placeholder="Description">' +
+    '<select class="form-select exp-item-cat">' +
+      categories.map(c => '<option value="' + c + '">' + c + '</option>').join('') +
+    '</select>' +
+    '<input type="number" class="form-input exp-item-amount" placeholder="0.00" min="0" step="0.01" oninput="updateExpenseTotal()">' +
+    '<button type="button" class="expense-item__remove" onclick="removeExpenseItem(this)">&times;</button>';
+  container.appendChild(div);
+  updateRemoveButtons();
+}
+
+function removeExpenseItem(btn) {
+  const container = document.getElementById('expenseItems');
+  if (container.children.length <= 1) return;
+  btn.closest('.expense-item').remove();
+  updateRemoveButtons();
+  updateExpenseTotal();
+}
+
+function updateRemoveButtons() {
+  const container = document.getElementById('expenseItems');
+  const btns = container.querySelectorAll('.expense-item__remove');
+  btns.forEach(b => {
+    b.disabled = container.children.length <= 1;
+  });
+}
+
+function updateExpenseTotal() {
+  let total = 0;
+  document.querySelectorAll('#expenseItems .exp-item-amount').forEach(input => {
+    total += parseFloat(input.value) || 0;
+  });
+  const el = document.getElementById('expTotal');
+  if (el) el.textContent = '\u00A5' + total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1954,6 +2245,18 @@ function openTicketForm() {
       <div class="form-group">
         <label class="form-label">Description</label>
         <textarea class="form-textarea" id="tkDesc" placeholder="Please describe your issue in detail..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Attachments</label>
+        <div class="upload-zone" onclick="document.getElementById('tkFiles').click()" id="tkUploadZone">
+          <div class="upload-zone__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          <div class="upload-zone__text">Click to select or drag files here</div>
+          <div class="upload-zone__hint">PDF, JPG, PNG up to 10MB</div>
+          <input type="file" id="tkFiles" multiple accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileSelect(this, 'tkFileList')">
+        </div>
+        <div class="file-list" id="tkFileList"></div>
       </div>
       <div class="form-actions">
         <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
@@ -2098,6 +2401,28 @@ document.getElementById('sidebarSearch').addEventListener('input', function(e) {
     document.querySelectorAll('.nav-group').forEach(g => g.classList.remove('collapsed'));
   }
 });
+
+/* ═══════════════════════════════════════════════════════════════
+   APPROVAL WORKFLOW TIMELINE
+   ═══════════════════════════════════════════════════════════════ */
+
+function getApprovalSteps(status, approver, date) {
+  const steps = [
+    { label: 'Submitted', person: 'Zhang Rui', date: date, status: 'done' },
+    { label: 'Manager Review', person: approver || 'Li Wei', date: '', status: 'pending' },
+    { label: 'HR Approval', person: 'HR Department', date: '', status: 'waiting' },
+    { label: 'Completed', person: '', date: '', status: 'waiting' }
+  ];
+  if (status === 'Approved') { steps[1].status='done'; steps[1].date=date; steps[2].status='done'; steps[2].date=date; steps[3].status='done'; steps[3].date=date; }
+  else if (status === 'Pending') { steps[1].status='current'; }
+  else if (status === 'Rejected') { steps[1].status='rejected'; steps[1].date=date; steps[2].status='skipped'; steps[3].status='skipped'; }
+  else if (status === 'Draft') { steps[0].status='current'; steps[1].status='waiting'; }
+  return steps;
+}
+function renderApprovalTimeline(status, approver, date) {
+  const steps = getApprovalSteps(status, approver, date);
+  return `<div class="approval-timeline"><div class="approval-title">Approval Workflow</div><div class="approval-steps">${steps.map((s,i)=>`<div class="approval-step step-${s.status}"><div class="step-indicator"><div class="step-dot">${s.status==='done'?'✓':s.status==='rejected'?'✕':s.status==='current'?'●':''}</div>${i<steps.length-1?'<div class="step-line"></div>':''}</div><div class="step-content"><div class="step-label">${s.label}</div>${s.person?`<div class="step-person">${s.person}</div>`:''}${s.date?`<div class="step-date">${s.date}</div>`:''}</div></div>`).join('')}</div></div>`;
+}
 
 /* ═══════════════════════════════════════════════════════════════
    INIT

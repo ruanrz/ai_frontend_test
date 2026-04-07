@@ -255,11 +255,30 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .expand-toggle.open svg{transform:rotate(90deg)}
 .expand-row{display:none}.expand-row.open{display:table-row}
 .expand-row td{padding:var(--sp-3) var(--sp-3) var(--sp-4) var(--sp-12)!important;background:rgba(15,98,254,.015);border-bottom:1px solid var(--border-subtle)!important}
-.approval-timeline{display:flex;flex-direction:column;gap:var(--sp-2)}
-.approval-step{display:flex;align-items:center;gap:var(--sp-3);font-size:.785rem}
-.approval-step-dot{width:6px;height:6px;border-radius:50%}
-.approval-step-label{color:var(--text-secondary)}
-.approval-step-date{color:var(--text-tertiary);font-family:var(--font-mono);font-size:.714rem}
+/* ── Approval Timeline (new) ──────────────────────────────── */
+.approval-timeline { margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(0,0,0,0.09); }
+.approval-title { font-size: 12px; font-weight: 600; color: #6f6f6f; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.06em; }
+.approval-step { display: flex; gap: 12px; }
+.step-indicator { display: flex; flex-direction: column; align-items: center; width: 24px; flex-shrink: 0; }
+.step-dot { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border: 2px solid rgba(0,0,0,0.1); color: #8d8d8d; background: #fff; }
+.step-line { width: 2px; flex: 1; min-height: 22px; background: rgba(0,0,0,0.06); }
+.step-content { padding-bottom: 18px; }
+.step-label { font-size: 14px; font-weight: 500; color: #1a1a1a; }
+.step-person { font-size: 12px; color: #6f6f6f; margin-top: 2px; }
+.step-date { font-size: 11px; color: #8d8d8d; font-family: 'IBM Plex Mono', monospace; margin-top: 1px; }
+.step-done .step-dot { background: #24a148; border-color: #24a148; color: #fff; }
+.step-done .step-line { background: #24a148; }
+.step-current .step-dot { border-color: #0f62fe; color: #0f62fe; animation: assembly-pulse 2s ease infinite; }
+@keyframes assembly-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(15,98,254,0.3)}50%{box-shadow:0 0 0 6px rgba(15,98,254,0)} }
+.step-rejected .step-dot { background: #da1e28; border-color: #da1e28; color: #fff; }
+.step-rejected .step-line { background: #da1e28; }
+.step-waiting .step-dot { background: #f7f7f5; }
+.step-skipped .step-dot { opacity: 0.4; } .step-skipped .step-content { opacity: 0.4; text-decoration: line-through; }
+/* ── Expense card expand ───────────────────────────────────── */
+.expense-card-detail { display: none; padding-top: var(--sp-3); border-top: 1px solid var(--border-subtle); margin-top: var(--sp-3); }
+.expense-card.expanded .expense-card-detail { display: block; }
+.expense-card--expandable { cursor: pointer; transition: background var(--transition-fast); }
+.expense-card--expandable:hover { background: var(--bg-hover); }
 
 /* ============================================================
    SALARY
@@ -294,6 +313,43 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
 .form-label{display:block;font-size:.785rem;font-weight:var(--fw-medium);color:var(--text-secondary);margin-bottom:var(--sp-1)}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-4)}
 .form-hint{font-size:.714rem;color:var(--text-tertiary);margin-top:var(--sp-1)}
+
+/* Attachment Upload Zone */
+.upload-zone{border:2px dashed rgba(0,0,0,0.12);border-radius:var(--radius-lg);padding:var(--sp-5) var(--sp-4);text-align:center;cursor:pointer;transition:border-color var(--transition-fast),background var(--transition-fast);background:#f7f7f5}
+.upload-zone:hover{border-color:#0f62fe;background:rgba(15,98,254,0.02)}
+.upload-zone-icon{color:var(--text-tertiary);margin-bottom:var(--sp-1)}
+.upload-zone-icon svg{width:20px;height:20px}
+.upload-zone-text{font-size:.857rem;color:var(--text-secondary)}
+.upload-zone-hint{font-size:.714rem;color:var(--text-tertiary);margin-top:2px}
+.upload-zone input[type="file"]{display:none}
+.upload-file-list{margin-top:var(--sp-2);display:flex;flex-wrap:wrap;gap:var(--sp-2)}
+.upload-file-pill{display:inline-flex;align-items:center;gap:var(--sp-2);background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:2px 8px 2px 10px;font-size:.785rem;color:var(--text-secondary)}
+.upload-file-pill button{width:16px;height:16px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:11px;color:var(--text-tertiary);background:none;border:none;cursor:pointer;padding:0;line-height:1}
+.upload-file-pill button:hover{background:var(--bg-hover);color:var(--text-primary)}
+
+/* Expense Line Items */
+.expense-line-items{display:flex;flex-direction:column;gap:var(--sp-3);margin-bottom:var(--sp-4)}
+.expense-line-item{background:#fff;border:1px solid rgba(0,0,0,0.09);border-radius:var(--radius-lg);box-shadow:0 1px 3px rgba(50,50,93,0.08);padding:var(--sp-4)}
+.expense-line-item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-3)}
+.expense-line-item-num{font-size:.714rem;font-weight:var(--fw-semibold);text-transform:uppercase;letter-spacing:.06em;color:var(--text-tertiary)}
+.expense-line-item-remove{width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius-sm);color:var(--text-tertiary);cursor:pointer;border:none;background:none;font-size:14px;transition:all var(--transition-fast)}
+.expense-line-item-remove:hover{background:var(--bg-hover);color:var(--status-red)}
+.expense-line-item-remove:disabled{opacity:0.3;cursor:not-allowed}
+.expense-line-item-remove:disabled:hover{background:none;color:var(--text-tertiary)}
+.expense-line-item-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-3)}
+.expense-line-item .form-group{margin-bottom:var(--sp-3)}
+.expense-line-item .form-group:last-child{margin-bottom:0}
+.expense-line-item .form-label{font-size:.714rem;font-weight:var(--fw-semibold);text-transform:uppercase;letter-spacing:.06em;color:#6f6f6f;margin-bottom:var(--sp-1)}
+.expense-line-item input,.expense-line-item select{border:1px solid rgba(0,0,0,0.12);border-radius:var(--radius-md)}
+.expense-line-item input:focus,.expense-line-item select:focus{border-color:#0f62fe}
+.add-line-item-btn{width:100%;padding:var(--sp-3);border:2px dashed rgba(0,0,0,0.12);border-radius:var(--radius-lg);background:none;color:rgba(0,0,0,0.4);font-size:.857rem;font-weight:var(--fw-medium);cursor:pointer;transition:all var(--transition-fast);display:flex;align-items:center;justify-content:center;gap:var(--sp-2)}
+.add-line-item-btn:hover{border-color:#0f62fe;color:#0f62fe}
+.expense-total-box{background:rgba(15,98,254,0.04);border:1px solid rgba(15,98,254,0.12);border-radius:var(--radius-lg);padding:var(--sp-4);display:flex;align-items:center;justify-content:flex-end;gap:var(--sp-3);margin-bottom:var(--sp-4)}
+.expense-total-label{font-size:.857rem;font-weight:var(--fw-medium);color:var(--text-secondary)}
+.expense-total-value{font-family:var(--font-mono);font-feature-settings:'tnum';font-size:1.3rem;font-weight:var(--fw-semibold);color:#0f62fe}
+.amount-input-wrap{position:relative;display:flex;align-items:center}
+.amount-input-wrap .amount-prefix{position:absolute;left:10px;font-size:.857rem;color:var(--text-tertiary);pointer-events:none;z-index:1}
+.amount-input-wrap input{padding-left:24px}
 
 /* ============================================================
    EXPENSES
@@ -682,6 +738,16 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       <div class="form-group"><label class="form-label">To Date</label><input type="date" id="newLeaveTo"/></div>
     </div>
     <div class="form-group"><label class="form-label">Reason</label><textarea id="newLeaveReason" placeholder="Please provide a reason for your leave request..." rows="4"></textarea></div>
+    <div class="form-group">
+      <label class="form-label">Attachments</label>
+      <div class="upload-zone" onclick="this.querySelector('input[type=file]').click()" ondragover="event.preventDefault();this.style.borderColor='#0f62fe'" ondragleave="this.style.borderColor=''" ondrop="event.preventDefault();this.style.borderColor='';handleFiles(event.dataTransfer.files,'leave-file-list')">
+        <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png" onchange="handleFiles(this.files,'leave-file-list')"/>
+        <div class="upload-zone-icon"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg></div>
+        <div class="upload-zone-text">Click or drag files here</div>
+        <div class="upload-zone-hint">PDF, JPG, PNG up to 10MB each</div>
+      </div>
+      <div class="upload-file-list" id="leave-file-list"></div>
+    </div>
     <div class="form-hint">Your request will be sent to Li Wei (Engineering Manager) for approval.</div>
   </div>
   <div class="slide-over-footer">
@@ -697,15 +763,48 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
     <button class="slide-over-close" onclick="closeSlideOver()"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
   </div>
   <div class="slide-over-body">
-    <div class="form-group"><label class="form-label">Description</label><input type="text" id="newExpDesc" placeholder="e.g., Client dinner at Beijing Hotel"/></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Category</label>
-        <select id="newExpCategory"><option value="">Select category...</option><option value="Travel">Travel</option><option value="Meals">Meals &amp; Entertainment</option><option value="Software">Software &amp; Tools</option><option value="Equipment">Equipment</option><option value="Office">Office Supplies</option><option value="Other">Other</option></select>
+    <div class="form-group"><label class="form-label">Claim Title</label><input type="text" id="newExpTitle" placeholder="e.g., Q2 Business Travel Expenses"/></div>
+    <div class="form-group"><label class="form-label">Date</label><input type="date" id="newExpDate"/></div>
+
+    <div class="form-group">
+      <label class="form-label">Line Items</label>
+      <div class="expense-line-items" id="expenseLineItems">
+        <div class="expense-line-item" data-idx="1">
+          <div class="expense-line-item-header">
+            <span class="expense-line-item-num">#1</span>
+            <button class="expense-line-item-remove" onclick="removeExpenseItem(1)" disabled title="Remove item">&times;</button>
+          </div>
+          <div class="form-group"><label class="form-label">Description</label><input type="text" placeholder="What was this expense for?" class="exp-item-desc"/></div>
+          <div class="expense-line-item-row">
+            <div class="form-group"><label class="form-label">Category</label>
+              <select class="exp-item-cat"><option value="">Select...</option><option value="Travel">Travel</option><option value="Equipment">Equipment</option><option value="Meals">Meals</option><option value="Transport">Transport</option><option value="Communication">Communication</option><option value="Other">Other</option></select>
+            </div>
+            <div class="form-group"><label class="form-label">Amount</label>
+              <div class="amount-input-wrap"><span class="amount-prefix">&yen;</span><input type="number" placeholder="0.00" step="0.01" class="exp-item-amount" oninput="updateExpenseTotal()"/></div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="form-group"><label class="form-label">Amount (CNY)</label><input type="number" id="newExpAmount" placeholder="0.00" step="0.01"/></div>
+      <button class="add-line-item-btn" onclick="addExpenseItem()"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Add Line Item</button>
     </div>
-    <div class="form-group"><label class="form-label">Expense Date</label><input type="date" id="newExpDate"/></div>
+
     <div class="form-group"><label class="form-label">Notes</label><textarea id="newExpNotes" placeholder="Additional details or receipt information..." rows="3"></textarea></div>
+
+    <div class="form-group">
+      <label class="form-label">Attachments</label>
+      <div class="upload-zone" onclick="this.querySelector('input[type=file]').click()" ondragover="event.preventDefault();this.style.borderColor='#0f62fe'" ondragleave="this.style.borderColor=''" ondrop="event.preventDefault();this.style.borderColor='';handleFiles(event.dataTransfer.files,'expense-file-list')">
+        <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png" onchange="handleFiles(this.files,'expense-file-list')"/>
+        <div class="upload-zone-icon"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg></div>
+        <div class="upload-zone-text">Click or drag files here</div>
+        <div class="upload-zone-hint">PDF, JPG, PNG up to 10MB each</div>
+      </div>
+      <div class="upload-file-list" id="expense-file-list"></div>
+    </div>
+
+    <div class="expense-total-box">
+      <span class="expense-total-label">Total:</span>
+      <span class="expense-total-value" id="expenseTotalDisplay">&yen;0.00</span>
+    </div>
   </div>
   <div class="slide-over-footer">
     <button class="btn btn-secondary" onclick="closeSlideOver()">Cancel</button>
@@ -730,6 +829,16 @@ select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%
       </div>
     </div>
     <div class="form-group"><label class="form-label">Description</label><textarea id="newTicketDesc" placeholder="Describe your issue in detail. Include any relevant context, error messages, or steps to reproduce..." rows="6"></textarea></div>
+    <div class="form-group">
+      <label class="form-label">Attachments</label>
+      <div class="upload-zone" onclick="this.querySelector('input[type=file]').click()" ondragover="event.preventDefault();this.style.borderColor='#0f62fe'" ondragleave="this.style.borderColor=''" ondrop="event.preventDefault();this.style.borderColor='';handleFiles(event.dataTransfer.files,'ticket-file-list')">
+        <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png" onchange="handleFiles(this.files,'ticket-file-list')"/>
+        <div class="upload-zone-icon"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg></div>
+        <div class="upload-zone-text">Click or drag files here</div>
+        <div class="upload-zone-hint">PDF, JPG, PNG up to 10MB each</div>
+      </div>
+      <div class="upload-file-list" id="ticket-file-list"></div>
+    </div>
   </div>
   <div class="slide-over-footer">
     <button class="btn btn-secondary" onclick="closeSlideOver()">Cancel</button>
@@ -965,14 +1074,8 @@ function renderLeaveTable(){
   const data=leaveFilter==='all'?LEAVES:LEAVES.filter(l=>l.status===leaveFilter);
   document.getElementById('leaveTableBody').innerHTML=data.map((l,i)=>{
     const c=ltColor(l.type),eid='le-'+i;
-    let ap='';
-    if(l.status==='Approved'){
-      ap='<div class="approval-timeline"><div class="approval-step"><div class="approval-step-dot" style="background:var(--status-blue)"></div><span class="approval-step-label">Submitted by '+EMP.name+'</span><span class="approval-step-date">'+l.applied+'</span></div><div class="approval-step"><div class="approval-step-dot" style="background:var(--status-green)"></div><span class="approval-step-label">Approved by '+l.approver+'</span><span class="approval-step-date">'+l.approvedDate+'</span></div></div>';
-    } else if(l.status==='Pending'){
-      ap='<div class="approval-timeline"><div class="approval-step"><div class="approval-step-dot" style="background:var(--status-blue)"></div><span class="approval-step-label">Submitted by '+EMP.name+'</span><span class="approval-step-date">'+l.applied+'</span></div><div class="approval-step"><div class="approval-step-dot" style="background:var(--status-yellow)"></div><span class="approval-step-label">Awaiting approval from '+EMP.manager+'</span><span class="approval-step-date">Pending</span></div></div>';
-    } else if(l.status==='Rejected'){
-      ap='<div class="approval-timeline"><div class="approval-step"><div class="approval-step-dot" style="background:var(--status-blue)"></div><span class="approval-step-label">Submitted by '+EMP.name+'</span><span class="approval-step-date">'+l.applied+'</span></div><div class="approval-step"><div class="approval-step-dot" style="background:var(--status-red)"></div><span class="approval-step-label">Rejected by '+l.approver+'</span><span class="approval-step-date">'+l.approvedDate+'</span></div></div>'+(l.rejectReason?'<div style="font-size:.785rem;color:var(--status-red);margin-top:4px;padding-left:18px">'+l.rejectReason+'</div>':'');
-    }
+    let ap=renderApprovalTimeline(l.status, l.approver, l.applied||l.from);
+    if(l.status==='Rejected'&&l.rejectReason){ap+='<div style="font-size:.785rem;color:var(--status-red);margin-top:4px;padding-left:18px">'+l.rejectReason+'</div>';}
     return '<tr><td><span class="expand-toggle" onclick="toggleExpand(\''+eid+'\',this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></span></td><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+c+';margin-right:8px;vertical-align:middle"></span>'+l.type+'</td><td class="tnum">'+l.from+'</td><td class="tnum">'+l.to+'</td><td class="tnum">'+l.days+'</td><td>'+statusBadge(l.status)+'</td><td class="tnum">'+l.applied+'</td></tr><tr class="expand-row" id="'+eid+'"><td colspan="7"><div style="margin-bottom:8px;font-size:.785rem;color:var(--text-tertiary)"><strong style="color:var(--text-secondary)">Reason:</strong> '+l.reason+'</div>'+ap+'</td></tr>';
   }).join('');
 }
@@ -1028,7 +1131,7 @@ function renderExpenses(){
   const icC={Travel:'var(--status-blue)',Meals:'var(--status-green)',Software:'var(--status-purple)',Equipment:'var(--status-gray)',Office:'var(--status-amber-text)',Other:'var(--status-gray)'};
   document.getElementById('expenseGrid').innerHTML=EXPENSES.map(e=>{
     const icon=CATEGORY_ICONS[e.category]||CATEGORY_ICONS.Other;
-    return `<div class="expense-card"><div class="expense-card-top"><div class="expense-card-icon" style="background:${bgC[e.category]||bgC.Other};color:${icC[e.category]||icC.Other}">${icon}</div><div class="expense-card-amount tnum">${fmt(e.amount)}</div></div><div class="expense-card-desc">${e.desc}</div><div class="expense-card-meta"><span>${e.category}</span><span>&middot;</span><span class="tnum">${e.date}</span></div><div class="expense-card-footer">${statusBadge(e.status)}<span style="font-family:var(--font-mono);font-size:.714rem;color:var(--text-tertiary)">${e.id}</span></div></div>`;
+    return `<div class="expense-card expense-card--expandable" onclick="this.classList.toggle('expanded')"><div class="expense-card-top"><div class="expense-card-icon" style="background:${bgC[e.category]||bgC.Other};color:${icC[e.category]||icC.Other}">${icon}</div><div class="expense-card-amount tnum">${fmt(e.amount)}</div></div><div class="expense-card-desc">${e.desc}</div><div class="expense-card-meta"><span>${e.category}</span><span>&middot;</span><span class="tnum">${e.date}</span></div><div class="expense-card-footer">${statusBadge(e.status)}<span style="font-family:var(--font-mono);font-size:.714rem;color:var(--text-tertiary)">${e.id}</span></div><div class="expense-card-detail">${e.notes?'<div style="font-size:.785rem;color:var(--text-secondary);margin-bottom:8px">'+e.notes+'</div>':''}${renderApprovalTimeline(e.status, null, e.date)}</div></div>`;
   }).join('');
 }
 
@@ -1077,20 +1180,123 @@ function submitLeave(){
   LEAVES.unshift({id:'LV-'+String(LEAVES.length+1).padStart(3,'0'),type,from,to,days,status:'Pending',applied:new Date().toISOString().split('T')[0],approver:null,approvedDate:null,reason:reason||'No reason provided'});
   closeSlideOver();renderLeaveTable();
   document.getElementById('newLeaveType').value='';document.getElementById('newLeaveFrom').value='';document.getElementById('newLeaveTo').value='';document.getElementById('newLeaveReason').value='';
+  document.getElementById('leave-file-list').innerHTML='';
   showToast('Leave request submitted successfully');
   if(currentPage!=='leave')navigateTo('leave');
 }
 
+/* ---- Attachment Upload Handling ---- */
+function handleFiles(files, listId){
+  const list=document.getElementById(listId);
+  Array.from(files).forEach(f=>{
+    const pill=document.createElement('span');
+    pill.className='upload-file-pill';
+    pill.innerHTML=f.name+'<button onclick="this.parentElement.remove()">&times;</button>';
+    list.appendChild(pill);
+  });
+}
+
+/* ---- Expense Line Item Management ---- */
+let expenseItemCounter=1;
+
+function addExpenseItem(){
+  expenseItemCounter++;
+  const container=document.getElementById('expenseLineItems');
+  const item=document.createElement('div');
+  item.className='expense-line-item';
+  item.dataset.idx=expenseItemCounter;
+  item.innerHTML=`
+    <div class="expense-line-item-header">
+      <span class="expense-line-item-num">#${expenseItemCounter}</span>
+      <button class="expense-line-item-remove" onclick="removeExpenseItem(${expenseItemCounter})" title="Remove item">&times;</button>
+    </div>
+    <div class="form-group"><label class="form-label">Description</label><input type="text" placeholder="What was this expense for?" class="exp-item-desc"/></div>
+    <div class="expense-line-item-row">
+      <div class="form-group"><label class="form-label">Category</label>
+        <select class="exp-item-cat"><option value="">Select...</option><option value="Travel">Travel</option><option value="Equipment">Equipment</option><option value="Meals">Meals</option><option value="Transport">Transport</option><option value="Communication">Communication</option><option value="Other">Other</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Amount</label>
+        <div class="amount-input-wrap"><span class="amount-prefix">&yen;</span><input type="number" placeholder="0.00" step="0.01" class="exp-item-amount" oninput="updateExpenseTotal()"/></div>
+      </div>
+    </div>`;
+  container.appendChild(item);
+  updateRemoveButtons();
+}
+
+function removeExpenseItem(idx){
+  const container=document.getElementById('expenseLineItems');
+  const items=container.querySelectorAll('.expense-line-item');
+  if(items.length<=1)return;
+  const target=container.querySelector('.expense-line-item[data-idx="'+idx+'"]');
+  if(target)target.remove();
+  // Renumber remaining items
+  const remaining=container.querySelectorAll('.expense-line-item');
+  remaining.forEach((el,i)=>{
+    const num=i+1;
+    el.querySelector('.expense-line-item-num').textContent='#'+num;
+  });
+  updateRemoveButtons();
+  updateExpenseTotal();
+}
+
+function updateRemoveButtons(){
+  const container=document.getElementById('expenseLineItems');
+  const items=container.querySelectorAll('.expense-line-item');
+  items.forEach(el=>{
+    const btn=el.querySelector('.expense-line-item-remove');
+    btn.disabled=items.length<=1;
+  });
+}
+
+function updateExpenseTotal(){
+  const inputs=document.querySelectorAll('#expenseLineItems .exp-item-amount');
+  let total=0;
+  inputs.forEach(inp=>{const v=parseFloat(inp.value);if(!isNaN(v))total+=v;});
+  document.getElementById('expenseTotalDisplay').textContent='\u00A5'+total.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
 function submitExpense(){
-  const desc=document.getElementById('newExpDesc').value;
-  const cat=document.getElementById('newExpCategory').value;
-  const amt=parseFloat(document.getElementById('newExpAmount').value);
+  const title=document.getElementById('newExpTitle').value;
   const date=document.getElementById('newExpDate').value;
   const notes=document.getElementById('newExpNotes').value;
-  if(!desc||!cat||!amt||!date){alert('Please fill in description, category, amount, and date.');return}
-  EXPENSES.unshift({id:'EXP-'+String(EXPENSES.length+1).padStart(3,'0'),desc,category:cat,amount:amt,date,status:'Pending',notes:notes||''});
+  const items=document.querySelectorAll('#expenseLineItems .expense-line-item');
+  if(!title||!date){alert('Please fill in claim title and date.');return}
+  let totalAmt=0;let firstCat='';let descs=[];
+  let valid=true;
+  items.forEach(el=>{
+    const desc=el.querySelector('.exp-item-desc').value;
+    const cat=el.querySelector('.exp-item-cat').value;
+    const amt=parseFloat(el.querySelector('.exp-item-amount').value);
+    if(!desc||!cat||isNaN(amt)||amt<=0){valid=false;}
+    totalAmt+=isNaN(amt)?0:amt;
+    if(!firstCat&&cat)firstCat=cat;
+    if(desc)descs.push(desc);
+  });
+  if(!valid){alert('Please fill in all line item fields (description, category, and a positive amount).');return}
+  EXPENSES.unshift({id:'EXP-'+String(EXPENSES.length+1).padStart(3,'0'),desc:title+(descs.length>1?' ('+descs.length+' items)':''),category:firstCat,amount:totalAmt,date,status:'Pending',notes:notes||''});
   closeSlideOver();renderExpenses();
-  document.getElementById('newExpDesc').value='';document.getElementById('newExpCategory').value='';document.getElementById('newExpAmount').value='';document.getElementById('newExpDate').value='';document.getElementById('newExpNotes').value='';
+  // Reset the form
+  document.getElementById('newExpTitle').value='';document.getElementById('newExpDate').value='';document.getElementById('newExpNotes').value='';
+  document.getElementById('expense-file-list').innerHTML='';
+  const container=document.getElementById('expenseLineItems');
+  container.innerHTML=`
+    <div class="expense-line-item" data-idx="1">
+      <div class="expense-line-item-header">
+        <span class="expense-line-item-num">#1</span>
+        <button class="expense-line-item-remove" onclick="removeExpenseItem(1)" disabled title="Remove item">&times;</button>
+      </div>
+      <div class="form-group"><label class="form-label">Description</label><input type="text" placeholder="What was this expense for?" class="exp-item-desc"/></div>
+      <div class="expense-line-item-row">
+        <div class="form-group"><label class="form-label">Category</label>
+          <select class="exp-item-cat"><option value="">Select...</option><option value="Travel">Travel</option><option value="Equipment">Equipment</option><option value="Meals">Meals</option><option value="Transport">Transport</option><option value="Communication">Communication</option><option value="Other">Other</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Amount</label>
+          <div class="amount-input-wrap"><span class="amount-prefix">&yen;</span><input type="number" placeholder="0.00" step="0.01" class="exp-item-amount" oninput="updateExpenseTotal()"/></div>
+        </div>
+      </div>
+    </div>`;
+  expenseItemCounter=1;
+  updateExpenseTotal();
   showToast('Expense claim submitted successfully');
   if(currentPage!=='expenses')navigateTo('expenses');
 }
@@ -1104,8 +1310,30 @@ function submitTicket(){
   TICKETS.unshift({id:'TK-'+String(TICKETS.length+1).padStart(3,'0'),subject,category:cat,priority,desc,status:'Open',created:new Date().toISOString().split('T')[0]});
   closeSlideOver();renderTickets();
   document.getElementById('newTicketSubject').value='';document.getElementById('newTicketCategory').value='';document.getElementById('newTicketPriority').value='Medium';document.getElementById('newTicketDesc').value='';
+  document.getElementById('ticket-file-list').innerHTML='';
   showToast('Support ticket created successfully');
   if(currentPage!=='tickets')navigateTo('tickets');
+}
+
+/* ================================================================
+   APPROVAL WORKFLOW TIMELINE
+   ================================================================ */
+function getApprovalSteps(status, approver, date) {
+  const steps = [
+    { label: 'Submitted', person: 'Zhang Rui', date: date, status: 'done' },
+    { label: 'Manager Review', person: approver || 'Li Wei', date: '', status: 'pending' },
+    { label: 'HR Approval', person: 'HR Department', date: '', status: 'waiting' },
+    { label: 'Completed', person: '', date: '', status: 'waiting' }
+  ];
+  if (status === 'Approved') { steps[1].status='done'; steps[1].date=date; steps[2].status='done'; steps[2].date=date; steps[3].status='done'; steps[3].date=date; }
+  else if (status === 'Pending') { steps[1].status='current'; }
+  else if (status === 'Rejected') { steps[1].status='rejected'; steps[1].date=date; steps[2].status='skipped'; steps[3].status='skipped'; }
+  else if (status === 'Draft') { steps[0].status='current'; steps[1].status='waiting'; }
+  return steps;
+}
+function renderApprovalTimeline(status, approver, date) {
+  const steps = getApprovalSteps(status, approver, date);
+  return `<div class="approval-timeline"><div class="approval-title">Approval Workflow</div><div class="approval-steps">${steps.map((s,i)=>`<div class="approval-step step-${s.status}"><div class="step-indicator"><div class="step-dot">${s.status==='done'?'✓':s.status==='rejected'?'✕':s.status==='current'?'●':''}</div>${i<steps.length-1?'<div class="step-line"></div>':''}</div><div class="step-content"><div class="step-label">${s.label}</div>${s.person?`<div class="step-person">${s.person}</div>`:''}${s.date?`<div class="step-date">${s.date}</div>`:''}</div></div>`).join('')}</div></div>`;
 }
 
 /* ================================================================

@@ -1617,6 +1617,218 @@ button {
   .main-content { padding: 16px 12px 40px; }
   .topnav { padding: 0 12px; }
 }
+
+/* ========================================================================
+   CREATE FORMS — Upload Zone, Line Items, Form Inputs
+   ======================================================================== */
+.form-group {
+  margin-bottom: 16px;
+}
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--navy);
+  background: var(--card);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px var(--purple-bg);
+}
+.form-group textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Upload zone */
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+.upload-zone:hover {
+  border-color: var(--purple);
+  background: var(--purple-bg);
+}
+.upload-icon { font-size: 24px; margin-bottom: 6px; }
+.upload-text { font-size: 13px; font-weight: 500; color: var(--navy); }
+.upload-hint { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.file-list { margin-top: 8px; }
+.file-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--navy);
+  margin-top: 4px;
+}
+.file-list-item button {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 4px;
+  transition: color var(--transition);
+}
+.file-list-item button:hover { color: var(--error); }
+
+/* Expense line items */
+.line-items-container {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.line-item {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.line-item:last-of-type { border-bottom: none; }
+.line-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.line-item-num {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.line-item-remove {
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: var(--radius);
+  transition: all var(--transition);
+}
+.line-item-remove:hover { color: var(--error); background: var(--error-bg); }
+.line-item-remove:disabled { opacity: 0.3; pointer-events: none; }
+.line-item-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.line-item-grid .form-group { margin-bottom: 0; }
+
+.add-line-item-btn {
+  width: 100%;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-top: 1px solid var(--border);
+  transition: background var(--transition);
+}
+.add-line-item-btn:hover { background: var(--purple-bg); }
+
+.expense-total {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.expense-total-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--body);
+}
+.expense-total-value {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--purple);
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.form-actions .btn {
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: var(--radius);
+  transition: all var(--transition);
+}
+.form-actions .btn--cancel {
+  color: var(--body);
+  border: 1px solid var(--border);
+  background: var(--card);
+}
+.form-actions .btn--cancel:hover { background: var(--bg); }
+.form-actions .btn--submit {
+  color: #fff;
+  background: var(--purple);
+}
+.form-actions .btn--submit:hover { background: var(--purple-light); }
+
+/* Approval Timeline */
+.approval-timeline { margin-top: 20px; padding-top: 16px; border-top: 1px solid #e3e8ee; }
+.approval-title { font-size: 13px; font-weight: 600; color: #0a2540; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; }
+.approval-steps { display: flex; flex-direction: column; gap: 0; }
+.approval-step { display: flex; gap: 12px; }
+.step-indicator { display: flex; flex-direction: column; align-items: center; width: 24px; flex-shrink: 0; }
+.step-dot { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border: 2px solid #e3e8ee; color: #8898aa; background: #fff; }
+.step-line { width: 2px; flex: 1; min-height: 24px; background: #e3e8ee; }
+.step-content { padding-bottom: 20px; }
+.step-label { font-size: 14px; font-weight: 500; color: #0a2540; }
+.step-person { font-size: 12px; color: #8898aa; margin-top: 2px; }
+.step-date { font-size: 11px; color: #8898aa; font-family: 'Source Code Pro', monospace; margin-top: 2px; }
+.step-done .step-dot { background: #15be53; border-color: #15be53; color: #fff; }
+.step-done .step-line { background: #15be53; }
+.step-current .step-dot { background: #fff; border-color: #635bff; color: #635bff; animation: pulse-dot 2s ease infinite; }
+@keyframes pulse-dot { 0%,100% { box-shadow: 0 0 0 0 rgba(99,91,255,0.3); } 50% { box-shadow: 0 0 0 6px rgba(99,91,255,0); } }
+.step-rejected .step-dot { background: #cd3d64; border-color: #cd3d64; color: #fff; }
+.step-rejected .step-line { background: #cd3d64; }
+.step-waiting .step-dot { background: #f6f9fc; border-color: #e3e8ee; }
+.step-skipped .step-dot { background: #f6f9fc; border-color: #e3e8ee; opacity: 0.5; }
+.step-skipped .step-content { opacity: 0.4; text-decoration: line-through; }
 </style>
 </head>
 <body>
@@ -1784,7 +1996,7 @@ button {
         <h1>Leave Management</h1>
         <div class="page-header__sub">Track your leave balances and requests</div>
       </div>
-      <button class="btn btn--primary">
+      <button class="btn btn--primary" onclick="openLeaveForm()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
         New Request
       </button>
@@ -1829,7 +2041,7 @@ button {
         <h1>Expense Claims</h1>
         <div class="page-header__sub">Submit and track your expense reimbursements</div>
       </div>
-      <button class="btn btn--primary">
+      <button class="btn btn--primary" onclick="openExpenseForm()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
         New Claim
       </button>
@@ -1854,7 +2066,7 @@ button {
         <h1>Support Tickets</h1>
         <div class="page-header__sub">Track issues and requests across your organization</div>
       </div>
-      <button class="btn btn--primary">
+      <button class="btn btn--primary" onclick="openTicketForm()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
         New Ticket
       </button>
@@ -2156,6 +2368,7 @@ function renderLeaveCards(filter) {
         <div class="slideover__row"><span class="slideover__label">Days</span><span class="slideover__value tnum">${req.days}</span></div>
         <div class="slideover__row"><span class="slideover__label">Status</span><span class="slideover__value">${badge(req.status)}</span></div>
         <div class="slideover__row"><span class="slideover__label">Approver</span><span class="slideover__value">${req.approver}</span></div>
+        ${renderApprovalTimeline(req.status, req.approver, req.from)}
       `);
     });
   });
@@ -2337,6 +2550,7 @@ function renderExpenseList(filter) {
         <div class="slideover__row"><span class="slideover__label">Amount</span><span class="slideover__value tnum">${fmtCNY(exp.amount)}</span></div>
         <div class="slideover__row"><span class="slideover__label">Items</span><span class="slideover__value">${exp.items}</span></div>
         <div class="slideover__row"><span class="slideover__label">Status</span><span class="slideover__value">${badge(exp.status)}</span></div>
+        ${renderApprovalTimeline(exp.status, 'Li Wei', exp.date)}
       `);
     });
   });
@@ -2440,6 +2654,56 @@ function renderProfileContent(tab) {
       </div>
     </div>
   `;
+}
+
+// ========================================================================
+// APPROVAL TIMELINE
+// ========================================================================
+function getApprovalSteps(status, approver, date) {
+  const steps = [
+    { label: 'Submitted', person: 'Zhang Rui', date: date, status: 'done' },
+    { label: 'Manager Review', person: approver, date: '', status: 'pending' },
+    { label: 'HR Approval', person: 'HR Department', date: '', status: 'waiting' },
+    { label: 'Completed', person: '', date: '', status: 'waiting' }
+  ];
+  if (status === 'Approved') {
+    steps[1].status = 'done'; steps[1].date = date;
+    steps[2].status = 'done'; steps[2].date = date;
+    steps[3].status = 'done'; steps[3].date = date;
+  } else if (status === 'Pending') {
+    steps[1].status = 'current';
+  } else if (status === 'Rejected') {
+    steps[1].status = 'rejected'; steps[1].date = date;
+    steps[2].status = 'skipped';
+    steps[3].status = 'skipped';
+  } else if (status === 'Draft') {
+    steps[0].status = 'current';
+    steps[1].status = 'waiting';
+  }
+  return steps;
+}
+
+function renderApprovalTimeline(status, approver, date) {
+  const steps = getApprovalSteps(status, approver || 'Li Wei', date);
+  return `
+    <div class="approval-timeline">
+      <div class="approval-title">Approval Workflow</div>
+      <div class="approval-steps">
+        ${steps.map((s, i) => `
+          <div class="approval-step step-${s.status}">
+            <div class="step-indicator">
+              <div class="step-dot">${s.status === 'done' ? '✓' : s.status === 'rejected' ? '✕' : s.status === 'current' ? '●' : ''}</div>
+              ${i < steps.length - 1 ? '<div class="step-line"></div>' : ''}
+            </div>
+            <div class="step-content">
+              <div class="step-label">${s.label}</div>
+              ${s.person ? `<div class="step-person">${s.person}</div>` : ''}
+              ${s.date ? `<div class="step-date">${s.date}</div>` : ''}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
 }
 
 // ========================================================================
@@ -2755,6 +3019,230 @@ document.getElementById('hamburgerBtn').addEventListener('click', () => {
 document.getElementById('avatarBtn').addEventListener('click', () => {
   navigateTo('profile');
 });
+
+// ========================================================================
+// CREATE FORMS — File Upload, Leave, Expense (multi-line), Ticket
+// ========================================================================
+
+function handleFiles(input, listId) {
+  const list = document.getElementById(listId);
+  if (!list) return;
+  Array.from(input.files).forEach(file => {
+    const item = document.createElement('div');
+    item.className = 'file-list-item';
+    item.innerHTML = `<span>${file.name} <span style="color:var(--muted);font-size:12px">(${(file.size / 1024).toFixed(1)} KB)</span></span><button onclick="this.parentElement.remove()">&times;</button>`;
+    list.appendChild(item);
+  });
+  input.value = '';
+}
+
+function uploadZoneHTML(formType) {
+  return `
+    <div class="form-group">
+      <label>Attachments</label>
+      <div class="upload-zone" onclick="this.querySelector('input').click()">
+        <input type="file" multiple style="display:none" onchange="handleFiles(this, 'fileList-${formType}')">
+        <div class="upload-icon">📎</div>
+        <div class="upload-text">Click or drag files here</div>
+        <div class="upload-hint">PDF, JPG, PNG up to 10MB each</div>
+      </div>
+      <div class="file-list" id="fileList-${formType}"></div>
+    </div>`;
+}
+
+// --- Leave Form ---
+function openLeaveForm() {
+  openSlideover('New Leave Request', `
+    <div class="form-group">
+      <label>Leave Type</label>
+      <select>
+        <option value="">Select leave type...</option>
+        ${LEAVE_TYPES.map(l => `<option>${l.type}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>From Date</label>
+        <input type="date">
+      </div>
+      <div class="form-group">
+        <label>To Date</label>
+        <input type="date">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Reason</label>
+      <textarea placeholder="Brief reason for leave (optional)"></textarea>
+    </div>
+    ${uploadZoneHTML('leave')}
+    <div class="form-actions">
+      <button class="btn btn--cancel" onclick="closeSlideover()">Cancel</button>
+      <button class="btn btn--submit" onclick="closeSlideover()">Submit Request</button>
+    </div>
+  `);
+}
+
+// --- Expense Form (multi-line items) ---
+let expenseLineCount = 0;
+
+function expenseLineItemHTML(num) {
+  return `
+    <div class="line-item" data-line="${num}">
+      <div class="line-item-header">
+        <span class="line-item-num">#${num}</span>
+        <button class="line-item-remove" onclick="removeLineItem(this)" ${num === 1 ? 'disabled' : ''}>&times;</button>
+      </div>
+      <div class="line-item-grid">
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" placeholder="What was this expense for?">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select>
+            <option value="">Select...</option>
+            <option>Travel</option>
+            <option>Equipment</option>
+            <option>Meals</option>
+            <option>Transport</option>
+            <option>Communication</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Amount (CNY)</label>
+          <input type="number" step="0.01" min="0" placeholder="0.00" oninput="updateExpenseTotal()">
+        </div>
+        <div class="form-group">
+          <label>Receipt</label>
+          <div class="upload-zone" style="padding:10px;" onclick="this.querySelector('input').click()">
+            <input type="file" style="display:none" onchange="handleFiles(this, 'fileList-lineReceipt-${num}')">
+            <div style="font-size:12px;color:var(--muted);">📎 Attach receipt</div>
+          </div>
+          <div class="file-list" id="fileList-lineReceipt-${num}"></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function addLineItem() {
+  expenseLineCount++;
+  const container = document.getElementById('expenseLineItems');
+  container.insertAdjacentHTML('beforeend', expenseLineItemHTML(expenseLineCount));
+  renumberLineItems();
+  updateRemoveButtons();
+}
+
+function removeLineItem(btn) {
+  const item = btn.closest('.line-item');
+  item.remove();
+  renumberLineItems();
+  updateRemoveButtons();
+  updateExpenseTotal();
+}
+
+function renumberLineItems() {
+  const items = document.querySelectorAll('#expenseLineItems .line-item');
+  items.forEach((item, i) => {
+    item.querySelector('.line-item-num').textContent = '#' + (i + 1);
+  });
+}
+
+function updateRemoveButtons() {
+  const items = document.querySelectorAll('#expenseLineItems .line-item');
+  items.forEach(item => {
+    const btn = item.querySelector('.line-item-remove');
+    btn.disabled = items.length <= 1;
+  });
+}
+
+function updateExpenseTotal() {
+  const inputs = document.querySelectorAll('#expenseLineItems input[type="number"]');
+  let total = 0;
+  inputs.forEach(input => { total += parseFloat(input.value) || 0; });
+  const el = document.getElementById('expenseTotalValue');
+  if (el) el.textContent = '¥' + total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function openExpenseForm() {
+  expenseLineCount = 1;
+  openSlideover('New Expense Claim', `
+    <div class="form-group">
+      <label>Expense Claim Title</label>
+      <input type="text" placeholder="e.g. March Business Trip">
+    </div>
+    <div class="form-group">
+      <label>Date</label>
+      <input type="date">
+    </div>
+    <div class="form-group">
+      <label>Line Items</label>
+      <div class="line-items-container">
+        <div id="expenseLineItems">
+          ${expenseLineItemHTML(1)}
+        </div>
+        <button class="add-line-item-btn" onclick="addLineItem()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          Add Line Item
+        </button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea placeholder="Additional notes or context (optional)"></textarea>
+    </div>
+    ${uploadZoneHTML('expense')}
+    <div class="expense-total">
+      <span class="expense-total-label">Total:</span>
+      <span class="expense-total-value" id="expenseTotalValue">¥0.00</span>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn--cancel" onclick="closeSlideover()">Cancel</button>
+      <button class="btn btn--submit" onclick="closeSlideover()">Submit Claim</button>
+    </div>
+  `);
+}
+
+// --- Ticket Form ---
+function openTicketForm() {
+  openSlideover('New Ticket', `
+    <div class="form-group">
+      <label>Subject</label>
+      <input type="text" placeholder="Brief description of the issue">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Category</label>
+        <select>
+          <option value="">Select...</option>
+          <option>IT Support</option>
+          <option>HR</option>
+          <option>Payroll</option>
+          <option>Benefits</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Priority</label>
+        <select>
+          <option value="">Select...</option>
+          <option>Low</option>
+          <option>Medium</option>
+          <option>High</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea placeholder="Describe the issue in detail..."></textarea>
+    </div>
+    ${uploadZoneHTML('ticket')}
+    <div class="form-actions">
+      <button class="btn btn--cancel" onclick="closeSlideover()">Cancel</button>
+      <button class="btn btn--submit" onclick="closeSlideover()">Submit Ticket</button>
+    </div>
+  `);
+}
 
 // ========================================================================
 // INIT

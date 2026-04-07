@@ -1081,6 +1081,237 @@ button, a, input, select {
   font-family: 'IBM Plex Mono', monospace;
 }
 
+/* =========================================================
+   CREATE FORMS — Upload Zone, Line Items, Form Inputs
+   ========================================================= */
+.cds-form-group {
+  margin-bottom: 16px;
+}
+.cds-form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--cds-gray-70);
+  letter-spacing: 0.32px;
+  margin-bottom: 6px;
+}
+.cds-form-group input[type="text"],
+.cds-form-group input[type="number"],
+.cds-form-group input[type="date"],
+.cds-form-group select,
+.cds-form-group textarea {
+  width: 100%;
+  height: 40px;
+  padding: 0 16px;
+  border: none;
+  border-bottom: 2px solid var(--cds-gray-50);
+  border-radius: 0;
+  background: var(--cds-gray-10);
+  font-family: inherit;
+  font-size: 14px;
+  letter-spacing: 0.16px;
+  color: var(--cds-gray-100);
+  transition: border-color 150ms;
+}
+.cds-form-group input:focus,
+.cds-form-group select:focus,
+.cds-form-group textarea:focus {
+  outline: none;
+  border-bottom-color: var(--cds-blue-60);
+}
+.cds-form-group textarea {
+  min-height: 80px;
+  padding: 12px 16px;
+  resize: vertical;
+}
+.cds-form-group select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23525252' d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+.cds-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Upload zone (Carbon) */
+.cds-upload-zone {
+  border: 2px dashed var(--cds-gray-30);
+  border-radius: 0;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 150ms, background 150ms;
+}
+.cds-upload-zone:hover {
+  border-color: var(--cds-blue-60);
+  background: var(--cds-blue-10);
+}
+.cds-upload-icon { font-size: 24px; margin-bottom: 6px; }
+.cds-upload-text { font-size: 14px; font-weight: 400; color: var(--cds-gray-100); }
+.cds-upload-hint { font-size: 12px; color: var(--cds-gray-50); margin-top: 2px; }
+.cds-file-list { margin-top: 8px; }
+.cds-file-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--cds-gray-10);
+  border-bottom: 1px solid var(--cds-gray-20);
+  font-size: 13px;
+  color: var(--cds-gray-100);
+}
+.cds-file-list-item button {
+  background: none; border: none; cursor: pointer;
+  color: var(--cds-gray-50);
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 4px;
+  transition: color 150ms;
+}
+.cds-file-list-item button:hover { color: var(--cds-red-60); }
+
+/* Expense line items (Carbon) */
+.cds-line-items-container {
+  border: 1px solid var(--cds-gray-20);
+  border-radius: 0;
+  background: var(--cds-gray-10);
+  overflow: hidden;
+}
+.cds-line-item {
+  padding: 16px;
+  border-bottom: 1px solid var(--cds-gray-20);
+  background: var(--cds-gray-10);
+  position: relative;
+}
+.cds-line-item:last-of-type { border-bottom: none; }
+.cds-line-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.cds-line-item-num {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cds-gray-70);
+  letter-spacing: 0.32px;
+  text-transform: uppercase;
+}
+.cds-line-item-remove {
+  background: none; border: none; cursor: pointer;
+  color: var(--cds-gray-50);
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px 8px;
+  transition: color 150ms, background 150ms;
+}
+.cds-line-item-remove:hover { color: var(--cds-red-60); background: rgba(218,30,40,0.1); }
+.cds-line-item-remove:disabled { opacity: 0.3; pointer-events: none; }
+.cds-line-item-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.cds-line-item-grid .cds-form-group { margin-bottom: 0; }
+
+.cds-add-line-item-btn {
+  width: 100%;
+  padding: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.16px;
+  color: var(--cds-blue-60);
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--cds-gray-20);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 150ms;
+}
+.cds-add-line-item-btn:hover { background: var(--cds-blue-10); }
+
+.cds-expense-total {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 2px solid var(--cds-gray-100);
+}
+.cds-expense-total-label {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--cds-gray-70);
+}
+.cds-expense-total-value {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--cds-blue-60);
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.cds-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--cds-gray-20);
+}
+.cds-form-actions button {
+  height: 48px;
+  padding: 0 32px;
+  font-family: inherit;
+  font-size: 14px;
+  letter-spacing: 0.16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 0;
+  transition: background 150ms;
+}
+.cds-form-actions .cds-form-cancel {
+  background: var(--cds-gray-10);
+  color: var(--cds-gray-100);
+  border: 1px solid var(--cds-gray-30);
+}
+.cds-form-actions .cds-form-cancel:hover { background: var(--cds-gray-20); }
+.cds-form-actions .cds-form-submit {
+  background: var(--cds-blue-60);
+  color: var(--cds-white);
+}
+.cds-form-actions .cds-form-submit:hover { background: var(--cds-blue-70); }
+
+/* Approval Timeline */
+.approval-timeline { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--cds-gray-20); }
+.approval-title { font-size: 12px; font-weight: 600; color: var(--cds-gray-100); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.32px; font-family: 'IBM Plex Sans', sans-serif; }
+.approval-steps { display: flex; flex-direction: column; gap: 0; }
+.approval-step { display: flex; gap: 12px; }
+.step-indicator { display: flex; flex-direction: column; align-items: center; width: 24px; flex-shrink: 0; }
+.step-dot { width: 24px; height: 24px; border-radius: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border: 2px solid var(--cds-gray-20); color: var(--cds-gray-50); background: var(--cds-gray-10); }
+.step-line { width: 2px; flex: 1; min-height: 24px; background: var(--cds-gray-20); }
+.step-content { padding-bottom: 20px; }
+.step-label { font-size: 14px; font-weight: 400; color: var(--cds-gray-100); font-family: 'IBM Plex Sans', sans-serif; }
+.step-person { font-size: 12px; color: var(--cds-gray-50); margin-top: 2px; font-family: 'IBM Plex Sans', sans-serif; }
+.step-date { font-size: 12px; color: var(--cds-gray-50); font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.32px; margin-top: 2px; }
+.step-done .step-dot { background: #24a148; border-color: #24a148; color: #fff; }
+.step-done .step-line { background: #24a148; }
+.step-current .step-dot { background: var(--cds-gray-10); border-color: var(--cds-blue-60); color: var(--cds-blue-60); }
+.step-rejected .step-dot { background: #da1e28; border-color: #da1e28; color: #fff; }
+.step-rejected .step-line { background: #da1e28; }
+.step-waiting .step-dot { background: var(--cds-gray-10); border-color: var(--cds-gray-20); }
+.step-skipped .step-dot { background: var(--cds-gray-10); border-color: var(--cds-gray-20); opacity: 0.5; }
+.step-skipped .step-content { opacity: 0.4; text-decoration: line-through; }
+
 </style>
 </head>
 <body>
@@ -1383,9 +1614,6 @@ function renderLeave() {
   }).join('');
 
   var tableRows = LEAVE_REQUESTS.map(function(r, i) {
-    var approvalTimeline = r.status === 'Approved'
-      ? '<div class="cds-label-value" style="border:none;padding:0;"><div class="cds-label-value__label">Approval Timeline</div><div class="cds-label-value__value" style="font-size:13px;color:var(--cds-gray-70);">Submitted &rarr; Manager Review &rarr; Approved</div></div>'
-      : '';
     return '<tr data-row="' + i + '" onclick="toggleLeaveRow(' + i + ')">' +
       '<td class="cds-checkbox-cell"><input type="checkbox" class="cds-checkbox" onclick="event.stopPropagation()"/></td>' +
       '<td>' + esc(r.id) + '</td>' +
@@ -1404,8 +1632,8 @@ function renderLeave() {
           '<div class="cds-label-value" style="border:none;padding:0;"><div class="cds-label-value__label">Duration</div><div class="cds-label-value__value">' + esc(r.from) + ' to ' + esc(r.to) + ' (' + r.days + ' day' + (r.days > 1 ? 's' : '') + ')</div></div>' +
           '<div class="cds-label-value" style="border:none;padding:0;"><div class="cds-label-value__label">Approver</div><div class="cds-label-value__value">' + esc(r.approver) + '</div></div>' +
           '<div class="cds-label-value" style="border:none;padding:0;"><div class="cds-label-value__label">Status</div><div class="cds-label-value__value"><span class="cds-tag ' + statusTagClass(r.status) + '">' + esc(r.status) + '</span></div></div>' +
-          approvalTimeline +
         '</div>' +
+        renderApprovalTimeline(r.status, r.approver, r.from) +
       '</td>' +
     '</tr>';
   }).join('');
@@ -1444,7 +1672,7 @@ function renderLeave() {
             '<option value="Rejected">Rejected</option>' +
           '</select></div>' +
           '<div style="flex:1;"></div>' +
-          '<button class="cds-btn cds-btn--primary cds-btn--sm" style="padding:0 16px;">New Request</button>' +
+          '<button class="cds-btn cds-btn--primary cds-btn--sm" style="padding:0 16px;" onclick="openLeaveForm()">New Request</button>' +
         '</div>' +
         '<table class="cds-data-table" id="leaveTable">' +
           '<thead><tr>' +
@@ -1590,8 +1818,8 @@ function renderExpenses() {
   var approvedTotal = EXPENSES.filter(function(e) { return e.status === 'Approved'; }).reduce(function(s, e) { return s + e.amount; }, 0);
   var allTotal = EXPENSES.reduce(function(s, e) { return s + e.amount; }, 0);
 
-  var rows = EXPENSES.map(function(e) {
-    return '<tr>' +
+  var rows = EXPENSES.map(function(e, i) {
+    return '<tr data-erow="' + i + '" onclick="toggleExpenseRow(' + i + ')">' +
       '<td>' + esc(e.id) + '</td>' +
       '<td class="mono">' + esc(e.date) + '</td>' +
       '<td><span class="cds-tag ' + expenseCatTagClass(e.category) + '">' + esc(e.category) + '</span></td>' +
@@ -1599,6 +1827,18 @@ function renderExpenses() {
       '<td class="mono text-right">' + fmt(e.amount) + '</td>' +
       '<td class="text-center">' + e.items + '</td>' +
       '<td><span class="cds-tag ' + statusTagClass(e.status) + '">' + esc(e.status) + '</span></td>' +
+    '</tr>' +
+    '<tr class="cds-data-table__expanded-row" id="expenseDetail' + i + '">' +
+      '<td colspan="7">' +
+        '<div style="display:flex;gap:24px;flex-wrap:wrap;">' +
+          '<div class="cds-label-value" style="border:none;padding:0;"><div class="cds-label-value__label">Claim ID</div><div class="cds-label-value__value mono">' + esc(e.id) + '</div></div>' +
+          '<div class="cds-label-value" style="border:none;padding:0;"><div class="cds-label-value__label">Category</div><div class="cds-label-value__value">' + esc(e.category) + '</div></div>' +
+          '<div class="cds-label-value" style="border:none;padding:0;"><div class="cds-label-value__label">Description</div><div class="cds-label-value__value">' + esc(e.description) + '</div></div>' +
+          '<div class="cds-label-value" style="border:none;padding:0;"><div class="cds-label-value__label">Amount</div><div class="cds-label-value__value mono">' + fmt(e.amount) + '</div></div>' +
+          '<div class="cds-label-value" style="border:none;padding:0;"><div class="cds-label-value__label">Status</div><div class="cds-label-value__value"><span class="cds-tag ' + statusTagClass(e.status) + '">' + esc(e.status) + '</span></div></div>' +
+        '</div>' +
+        renderApprovalTimeline(e.status, 'Li Wei', e.date) +
+      '</td>' +
     '</tr>';
   }).join('');
 
@@ -1640,7 +1880,7 @@ function renderExpenses() {
             '<option value="Rejected">Rejected</option>' +
           '</select></div>' +
           '<div style="flex:1;"></div>' +
-          '<button class="cds-btn cds-btn--primary cds-btn--sm" style="padding:0 16px;">New Claim</button>' +
+          '<button class="cds-btn cds-btn--primary cds-btn--sm" style="padding:0 16px;" onclick="openExpenseForm()">New Claim</button>' +
         '</div>' +
         '<table class="cds-data-table" id="expenseTable">' +
           '<thead><tr>' +
@@ -1694,7 +1934,7 @@ function renderTickets() {
           '<h1 class="cds-page-header__title">Support Tickets</h1>' +
           '<p class="cds-page-header__subtitle">Track your support requests and their resolution status</p>' +
         '</div>' +
-        '<button class="cds-btn cds-btn--primary cds-btn--sm" style="padding:0 16px;margin-top:4px;">New Ticket</button>' +
+        '<button class="cds-btn cds-btn--primary cds-btn--sm" style="padding:0 16px;margin-top:4px;" onclick="openTicketForm()">New Ticket</button>' +
       '</div>' +
     '</div>' +
     '<div class="cds-page-body">' +
@@ -1876,6 +2116,52 @@ updateNavState();
 
 
 /* =============================================================
+   APPROVAL TIMELINE
+   ============================================================= */
+function getApprovalSteps(status, approver, date) {
+  var steps = [
+    { label: 'Submitted', person: 'Zhang Rui', date: date, status: 'done' },
+    { label: 'Manager Review', person: approver, date: '', status: 'pending' },
+    { label: 'HR Approval', person: 'HR Department', date: '', status: 'waiting' },
+    { label: 'Completed', person: '', date: '', status: 'waiting' }
+  ];
+  if (status === 'Approved') {
+    steps[1].status = 'done'; steps[1].date = date;
+    steps[2].status = 'done'; steps[2].date = date;
+    steps[3].status = 'done'; steps[3].date = date;
+  } else if (status === 'Pending') {
+    steps[1].status = 'current';
+  } else if (status === 'Rejected') {
+    steps[1].status = 'rejected'; steps[1].date = date;
+    steps[2].status = 'skipped';
+    steps[3].status = 'skipped';
+  } else if (status === 'Draft') {
+    steps[0].status = 'current';
+    steps[1].status = 'waiting';
+  }
+  return steps;
+}
+
+function renderApprovalTimeline(status, approver, date) {
+  var steps = getApprovalSteps(status, approver || 'Li Wei', date);
+  var html = '<div class="approval-timeline"><div class="approval-title">Approval Workflow</div><div class="approval-steps">';
+  for (var i = 0; i < steps.length; i++) {
+    var s = steps[i];
+    var dotContent = s.status === 'done' ? '&#10003;' : s.status === 'rejected' ? '&#10005;' : s.status === 'current' ? '&#9679;' : '';
+    var lineHTML = i < steps.length - 1 ? '<div class="step-line"></div>' : '';
+    html += '<div class="approval-step step-' + s.status + '">' +
+      '<div class="step-indicator"><div class="step-dot">' + dotContent + '</div>' + lineHTML + '</div>' +
+      '<div class="step-content"><div class="step-label">' + s.label + '</div>' +
+      (s.person ? '<div class="step-person">' + s.person + '</div>' : '') +
+      (s.date ? '<div class="step-date">' + s.date + '</div>' : '') +
+      '</div></div>';
+  }
+  html += '</div></div>';
+  return html;
+}
+
+
+/* =============================================================
    LEAVE TABLE: Expand/Collapse & Filter
    ============================================================= */
 function toggleLeaveRow(index) {
@@ -1916,8 +2202,15 @@ function filterLeaveTable() {
 
 
 /* =============================================================
-   EXPENSE TABLE: Filter
+   EXPENSE TABLE: Expand/Collapse & Filter
    ============================================================= */
+function toggleExpenseRow(index) {
+  var detail = document.getElementById('expenseDetail' + index);
+  if (detail) {
+    detail.classList.toggle('is-open');
+  }
+}
+
 function filterExpenseTable() {
   var search = (document.getElementById('expenseSearch') ? document.getElementById('expenseSearch').value : '').toLowerCase();
   var catFilter = document.getElementById('expenseCatFilter') ? document.getElementById('expenseCatFilter').value : 'all';
@@ -1925,15 +2218,18 @@ function filterExpenseTable() {
   var tbody = document.getElementById('expenseTableBody');
   if (!tbody) return;
 
-  var rows = tbody.querySelectorAll('tr');
+  var rows = tbody.querySelectorAll('tr[data-erow]');
   for (var i = 0; i < rows.length; i++) {
-    var e = EXPENSES[i];
-    if (!e) continue;
+    var row = rows[i];
+    var idx = parseInt(row.dataset.erow);
+    var e = EXPENSES[idx];
+    var detailRow = document.getElementById('expenseDetail' + idx);
     var visible = true;
     if (catFilter !== 'all' && e.category !== catFilter) visible = false;
     if (statusFilter !== 'all' && e.status !== statusFilter) visible = false;
     if (search && e.id.toLowerCase().indexOf(search) === -1 && e.description.toLowerCase().indexOf(search) === -1) visible = false;
-    rows[i].style.display = visible ? '' : 'none';
+    row.style.display = visible ? '' : 'none';
+    if (detailRow) detailRow.style.display = visible && detailRow.classList.contains('is-open') ? '' : 'none';
   }
 }
 
@@ -2049,6 +2345,207 @@ function toggleTicketDetail(index) {
     var isOpen = detail.classList.toggle('is-open');
     item.classList.toggle('cds-slist-item--expanded', isOpen);
   }
+}
+
+
+/* =============================================================
+   CREATE FORMS — File Upload, Leave, Expense (multi-line), Ticket
+   ============================================================= */
+
+function openFormPanel(title, bodyHTML) {
+  sidePanelTitle.textContent = title;
+  sidePanelBody.innerHTML = bodyHTML;
+  sidePanelOverlay.classList.add('is-open');
+  sidePanel.classList.add('is-open');
+}
+
+function handleFiles(input, listId) {
+  var list = document.getElementById(listId);
+  if (!list) return;
+  var files = input.files;
+  for (var i = 0; i < files.length; i++) {
+    var file = files[i];
+    var item = document.createElement('div');
+    item.className = 'cds-file-list-item';
+    item.innerHTML = '<span>' + esc(file.name) + ' <span style="color:var(--cds-gray-50);font-size:12px;">(' + (file.size / 1024).toFixed(1) + ' KB)</span></span><button onclick="this.parentElement.remove()">&times;</button>';
+    list.appendChild(item);
+  }
+  input.value = '';
+}
+
+function uploadZoneHTML(formType) {
+  return '' +
+    '<div class="cds-form-group">' +
+      '<label>Attachments</label>' +
+      '<div class="cds-upload-zone" onclick="this.querySelector(\'input\').click()">' +
+        '<input type="file" multiple style="display:none" onchange="handleFiles(this, \'fileList-' + formType + '\')">' +
+        '<div class="cds-upload-icon">\uD83D\uDCCE</div>' +
+        '<div class="cds-upload-text">Click or drag files here</div>' +
+        '<div class="cds-upload-hint">PDF, JPG, PNG up to 10MB each</div>' +
+      '</div>' +
+      '<div class="cds-file-list" id="fileList-' + formType + '"></div>' +
+    '</div>';
+}
+
+// --- Leave Form ---
+function openLeaveForm() {
+  var typeOptions = LEAVE_TYPES.map(function(l) {
+    return '<option>' + esc(l.type) + '</option>';
+  }).join('');
+
+  openFormPanel('New Leave Request', '' +
+    '<div class="cds-form-group">' +
+      '<label>Leave Type</label>' +
+      '<select><option value="">Select leave type...</option>' + typeOptions + '</select>' +
+    '</div>' +
+    '<div class="cds-form-row">' +
+      '<div class="cds-form-group"><label>From Date</label><input type="date"></div>' +
+      '<div class="cds-form-group"><label>To Date</label><input type="date"></div>' +
+    '</div>' +
+    '<div class="cds-form-group">' +
+      '<label>Reason</label>' +
+      '<textarea placeholder="Brief reason for leave (optional)"></textarea>' +
+    '</div>' +
+    uploadZoneHTML('leave') +
+    '<div class="cds-form-actions">' +
+      '<button class="cds-form-cancel" onclick="closeSidePanel()">Cancel</button>' +
+      '<button class="cds-form-submit" onclick="closeSidePanel()">Submit Request</button>' +
+    '</div>'
+  );
+}
+
+// --- Expense Form (multi-line items) ---
+var expenseLineCount = 0;
+
+function expenseLineItemHTML(num) {
+  return '' +
+    '<div class="cds-line-item" data-line="' + num + '">' +
+      '<div class="cds-line-item-header">' +
+        '<span class="cds-line-item-num">#' + num + '</span>' +
+        '<button class="cds-line-item-remove" onclick="removeLineItem(this)"' + (num === 1 ? ' disabled' : '') + '>&times;</button>' +
+      '</div>' +
+      '<div class="cds-line-item-grid">' +
+        '<div class="cds-form-group"><label>Description</label><input type="text" placeholder="What was this expense for?"></div>' +
+        '<div class="cds-form-group"><label>Category</label>' +
+          '<select><option value="">Select...</option><option>Travel</option><option>Equipment</option><option>Meals</option><option>Transport</option><option>Communication</option><option>Other</option></select>' +
+        '</div>' +
+        '<div class="cds-form-group"><label>Amount (CNY)</label><input type="number" step="0.01" min="0" placeholder="0.00" oninput="updateExpenseTotal()"></div>' +
+        '<div class="cds-form-group"><label>Receipt</label>' +
+          '<div class="cds-upload-zone" style="padding:10px;" onclick="this.querySelector(\'input\').click()">' +
+            '<input type="file" style="display:none" onchange="handleFiles(this, \'fileList-lineReceipt-' + num + '\')">' +
+            '<div style="font-size:12px;color:var(--cds-gray-50);">\uD83D\uDCCE Attach receipt</div>' +
+          '</div>' +
+          '<div class="cds-file-list" id="fileList-lineReceipt-' + num + '"></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+}
+
+function addLineItem() {
+  expenseLineCount++;
+  var container = document.getElementById('expenseLineItems');
+  container.insertAdjacentHTML('beforeend', expenseLineItemHTML(expenseLineCount));
+  renumberLineItems();
+  updateRemoveButtons();
+}
+
+function removeLineItem(btn) {
+  var item = btn.closest('.cds-line-item');
+  item.remove();
+  renumberLineItems();
+  updateRemoveButtons();
+  updateExpenseTotal();
+}
+
+function renumberLineItems() {
+  var items = document.querySelectorAll('#expenseLineItems .cds-line-item');
+  for (var i = 0; i < items.length; i++) {
+    items[i].querySelector('.cds-line-item-num').textContent = '#' + (i + 1);
+  }
+}
+
+function updateRemoveButtons() {
+  var items = document.querySelectorAll('#expenseLineItems .cds-line-item');
+  for (var i = 0; i < items.length; i++) {
+    var btn = items[i].querySelector('.cds-line-item-remove');
+    btn.disabled = items.length <= 1;
+  }
+}
+
+function updateExpenseTotal() {
+  var inputs = document.querySelectorAll('#expenseLineItems input[type="number"]');
+  var total = 0;
+  for (var i = 0; i < inputs.length; i++) {
+    total += parseFloat(inputs[i].value) || 0;
+  }
+  var el = document.getElementById('expenseTotalValue');
+  if (el) el.textContent = '\u00a5' + total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function openExpenseForm() {
+  expenseLineCount = 1;
+  openFormPanel('New Expense Claim', '' +
+    '<div class="cds-form-group">' +
+      '<label>Expense Claim Title</label>' +
+      '<input type="text" placeholder="e.g. March Business Trip">' +
+    '</div>' +
+    '<div class="cds-form-group">' +
+      '<label>Date</label>' +
+      '<input type="date">' +
+    '</div>' +
+    '<div class="cds-form-group">' +
+      '<label>Line Items</label>' +
+      '<div class="cds-line-items-container">' +
+        '<div id="expenseLineItems">' +
+          expenseLineItemHTML(1) +
+        '</div>' +
+        '<button class="cds-add-line-item-btn" onclick="addLineItem()">' +
+          '<svg width="16" height="16" viewBox="0 0 16 16" fill="var(--cds-blue-60)"><path d="M8 2v12M2 8h12" stroke="var(--cds-blue-60)" stroke-width="2" fill="none"/></svg>' +
+          'Add Line Item' +
+        '</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="cds-form-group">' +
+      '<label>Notes</label>' +
+      '<textarea placeholder="Additional notes or context (optional)"></textarea>' +
+    '</div>' +
+    uploadZoneHTML('expense') +
+    '<div class="cds-expense-total">' +
+      '<span class="cds-expense-total-label">Total:</span>' +
+      '<span class="cds-expense-total-value" id="expenseTotalValue">\u00a50.00</span>' +
+    '</div>' +
+    '<div class="cds-form-actions">' +
+      '<button class="cds-form-cancel" onclick="closeSidePanel()">Cancel</button>' +
+      '<button class="cds-form-submit" onclick="closeSidePanel()">Submit Claim</button>' +
+    '</div>'
+  );
+}
+
+// --- Ticket Form ---
+function openTicketForm() {
+  openFormPanel('New Ticket', '' +
+    '<div class="cds-form-group">' +
+      '<label>Subject</label>' +
+      '<input type="text" placeholder="Brief description of the issue">' +
+    '</div>' +
+    '<div class="cds-form-row">' +
+      '<div class="cds-form-group"><label>Category</label>' +
+        '<select><option value="">Select...</option><option>IT Support</option><option>HR</option><option>Payroll</option><option>Benefits</option><option>Other</option></select>' +
+      '</div>' +
+      '<div class="cds-form-group"><label>Priority</label>' +
+        '<select><option value="">Select...</option><option>Low</option><option>Medium</option><option>High</option></select>' +
+      '</div>' +
+    '</div>' +
+    '<div class="cds-form-group">' +
+      '<label>Description</label>' +
+      '<textarea placeholder="Describe the issue in detail..."></textarea>' +
+    '</div>' +
+    uploadZoneHTML('ticket') +
+    '<div class="cds-form-actions">' +
+      '<button class="cds-form-cancel" onclick="closeSidePanel()">Cancel</button>' +
+      '<button class="cds-form-submit" onclick="closeSidePanel()">Submit Ticket</button>' +
+    '</div>'
+  );
 }
 
 </script>
