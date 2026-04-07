@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Employee Portal — Ramping Up HRMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+/* ============================================================
+   ASSEMBLY EDITION — DESIGN TOKENS
+   Stripe shadows + IBM status + Notion warmth + Mintlify type
+   ============================================================ */
+:root {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+
+  --bg-page: #f0f0ed;
+  --bg-card: #fff;
+  --bg-sidebar: #fafaf8;
+  --bg-rail: #1a1a1a;
+  --bg-rail-hover: rgba(255,255,255,0.08);
+  --bg-rail-active: #0f62fe;
+  --bg-input: #fff;
+  --bg-hover: rgba(0,0,0,0.03);
+  --bg-code: #f4f4f4;
+
+  --text-primary: #1a1a1a;
+  --text-secondary: #525252;
+  --text-tertiary: #8d8d8d;
+  --text-inverse: #fff;
+  --text-link: #0f62fe;
+
+  --border-subtle: rgba(0,0,0,0.09);
+  --border-strong: rgba(0,0,0,0.16);
+  --border-focus: #0f62fe;
+
+  --status-green: #24a148;
+  --status-green-bg: #defbe6;
+  --status-red: #da1e28;
+  --status-red-bg: #fff1f1;
+  --status-yellow: #f1c21b;
+  --status-yellow-bg: #fef9e7;
+  --status-blue: #0f62fe;
+  --status-blue-bg: #edf5ff;
+  --status-purple: #8a3ffc;
+  --status-purple-bg: #f6f2ff;
+  --status-gray: #6f6f6f;
+  --status-gray-bg: #f4f4f4;
+  --status-amber-text: #8a6d3b;
+  --status-amber-bg: #fef9e7;
+
+  --accent-primary: #0f62fe;
+  --accent-primary-hover: #0043ce;
+
+  --leave-annual: #0f62fe;
+  --leave-sick: #8a3ffc;
+  --leave-personal: #009d9a;
+  --leave-wfh: #24a148;
+
+  --shadow-sm: 0 1px 2px rgba(50,50,93,0.08), 0 1px 1px rgba(0,0,0,0.05);
+  --shadow-md: 0 2px 5px rgba(50,50,93,0.1), 0 1px 1.5px rgba(0,0,0,0.07);
+  --shadow-lg: 0 6px 12px rgba(50,50,93,0.12), 0 3px 7px rgba(0,0,0,0.08);
+  --shadow-xl: 0 15px 35px rgba(50,50,93,0.15), 0 5px 15px rgba(0,0,0,0.1);
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-8: 32px; --sp-10: 40px; --sp-12: 48px;
+
+  --transition-fast: 120ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms cubic-bezier(.4,0,.2,1);
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{font-family:var(--font-sans);font-weight:var(--fw-regular);color:var(--text-primary);background:var(--bg-page);line-height:1.5;overflow:hidden;height:100vh}
+a{color:var(--text-link);text-decoration:none}
+a:hover{text-decoration:underline}
+button{font-family:inherit;cursor:pointer;border:none;background:none;font-size:inherit}
+input,select,textarea{font-family:inherit;font-size:.928rem;border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:var(--sp-2) var(--sp-3);background:var(--bg-input);color:var(--text-primary);transition:border-color var(--transition-fast);outline:none;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--border-focus);box-shadow:0 0 0 3px rgba(15,98,254,.1)}
+textarea{resize:vertical;min-height:80px}
+select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23525252' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,.25)}
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+.app-shell{display:flex;height:100vh;overflow:hidden}
+
+/* --- App Rail (52px) --- */
+.app-rail{width:52px;min-width:52px;background:var(--bg-rail);display:flex;flex-direction:column;align-items:center;padding:var(--sp-3) 0;z-index:100}
+.rail-logo{width:32px;height:32px;display:flex;align-items:center;justify-content:center;margin-bottom:var(--sp-6);cursor:pointer;border-radius:var(--radius-lg);transition:background var(--transition-fast)}
+.rail-logo:hover{background:var(--bg-rail-hover)}
+.rail-logo svg{width:24px;height:24px}
+.rail-nav{display:flex;flex-direction:column;gap:var(--sp-2);flex:1}
+.rail-btn{width:36px;height:36px;border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.55);transition:all var(--transition-fast);position:relative}
+.rail-btn:hover{background:var(--bg-rail-hover);color:rgba(255,255,255,.85)}
+.rail-btn.active{background:var(--accent-primary);color:#fff}
+.rail-btn svg{width:18px;height:18px;stroke-width:1.8}
+.rail-btn::after{content:attr(data-tooltip);position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);background:var(--text-primary);color:var(--text-inverse);padding:4px 10px;border-radius:var(--radius-sm);font-size:.785rem;font-weight:var(--fw-medium);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity var(--transition-fast);z-index:999}
+.rail-btn:hover::after{opacity:1}
+.rail-avatar{width:32px;height:32px;border-radius:50%;background:#4a4a4a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.785rem;font-weight:var(--fw-semibold);cursor:pointer;margin-top:auto;transition:background var(--transition-fast)}
+.rail-avatar:hover{background:#5a5a5a}
+
+/* --- Secondary Nav Panel (220px) --- */
+.secondary-nav{width:220px;min-width:220px;background:var(--bg-sidebar);border-right:1px solid var(--border-subtle);display:flex;flex-direction:column;overflow-y:auto;transition:width var(--transition-slow),min-width var(--transition-slow),opacity var(--transition-slow)}
+.secondary-nav.collapsed{width:0;min-width:0;overflow:hidden;opacity:0;border-right:none}
+.sec-nav-header{padding:var(--sp-4) var(--sp-4) var(--sp-2);display:flex;align-items:center;justify-content:space-between}
+.sec-nav-title{font-size:.785rem;font-weight:var(--fw-semibold);text-transform:uppercase;letter-spacing:.06em;color:var(--text-tertiary)}
+.sec-nav-collapse{width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius-sm);color:var(--text-tertiary)}
+.sec-nav-collapse:hover{background:var(--bg-hover);color:var(--text-secondary)}
+.sec-nav-content{padding:var(--sp-2) var(--sp-3);flex:1}
+.sec-nav-item{display:flex;align-items:center;gap:var(--sp-2);padding:var(--sp-2) var(--sp-3);border-radius:var(--radius-md);color:var(--text-secondary);font-size:.857rem;cursor:pointer;transition:background var(--transition-fast);text-decoration:none}
+.sec-nav-item:hover{background:var(--bg-hover);color:var(--text-primary);text-decoration:none}
+.sec-nav-item.active{background:rgba(15,98,254,.06);color:var(--accent-primary);font-weight:var(--fw-medium)}
+.sec-nav-divider{height:1px;background:var(--border-subtle);margin:var(--sp-2) var(--sp-3)}
+.sec-nav-balance{display:flex;align-items:center;justify-content:space-between;padding:var(--sp-2) var(--sp-3);border-radius:var(--radius-md);font-size:.857rem;color:var(--text-secondary);cursor:pointer;transition:background var(--transition-fast)}
+.sec-nav-balance:hover{background:var(--bg-hover)}
+.sec-nav-balance-dot{width:8px;height:8px;border-radius:50%;margin-right:var(--sp-2);display:inline-block}
+.sec-nav-balance-label{display:flex;align-items:center}
+.sec-nav-balance-count{font-family:var(--font-mono);font-weight:var(--fw-medium);font-size:.857rem;color:var(--text-primary)}
+
+/* --- Main Content Area --- */
+.main-area{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.top-bar{height:48px;min-height:48px;background:var(--bg-card);border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;padding:0 var(--sp-6);gap:var(--sp-4)}
+.top-bar-title{font-size:1rem;font-weight:var(--fw-semibold);color:var(--text-primary)}
+.top-bar-breadcrumb{font-size:.785rem;color:var(--text-tertiary);margin-left:var(--sp-1)}
+.top-bar-spacer{flex:1}
+.top-bar-actions{display:flex;align-items:center;gap:var(--sp-2)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:var(--sp-2);padding:var(--sp-2) var(--sp-3);border-radius:var(--radius-md);font-size:.857rem;font-weight:var(--fw-medium);transition:all var(--transition-fast);white-space:nowrap}
+.btn-primary{background:var(--accent-primary);color:#fff;box-shadow:var(--shadow-sm)}
+.btn-primary:hover{background:var(--accent-primary-hover);box-shadow:var(--shadow-md)}
+.btn-secondary{background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-subtle)}
+.btn-secondary:hover{background:var(--bg-hover);border-color:var(--border-strong)}
+.btn-ghost{color:var(--text-secondary);padding:var(--sp-2)}
+.btn-ghost:hover{background:var(--bg-hover);color:var(--text-primary)}
+.btn svg{width:16px;height:16px}
+
+.content-scroll{flex:1;overflow-y:auto;padding:var(--sp-6)}
+
+/* ============================================================
+   PAGE, SECTION, CARD, BADGE
+   ============================================================ */
+.page{display:none}.page.active{display:block}
+.section-label{font-size:.714rem;font-weight:var(--fw-semibold);text-transform:uppercase;letter-spacing:.06em;color:var(--text-tertiary);margin-bottom:var(--sp-3)}
+.card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-xl);box-shadow:var(--shadow-md);padding:var(--sp-5);transition:box-shadow var(--transition-normal)}
+.card:hover{box-shadow:var(--shadow-lg)}
+.card-flat{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-xl);padding:var(--sp-5)}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:var(--radius-sm);font-size:.714rem;font-weight:var(--fw-medium);letter-spacing:.02em;white-space:nowrap}
+.badge-approved{background:var(--status-green-bg);color:var(--status-green)}
+.badge-pending{background:var(--status-amber-bg);color:var(--status-amber-text)}
+.badge-rejected{background:var(--status-red-bg);color:var(--status-red)}
+.badge-draft{background:var(--status-gray-bg);color:var(--status-gray)}
+.badge-open{background:var(--status-blue-bg);color:var(--status-blue)}
+.badge-closed{background:var(--status-purple-bg);color:var(--status-purple)}
+.badge-paid{background:var(--status-green-bg);color:var(--status-green)}
+
+/* ============================================================
+   DATA TABLE
+   ============================================================ */
+.data-table{width:100%;border-collapse:collapse;font-size:.857rem}
+.data-table thead th{text-align:left;padding:var(--sp-2) var(--sp-3);font-weight:var(--fw-semibold);font-size:.714rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-tertiary);border-bottom:1px solid var(--border-subtle);white-space:nowrap;user-select:none}
+.data-table tbody td{padding:var(--sp-3);border-bottom:1px solid var(--border-subtle);color:var(--text-primary);vertical-align:middle}
+.data-table tbody tr{transition:background var(--transition-fast)}
+.data-table tbody tr:hover{background:var(--bg-hover)}
+.data-table tbody tr:last-child td{border-bottom:none}
+.tnum{font-family:var(--font-mono);font-feature-settings:'tnum';font-variant-numeric:tabular-nums}
+
+/* ============================================================
+   METRICS (Dashboard)
+   ============================================================ */
+.metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-4);margin-bottom:var(--sp-6)}
+.metric-card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-xl);box-shadow:var(--shadow-md);padding:var(--sp-5);display:flex;flex-direction:column;gap:var(--sp-1);transition:box-shadow var(--transition-normal),transform var(--transition-normal)}
+.metric-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-1px)}
+.metric-label{font-size:.714rem;font-weight:var(--fw-semibold);text-transform:uppercase;letter-spacing:.06em;color:var(--text-tertiary)}
+.metric-value{font-size:1.714rem;font-weight:var(--fw-semibold);font-family:var(--font-mono);font-feature-settings:'tnum';color:var(--text-primary);line-height:1.2}
+.metric-trend{font-size:.785rem;display:flex;align-items:center;gap:var(--sp-1)}
+.metric-trend.up{color:var(--status-green)}.metric-trend.down{color:var(--status-red)}.metric-trend.neutral{color:var(--text-tertiary)}
+.metric-accent{width:100%;height:3px;border-radius:2px;margin-top:var(--sp-2)}
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+.welcome-row{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:var(--sp-6)}
+.welcome-greeting{font-size:1.286rem;font-weight:var(--fw-semibold);color:var(--text-primary)}
+.welcome-date{font-size:.857rem;color:var(--text-tertiary);margin-top:var(--sp-1)}
+.welcome-right{font-size:.857rem;color:var(--text-secondary)}
+.dash-two-col{display:grid;grid-template-columns:1.6fr 1fr;gap:var(--sp-4);margin-bottom:var(--sp-6)}
+
+/* Timeline */
+.timeline{padding:var(--sp-3) 0}
+.timeline-item{display:flex;gap:var(--sp-3);padding-bottom:var(--sp-4);position:relative}
+.timeline-item:last-child{padding-bottom:0}
+.timeline-dot{width:8px;height:8px;border-radius:50%;background:var(--accent-primary);margin-top:5px;flex-shrink:0;position:relative;z-index:1}
+.timeline-item:not(:last-child) .timeline-dot::after{content:'';position:absolute;left:3px;top:10px;width:2px;height:calc(100% + 12px);background:var(--border-subtle)}
+.timeline-text{font-size:.857rem;color:var(--text-secondary);line-height:1.5}
+.timeline-text strong{color:var(--text-primary);font-weight:var(--fw-medium)}
+.timeline-time{font-size:.714rem;color:var(--text-tertiary);margin-top:2px}
+
+/* Leave bars */
+.leave-summary-chart{padding:var(--sp-3) 0}
+.leave-bar-group{margin-bottom:var(--sp-4)}
+.leave-bar-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-1);font-size:.857rem}
+.leave-bar-name{color:var(--text-secondary)}
+.leave-bar-nums{font-family:var(--font-mono);font-size:.785rem;color:var(--text-tertiary)}
+.leave-bar-track{height:6px;background:var(--bg-code);border-radius:3px;overflow:hidden}
+.leave-bar-fill{height:100%;border-radius:3px;transition:width var(--transition-slow)}
+
+/* Quick actions */
+.quick-actions{display:flex;gap:var(--sp-2);flex-wrap:wrap}
+.quick-pill{display:inline-flex;align-items:center;gap:var(--sp-2);padding:var(--sp-2) var(--sp-4);border:1px solid var(--border-subtle);border-radius:20px;font-size:.857rem;color:var(--text-secondary);background:var(--bg-card);cursor:pointer;transition:all var(--transition-fast);box-shadow:var(--shadow-sm)}
+.quick-pill:hover{border-color:var(--accent-primary);color:var(--accent-primary);box-shadow:var(--shadow-md)}
+.quick-pill svg{width:14px;height:14px}
+
+/* ============================================================
+   LEAVE
+   ============================================================ */
+.balance-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-4);margin-bottom:var(--sp-6)}
+.balance-card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-xl);box-shadow:var(--shadow-md);padding:var(--sp-5);position:relative;overflow:hidden;transition:box-shadow var(--transition-normal),transform var(--transition-normal)}
+.balance-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-1px)}
+.balance-card-stripe{position:absolute;top:0;left:0;right:0;height:3px}
+.balance-card-type{font-size:.857rem;font-weight:var(--fw-medium);color:var(--text-secondary);margin-bottom:var(--sp-2);margin-top:var(--sp-1)}
+.balance-card-num{display:flex;align-items:baseline;gap:var(--sp-2)}
+.balance-card-used{font-family:var(--font-mono);font-feature-settings:'tnum';font-size:1.5rem;font-weight:var(--fw-semibold);color:var(--text-primary);line-height:1}
+.balance-card-total{font-family:var(--font-mono);font-size:.857rem;color:var(--text-tertiary)}
+
+/* Filters */
+.filter-bar{display:flex;align-items:center;gap:var(--sp-3);margin-bottom:var(--sp-4);flex-wrap:wrap}
+.filter-chip{display:inline-flex;align-items:center;gap:var(--sp-1);padding:var(--sp-1) var(--sp-3);border:1px solid var(--border-subtle);border-radius:16px;font-size:.785rem;color:var(--text-secondary);cursor:pointer;transition:all var(--transition-fast);background:var(--bg-card)}
+.filter-chip:hover{border-color:var(--border-strong)}
+.filter-chip.active{border-color:var(--accent-primary);color:var(--accent-primary);background:rgba(15,98,254,.04)}
+
+/* Expandable rows */
+.expand-toggle{width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius-sm);cursor:pointer;transition:background var(--transition-fast)}
+.expand-toggle:hover{background:var(--bg-hover)}
+.expand-toggle svg{width:12px;height:12px;transition:transform var(--transition-fast)}
+.expand-toggle.open svg{transform:rotate(90deg)}
+.expand-row{display:none}.expand-row.open{display:table-row}
+.expand-row td{padding:var(--sp-3) var(--sp-3) var(--sp-4) var(--sp-12)!important;background:rgba(15,98,254,.015);border-bottom:1px solid var(--border-subtle)!important}
+.approval-timeline{display:flex;flex-direction:column;gap:var(--sp-2)}
+.approval-step{display:flex;align-items:center;gap:var(--sp-3);font-size:.785rem}
+.approval-step-dot{width:6px;height:6px;border-radius:50%}
+.approval-step-label{color:var(--text-secondary)}
+.approval-step-date{color:var(--text-tertiary);font-family:var(--font-mono);font-size:.714rem}
+
+/* ============================================================
+   SALARY
+   ============================================================ */
+.featured-payslip{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-xl);box-shadow:var(--shadow-lg);padding:var(--sp-8);margin-bottom:var(--sp-6);display:flex;align-items:center;justify-content:space-between}
+.featured-payslip-label{font-size:.785rem;font-weight:var(--fw-semibold);text-transform:uppercase;letter-spacing:.06em;color:var(--text-tertiary);margin-bottom:var(--sp-1)}
+.featured-payslip-month{font-size:1rem;font-weight:var(--fw-medium);color:var(--text-secondary);margin-bottom:var(--sp-3)}
+.featured-payslip-amount{font-family:var(--font-mono);font-feature-settings:'tnum';font-size:2.5rem;font-weight:var(--fw-semibold);color:var(--text-primary);line-height:1}
+.featured-payslip-currency{font-size:1rem;font-weight:var(--fw-regular);color:var(--text-tertiary);margin-left:var(--sp-2)}
+.featured-payslip-right{display:flex;gap:var(--sp-8)}
+.featured-payslip-stat-label{font-size:.714rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-tertiary);margin-bottom:var(--sp-1)}
+.featured-payslip-stat-val{font-family:var(--font-mono);font-feature-settings:'tnum';font-size:1.143rem;font-weight:var(--fw-semibold);color:var(--text-primary)}
+
+/* ============================================================
+   SLIDE-OVER
+   ============================================================ */
+.slide-over-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:200;opacity:0;pointer-events:none;transition:opacity var(--transition-slow)}
+.slide-over-backdrop.open{opacity:1;pointer-events:all}
+.slide-over{position:fixed;top:0;right:0;bottom:0;width:480px;max-width:90vw;background:var(--bg-card);box-shadow:var(--shadow-xl);z-index:201;transform:translateX(100%);transition:transform var(--transition-slow);display:flex;flex-direction:column}
+.slide-over.open{transform:translateX(0)}
+.slide-over-header{display:flex;align-items:center;justify-content:space-between;padding:var(--sp-4) var(--sp-6);border-bottom:1px solid var(--border-subtle);min-height:52px}
+.slide-over-title{font-size:1rem;font-weight:var(--fw-semibold)}
+.slide-over-close{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius-md);color:var(--text-tertiary);transition:all var(--transition-fast)}
+.slide-over-close:hover{background:var(--bg-hover);color:var(--text-primary)}
+.slide-over-body{flex:1;overflow-y:auto;padding:var(--sp-6)}
+.slide-over-footer{padding:var(--sp-4) var(--sp-6);border-top:1px solid var(--border-subtle);display:flex;justify-content:flex-end;gap:var(--sp-2)}
+
+/* ============================================================
+   FORMS
+   ============================================================ */
+.form-group{margin-bottom:var(--sp-4)}
+.form-label{display:block;font-size:.785rem;font-weight:var(--fw-medium);color:var(--text-secondary);margin-bottom:var(--sp-1)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-4)}
+.form-hint{font-size:.714rem;color:var(--text-tertiary);margin-top:var(--sp-1)}
+
+/* ============================================================
+   EXPENSES
+   ============================================================ */
+.summary-row{display:flex;gap:var(--sp-6);margin-bottom:var(--sp-6);padding:var(--sp-5);background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm)}
+.summary-stat{display:flex;flex-direction:column;gap:2px}
+.summary-stat-val{font-family:var(--font-mono);font-feature-settings:'tnum';font-size:1.286rem;font-weight:var(--fw-semibold);color:var(--text-primary)}
+.summary-stat-label{font-size:.714rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-tertiary)}
+.expense-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:var(--sp-4)}
+.expense-card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-xl);box-shadow:var(--shadow-md);padding:var(--sp-5);transition:box-shadow var(--transition-normal),transform var(--transition-normal);cursor:pointer}
+.expense-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-1px)}
+.expense-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:var(--sp-3)}
+.expense-card-icon{width:36px;height:36px;border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center}
+.expense-card-icon svg{width:18px;height:18px}
+.expense-card-amount{font-family:var(--font-mono);font-feature-settings:'tnum';font-size:1.143rem;font-weight:var(--fw-semibold);color:var(--text-primary)}
+.expense-card-desc{font-size:.928rem;font-weight:var(--fw-medium);color:var(--text-primary);margin-bottom:var(--sp-1)}
+.expense-card-meta{font-size:.785rem;color:var(--text-tertiary);display:flex;align-items:center;gap:var(--sp-3)}
+.expense-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:var(--sp-3);padding-top:var(--sp-3);border-top:1px solid var(--border-subtle)}
+
+/* ============================================================
+   TICKETS
+   ============================================================ */
+.ticket-group{margin-bottom:var(--sp-6)}
+.ticket-group-header{display:flex;align-items:center;gap:var(--sp-2);margin-bottom:var(--sp-3)}
+.ticket-group-dot{width:8px;height:8px;border-radius:50%}
+.ticket-group-label{font-size:.785rem;font-weight:var(--fw-semibold);text-transform:uppercase;letter-spacing:.06em;color:var(--text-tertiary)}
+.ticket-group-count{font-size:.714rem;color:var(--text-tertiary);margin-left:auto}
+.ticket-item{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:var(--sp-4);margin-bottom:var(--sp-2);cursor:pointer;transition:box-shadow var(--transition-fast)}
+.ticket-item:hover{box-shadow:var(--shadow-md)}
+.ticket-item-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:var(--sp-2)}
+.ticket-item-subject{font-size:.928rem;font-weight:var(--fw-medium);color:var(--text-primary)}
+.ticket-item-id{font-family:var(--font-mono);font-size:.714rem;color:var(--text-tertiary)}
+.ticket-item-meta{display:flex;align-items:center;gap:var(--sp-3);font-size:.785rem;color:var(--text-tertiary)}
+.ticket-item-expand{display:none;margin-top:var(--sp-3);padding-top:var(--sp-3);border-top:1px solid var(--border-subtle);font-size:.857rem;color:var(--text-secondary);line-height:1.6}
+.ticket-item.expanded .ticket-item-expand{display:block}
+
+/* ============================================================
+   PROFILE
+   ============================================================ */
+.profile-header-card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-xl);box-shadow:var(--shadow-md);padding:var(--sp-8);display:flex;align-items:center;gap:var(--sp-6);margin-bottom:var(--sp-6)}
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#0f62fe,#8a3ffc);display:flex;align-items:center;justify-content:center;font-size:1.714rem;font-weight:var(--fw-semibold);color:#fff;flex-shrink:0}
+.profile-name{font-size:1.286rem;font-weight:var(--fw-semibold);color:var(--text-primary)}
+.profile-title{font-size:.928rem;color:var(--text-secondary);margin-top:2px}
+.profile-id{font-family:var(--font-mono);font-size:.785rem;color:var(--text-tertiary);margin-top:var(--sp-1)}
+.profile-tabs{display:flex;gap:0;border-bottom:1px solid var(--border-subtle);margin-bottom:var(--sp-6)}
+.profile-tab{padding:var(--sp-3) var(--sp-5);font-size:.857rem;font-weight:var(--fw-medium);color:var(--text-tertiary);cursor:pointer;border-bottom:2px solid transparent;transition:all var(--transition-fast);margin-bottom:-1px}
+.profile-tab:hover{color:var(--text-primary)}
+.profile-tab.active{color:var(--accent-primary);border-bottom-color:var(--accent-primary)}
+.profile-section{display:none}.profile-section.active{display:block}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5)}
+.profile-field-label{font-size:.714rem;font-weight:var(--fw-semibold);text-transform:uppercase;letter-spacing:.06em;color:var(--text-tertiary);margin-bottom:var(--sp-1)}
+.profile-field-value{font-size:.928rem;color:var(--text-primary)}
+.profile-field-value.mono{font-family:var(--font-mono);font-feature-settings:'tnum'}
+
+/* ============================================================
+   TOAST NOTIFICATION
+   ============================================================ */
+.toast-container{position:fixed;top:var(--sp-4);right:var(--sp-4);z-index:300;display:flex;flex-direction:column;gap:var(--sp-2)}
+.toast{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:var(--sp-3) var(--sp-5);font-size:.857rem;color:var(--text-primary);display:flex;align-items:center;gap:var(--sp-3);transform:translateX(120%);transition:transform var(--transition-slow);max-width:360px}
+.toast.show{transform:translateX(0)}
+.toast-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toast-icon.success{background:var(--status-green-bg);color:var(--status-green)}
+.toast-icon svg{width:12px;height:12px}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media(max-width:1024px){
+  .metrics-row,.balance-cards{grid-template-columns:repeat(2,1fr)}
+  .dash-two-col{grid-template-columns:1fr}
+  .featured-payslip{flex-direction:column;align-items:flex-start;gap:var(--sp-5)}
+  .profile-grid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .secondary-nav{display:none}
+  .metrics-row,.balance-cards{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <!-- ============================================================
+       APP RAIL
+       ============================================================ -->
+  <nav class="app-rail">
+    <div class="rail-logo" onclick="navigateTo('dashboard')">
+      <svg viewBox="80 46 82 82" width="24" height="24"><path d="M110.39,71.82c.85,0,1.42.88,1.06,1.66l-4.55,9.9-.06.13-.67,1.46-6.4,13.93c-.19.42-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l5.95-12.96.67-1.46,5.06-11.01c.19-.41.61-.68,1.06-.68h10.58Z" fill="#fff"/><path d="M151.2,83.51h-10.58c-.46,0-.87-.27-1.06-.68l-4.3-9.35c-.36-.77.21-1.66,1.06-1.66h10.58c.46,0,.87.27,1.06.68l4.3,9.35c.36.77-.21,1.66-1.06,1.66Z" fill="#47fa22"/><path d="M126.07,73.48l-4.3,9.35c-.19.41-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l4.3-9.35c.19-.41.61-.68,1.06-.68h10.58c.85,0,1.42.88,1.06,1.66Z" fill="#fff"/><path d="M125.69,99.59h-10.59c-.46,0-.87-.27-1.06-.68l-5.64-12.28c-.36-.77.21-1.66,1.06-1.66h10.59c.46,0,.87.27,1.06.68l5.64,12.28c.36.77-.21,1.66-1.06,1.66Z" fill="#fff"/><path d="M152.93,86.63l-5.64,12.28c-.19.42-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l5.64-12.28c.19-.42.61-.68,1.06-.68h10.58c.85,0,1.42.88,1.06,1.66Z" fill="#47fa22"/></svg>
+    </div>
+    <div class="rail-nav">
+      <button class="rail-btn active" data-page="dashboard" data-tooltip="Dashboard" onclick="navigateTo('dashboard')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1"/></svg>
+      </button>
+      <button class="rail-btn" data-page="leave" data-tooltip="Leave" onclick="navigateTo('leave')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+      </button>
+      <button class="rail-btn" data-page="salary" data-tooltip="Salary" onclick="navigateTo('salary')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </button>
+      <button class="rail-btn" data-page="expenses" data-tooltip="Expenses" onclick="navigateTo('expenses')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+      </button>
+      <button class="rail-btn" data-page="tickets" data-tooltip="Tickets" onclick="navigateTo('tickets')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+      </button>
+      <button class="rail-btn" data-page="profile" data-tooltip="Profile" onclick="navigateTo('profile')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      </button>
+    </div>
+    <div class="rail-avatar" onclick="navigateTo('profile')">ZR</div>
+  </nav>
+
+  <!-- ============================================================
+       SECONDARY NAV
+       ============================================================ -->
+  <aside class="secondary-nav" id="secondaryNav">
+    <div class="sec-nav-header">
+      <span class="sec-nav-title" id="secNavTitle">Quick Links</span>
+      <button class="sec-nav-collapse" onclick="toggleSecondaryNav()" title="Collapse panel">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/></svg>
+      </button>
+    </div>
+    <div class="sec-nav-content" id="secNavContent"></div>
+  </aside>
+
+  <!-- ============================================================
+       MAIN AREA
+       ============================================================ -->
+  <div class="main-area">
+    <header class="top-bar">
+      <button class="btn-ghost" id="secNavToggle" onclick="toggleSecondaryNav()" style="display:none" title="Show side panel">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+      </button>
+      <span class="top-bar-title" id="topBarTitle">Dashboard</span>
+      <span class="top-bar-breadcrumb" id="topBarBreadcrumb"></span>
+      <div class="top-bar-spacer"></div>
+      <div class="top-bar-actions" id="topBarActions"></div>
+    </header>
+
+    <div class="content-scroll">
+
+      <!-- ======================== DASHBOARD ======================== -->
+      <div class="page active" id="page-dashboard">
+        <div class="welcome-row">
+          <div>
+            <div class="welcome-greeting">Good morning, Rui</div>
+            <div class="welcome-date" id="dashDate"></div>
+          </div>
+          <div class="welcome-right"><span class="tnum">EMP-2024-0032</span> &middot; Engineering</div>
+        </div>
+        <div class="metrics-row">
+          <div class="metric-card">
+            <div class="metric-label">Leave Balance</div>
+            <div class="metric-value">17</div>
+            <div class="metric-trend neutral">of 24 total days</div>
+            <div class="metric-accent" style="background:var(--leave-annual);width:71%"></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Latest Net Pay</div>
+            <div class="metric-value">&yen;31,450</div>
+            <div class="metric-trend up">
+              <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+              +2.3% from last month
+            </div>
+            <div class="metric-accent" style="background:var(--status-green);width:100%"></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Pending Expenses</div>
+            <div class="metric-value">2</div>
+            <div class="metric-trend neutral">&yen;1,630 total pending</div>
+            <div class="metric-accent" style="background:var(--status-yellow);width:40%"></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Open Tickets</div>
+            <div class="metric-value">3</div>
+            <div class="metric-trend neutral">1 high priority</div>
+            <div class="metric-accent" style="background:var(--status-red);width:30%"></div>
+          </div>
+        </div>
+        <div class="dash-two-col">
+          <div class="card">
+            <div class="section-label">Recent Activity</div>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-dot" style="background:var(--status-green)"></div>
+                <div>
+                  <div class="timeline-text"><strong>Annual Leave</strong> approved by Manager Li Wei</div>
+                  <div class="timeline-time">Today, 09:15 AM</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot" style="background:var(--status-blue)"></div>
+                <div>
+                  <div class="timeline-text"><strong>March Payslip</strong> has been processed</div>
+                  <div class="timeline-time">Apr 5, 2026</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot" style="background:var(--status-yellow)"></div>
+                <div>
+                  <div class="timeline-text"><strong>Expense Report</strong> &mdash; Software License &yen;680 submitted</div>
+                  <div class="timeline-time">Apr 3, 2026</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot" style="background:var(--status-purple)"></div>
+                <div>
+                  <div class="timeline-text"><strong>Ticket TK-005</strong> &mdash; VPN access request created</div>
+                  <div class="timeline-time">Apr 2, 2026</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot" style="background:var(--status-green)"></div>
+                <div>
+                  <div class="timeline-text"><strong>Expense</strong> &mdash; Client Dinner &yen;820 approved &amp; reimbursed</div>
+                  <div class="timeline-time">Mar 30, 2026</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-label">Leave Summary</div>
+            <div class="leave-summary-chart">
+              <div class="leave-bar-group">
+                <div class="leave-bar-label"><span class="leave-bar-name">Annual Leave</span><span class="leave-bar-nums">5 / 15</span></div>
+                <div class="leave-bar-track"><div class="leave-bar-fill" style="width:33%;background:var(--leave-annual)"></div></div>
+              </div>
+              <div class="leave-bar-group">
+                <div class="leave-bar-label"><span class="leave-bar-name">Sick Leave</span><span class="leave-bar-nums">2 / 10</span></div>
+                <div class="leave-bar-track"><div class="leave-bar-fill" style="width:20%;background:var(--leave-sick)"></div></div>
+              </div>
+              <div class="leave-bar-group">
+                <div class="leave-bar-label"><span class="leave-bar-name">Personal Leave</span><span class="leave-bar-nums">1 / 5</span></div>
+                <div class="leave-bar-track"><div class="leave-bar-fill" style="width:20%;background:var(--leave-personal)"></div></div>
+              </div>
+              <div class="leave-bar-group">
+                <div class="leave-bar-label"><span class="leave-bar-name">Work From Home</span><span class="leave-bar-nums">3 / 12</span></div>
+                <div class="leave-bar-track"><div class="leave-bar-fill" style="width:25%;background:var(--leave-wfh)"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-flat" style="padding:var(--sp-4) var(--sp-5)">
+          <div class="section-label">Quick Actions</div>
+          <div class="quick-actions">
+            <button class="quick-pill" onclick="openSlideOver('new-leave')">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              Request Leave
+            </button>
+            <button class="quick-pill" onclick="openSlideOver('new-expense')">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              Submit Expense
+            </button>
+            <button class="quick-pill" onclick="openSlideOver('new-ticket')">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              Create Ticket
+            </button>
+            <button class="quick-pill" onclick="navigateTo('salary')">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              View Payslip
+            </button>
+            <button class="quick-pill" onclick="navigateTo('profile')">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              My Profile
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================== LEAVE ======================== -->
+      <div class="page" id="page-leave">
+        <div class="balance-cards" id="leaveBalanceCards"></div>
+        <div class="filter-bar">
+          <span class="section-label" style="margin:0">Filter</span>
+          <button class="filter-chip active" data-filter="all" onclick="filterLeaves('all',this)">All</button>
+          <button class="filter-chip" data-filter="Approved" onclick="filterLeaves('Approved',this)">Approved</button>
+          <button class="filter-chip" data-filter="Pending" onclick="filterLeaves('Pending',this)">Pending</button>
+          <button class="filter-chip" data-filter="Rejected" onclick="filterLeaves('Rejected',this)">Rejected</button>
+        </div>
+        <div class="card-flat" style="padding:0;overflow:hidden">
+          <table class="data-table" id="leaveTable">
+            <thead><tr><th style="width:32px"></th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th><th>Applied</th></tr></thead>
+            <tbody id="leaveTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ======================== SALARY ======================== -->
+      <div class="page" id="page-salary">
+        <div class="featured-payslip" id="featuredPayslip"></div>
+        <div class="section-label">Payment History</div>
+        <div class="card-flat" style="padding:0;overflow:hidden">
+          <table class="data-table">
+            <thead><tr><th>Month</th><th>Gross Pay</th><th>Deductions</th><th>Net Pay</th><th>Status</th><th>Pay Date</th><th></th></tr></thead>
+            <tbody id="salaryTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ======================== EXPENSES ======================== -->
+      <div class="page" id="page-expenses">
+        <div class="summary-row" id="expenseSummary"></div>
+        <div class="section-label">Expense Claims</div>
+        <div class="expense-grid" id="expenseGrid"></div>
+      </div>
+
+      <!-- ======================== TICKETS ======================== -->
+      <div class="page" id="page-tickets">
+        <div id="ticketsContent"></div>
+      </div>
+
+      <!-- ======================== PROFILE ======================== -->
+      <div class="page" id="page-profile">
+        <div class="profile-header-card">
+          <div class="profile-avatar">ZR</div>
+          <div>
+            <div class="profile-name">Zhang Rui</div>
+            <div class="profile-title">Software Engineer &middot; Engineering Department</div>
+            <div class="profile-id">EMP-2024-0032</div>
+          </div>
+        </div>
+        <div class="profile-tabs" id="profileTabs">
+          <div class="profile-tab active" data-tab="personal" onclick="switchProfileTab('personal')">Personal</div>
+          <div class="profile-tab" data-tab="company" onclick="switchProfileTab('company')">Company</div>
+          <div class="profile-tab" data-tab="bank" onclick="switchProfileTab('bank')">Bank</div>
+        </div>
+        <div class="card-flat">
+          <div class="profile-section active" id="profile-personal">
+            <div class="profile-grid">
+              <div><div class="profile-field-label">Full Name</div><div class="profile-field-value">Zhang Rui</div></div>
+              <div><div class="profile-field-label">Email</div><div class="profile-field-value">rui.zhang@company.com</div></div>
+              <div><div class="profile-field-label">Phone</div><div class="profile-field-value mono">+86 138-0013-8000</div></div>
+              <div><div class="profile-field-label">Date of Birth</div><div class="profile-field-value">1992-05-14</div></div>
+              <div><div class="profile-field-label">Gender</div><div class="profile-field-value">Male</div></div>
+              <div><div class="profile-field-label">Nationality</div><div class="profile-field-value">Chinese</div></div>
+              <div><div class="profile-field-label">ID Number</div><div class="profile-field-value mono">110101199205******</div></div>
+              <div><div class="profile-field-label">Address</div><div class="profile-field-value">Haidian District, Beijing</div></div>
+              <div><div class="profile-field-label">Emergency Contact</div><div class="profile-field-value">Zhang Wei (Father)</div></div>
+              <div><div class="profile-field-label">Emergency Phone</div><div class="profile-field-value mono">+86 139-0013-9000</div></div>
+            </div>
+          </div>
+          <div class="profile-section" id="profile-company">
+            <div class="profile-grid">
+              <div><div class="profile-field-label">Employee ID</div><div class="profile-field-value mono">EMP-2024-0032</div></div>
+              <div><div class="profile-field-label">Department</div><div class="profile-field-value">Engineering</div></div>
+              <div><div class="profile-field-label">Position</div><div class="profile-field-value">Software Engineer</div></div>
+              <div><div class="profile-field-label">Reporting To</div><div class="profile-field-value">Li Wei (Engineering Manager)</div></div>
+              <div><div class="profile-field-label">Date of Joining</div><div class="profile-field-value">2024-03-15</div></div>
+              <div><div class="profile-field-label">Employment Type</div><div class="profile-field-value">Full-time (EOR)</div></div>
+              <div><div class="profile-field-label">Work Location</div><div class="profile-field-value">Beijing Office</div></div>
+              <div><div class="profile-field-label">Contract Period</div><div class="profile-field-value">2024-03-15 to 2027-03-14</div></div>
+            </div>
+          </div>
+          <div class="profile-section" id="profile-bank">
+            <div class="profile-grid">
+              <div><div class="profile-field-label">Bank Name</div><div class="profile-field-value">China Merchants Bank</div></div>
+              <div><div class="profile-field-label">Account Holder</div><div class="profile-field-value">Zhang Rui</div></div>
+              <div><div class="profile-field-label">Account Number</div><div class="profile-field-value mono">**** **** **** 6789</div></div>
+              <div><div class="profile-field-label">Branch</div><div class="profile-field-value">Zhongguancun Sub-branch, Beijing</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE-OVERS
+     ============================================================ -->
+<div class="slide-over-backdrop" id="slideOverBackdrop" onclick="closeSlideOver()"></div>
+
+<!-- New Leave -->
+<div class="slide-over" id="slideOver-new-leave">
+  <div class="slide-over-header">
+    <span class="slide-over-title">New Leave Request</span>
+    <button class="slide-over-close" onclick="closeSlideOver()"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+  </div>
+  <div class="slide-over-body">
+    <div class="form-group"><label class="form-label">Leave Type</label>
+      <select id="newLeaveType"><option value="">Select leave type...</option><option value="Annual Leave">Annual Leave</option><option value="Sick Leave">Sick Leave</option><option value="Personal Leave">Personal Leave</option><option value="Work From Home">Work From Home</option></select>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">From Date</label><input type="date" id="newLeaveFrom"/></div>
+      <div class="form-group"><label class="form-label">To Date</label><input type="date" id="newLeaveTo"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Reason</label><textarea id="newLeaveReason" placeholder="Please provide a reason for your leave request..." rows="4"></textarea></div>
+    <div class="form-hint">Your request will be sent to Li Wei (Engineering Manager) for approval.</div>
+  </div>
+  <div class="slide-over-footer">
+    <button class="btn btn-secondary" onclick="closeSlideOver()">Cancel</button>
+    <button class="btn btn-primary" onclick="submitLeave()">Submit Request</button>
+  </div>
+</div>
+
+<!-- New Expense -->
+<div class="slide-over" id="slideOver-new-expense">
+  <div class="slide-over-header">
+    <span class="slide-over-title">New Expense Claim</span>
+    <button class="slide-over-close" onclick="closeSlideOver()"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+  </div>
+  <div class="slide-over-body">
+    <div class="form-group"><label class="form-label">Description</label><input type="text" id="newExpDesc" placeholder="e.g., Client dinner at Beijing Hotel"/></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Category</label>
+        <select id="newExpCategory"><option value="">Select category...</option><option value="Travel">Travel</option><option value="Meals">Meals &amp; Entertainment</option><option value="Software">Software &amp; Tools</option><option value="Equipment">Equipment</option><option value="Office">Office Supplies</option><option value="Other">Other</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Amount (CNY)</label><input type="number" id="newExpAmount" placeholder="0.00" step="0.01"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Expense Date</label><input type="date" id="newExpDate"/></div>
+    <div class="form-group"><label class="form-label">Notes</label><textarea id="newExpNotes" placeholder="Additional details or receipt information..." rows="3"></textarea></div>
+  </div>
+  <div class="slide-over-footer">
+    <button class="btn btn-secondary" onclick="closeSlideOver()">Cancel</button>
+    <button class="btn btn-primary" onclick="submitExpense()">Submit Claim</button>
+  </div>
+</div>
+
+<!-- New Ticket -->
+<div class="slide-over" id="slideOver-new-ticket">
+  <div class="slide-over-header">
+    <span class="slide-over-title">New Support Ticket</span>
+    <button class="slide-over-close" onclick="closeSlideOver()"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+  </div>
+  <div class="slide-over-body">
+    <div class="form-group"><label class="form-label">Subject</label><input type="text" id="newTicketSubject" placeholder="Brief description of your issue"/></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Category</label>
+        <select id="newTicketCategory"><option value="">Select category...</option><option value="IT Support">IT Support</option><option value="HR Query">HR Query</option><option value="Payroll">Payroll</option><option value="Benefits">Benefits</option><option value="Facilities">Facilities</option><option value="Other">Other</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Priority</label>
+        <select id="newTicketPriority"><option value="Low">Low</option><option value="Medium" selected>Medium</option><option value="High">High</option><option value="Urgent">Urgent</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Description</label><textarea id="newTicketDesc" placeholder="Describe your issue in detail. Include any relevant context, error messages, or steps to reproduce..." rows="6"></textarea></div>
+  </div>
+  <div class="slide-over-footer">
+    <button class="btn btn-secondary" onclick="closeSlideOver()">Cancel</button>
+    <button class="btn btn-primary" onclick="submitTicket()">Create Ticket</button>
+  </div>
+</div>
+
+<!-- Salary Detail -->
+<div class="slide-over" id="slideOver-salary-detail">
+  <div class="slide-over-header">
+    <span class="slide-over-title" id="salaryDetailTitle">Payslip Detail</span>
+    <button class="slide-over-close" onclick="closeSlideOver()"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+  </div>
+  <div class="slide-over-body" id="salaryDetailBody"></div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+/* ================================================================
+   MOCK DATA
+   ================================================================ */
+const EMP = {
+  name:'Zhang Rui',initials:'ZR',position:'Software Engineer',department:'Engineering',
+  empId:'EMP-2024-0032',email:'rui.zhang@company.com',phone:'+86 138-0013-8000',
+  dob:'1992-05-14',joinDate:'2024-03-15',manager:'Li Wei',managerTitle:'Engineering Manager',location:'Beijing Office'
+};
+
+const LEAVE_TYPES = [
+  {name:'Annual Leave',color:'#0f62fe',total:15,used:5},
+  {name:'Sick Leave',color:'#8a3ffc',total:10,used:2},
+  {name:'Personal Leave',color:'#009d9a',total:5,used:1},
+  {name:'Work From Home',color:'#24a148',total:12,used:3}
+];
+
+const LEAVES = [
+  {id:'LV-001',type:'Annual Leave',from:'2026-04-14',to:'2026-04-16',days:3,status:'Approved',applied:'2026-04-01',approver:'Li Wei',approvedDate:'2026-04-02',reason:'Family vacation trip to Hangzhou'},
+  {id:'LV-002',type:'Sick Leave',from:'2026-03-20',to:'2026-03-21',days:2,status:'Approved',applied:'2026-03-20',approver:'Li Wei',approvedDate:'2026-03-20',reason:'Flu symptoms, doctor visit required'},
+  {id:'LV-003',type:'Work From Home',from:'2026-04-08',to:'2026-04-08',days:1,status:'Pending',applied:'2026-04-06',approver:null,approvedDate:null,reason:'Apartment maintenance scheduled'},
+  {id:'LV-004',type:'Annual Leave',from:'2026-02-10',to:'2026-02-11',days:2,status:'Approved',applied:'2026-02-01',approver:'Li Wei',approvedDate:'2026-02-03',reason:'Extended Chinese New Year break'},
+  {id:'LV-005',type:'Personal Leave',from:'2026-01-15',to:'2026-01-15',days:1,status:'Rejected',applied:'2026-01-10',approver:'Li Wei',approvedDate:'2026-01-11',reason:'Personal appointment',rejectReason:'Conflicts with sprint deadline; please reschedule'},
+  {id:'LV-006',type:'Work From Home',from:'2026-04-10',to:'2026-04-11',days:2,status:'Pending',applied:'2026-04-07',approver:null,approvedDate:null,reason:'Deep focus work on project deliverable'}
+];
+
+const SLIPS = [
+  {month:'March 2026',gross:42000,deductions:10550,net:31450,status:'Paid',payDate:'2026-04-05'},
+  {month:'February 2026',gross:42000,deductions:11250,net:30750,status:'Paid',payDate:'2026-03-05'},
+  {month:'January 2026',gross:42000,deductions:10800,net:31200,status:'Paid',payDate:'2026-02-05'},
+  {month:'December 2025',gross:48000,deductions:13200,net:34800,status:'Paid',payDate:'2026-01-05'},
+  {month:'November 2025',gross:42000,deductions:10550,net:31450,status:'Paid',payDate:'2025-12-05'}
+];
+
+const SAL_DETAIL = {
+  earnings:[
+    {item:'Basic Salary',amount:30000},{item:'Housing Allowance',amount:5000},
+    {item:'Transport Allowance',amount:2000},{item:'Meal Allowance',amount:1500},
+    {item:'Performance Bonus',amount:3500}
+  ],
+  deductions:[
+    {item:'Pension (8%)',amount:3360},{item:'Medical Insurance (2%)',amount:840},
+    {item:'Unemployment Insurance (0.5%)',amount:210},{item:'Housing Fund (12%)',amount:5040},
+    {item:'Individual Income Tax',amount:1100}
+  ]
+};
+
+const EXPENSES = [
+  {id:'EXP-001',desc:'Client Dinner - Beijing Hotel',category:'Meals',amount:820,date:'2026-03-25',status:'Approved',notes:'Meeting with TechCorp client team'},
+  {id:'EXP-002',desc:'Taxi to Airport',category:'Travel',amount:280,date:'2026-03-18',status:'Approved',notes:'Shanghai business trip'},
+  {id:'EXP-003',desc:'Software License - Figma',category:'Software',amount:680,date:'2026-04-01',status:'Pending',notes:'Annual design tool subscription'},
+  {id:'EXP-004',desc:'Team Lunch',category:'Meals',amount:950,date:'2026-04-03',status:'Pending',notes:'Sprint review celebration lunch'},
+  {id:'EXP-005',desc:'Conference Ticket - QCon',category:'Other',amount:2800,date:'2026-02-15',status:'Rejected',notes:'Annual conference registration. Rejected: requires pre-approval for amounts over 2000 CNY.'}
+];
+
+const TICKETS = [
+  {id:'TK-001',subject:'Cannot access Jenkins CI pipeline',category:'IT Support',priority:'High',status:'Open',created:'2026-04-05',desc:'Getting 403 Forbidden error when trying to access Jenkins at ci.internal.com. Tried clearing cache and different browsers. Need access restored for deployment workflow.'},
+  {id:'TK-002',subject:'Request additional monitor',category:'Facilities',priority:'Low',status:'Open',created:'2026-04-03',desc:'Would like to request a second external monitor for my workstation. Currently using laptop screen and one 24-inch monitor, need more screen real estate for development work.'},
+  {id:'TK-003',subject:'March payslip discrepancy',category:'Payroll',priority:'Medium',status:'Closed',created:'2026-03-28',desc:'The transport allowance on my March payslip shows 1500 instead of the expected 2000. Resolved: adjustment will be reflected in April payslip.'},
+  {id:'TK-004',subject:'Update emergency contact info',category:'HR Query',priority:'Low',status:'Closed',created:'2026-03-15',desc:'Need to update my emergency contact phone number. New number provided via secure form.'},
+  {id:'TK-005',subject:'VPN access for remote work',category:'IT Support',priority:'Medium',status:'Open',created:'2026-04-02',desc:'Need VPN credentials for the new GlobalProtect VPN. The old Cisco AnyConnect credentials no longer work after the migration. Required for remote work days.'}
+];
+
+const CATEGORY_ICONS = {
+  Travel:'<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+  Meals:'<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8c-2.21 0-4 1.79-4 4h8c0-2.21-1.79-4-4-4zM5 16h14M7 20h10M12 4v2"/></svg>',
+  Software:'<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>',
+  Equipment:'<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.573-1.066z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',
+  Office:'<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>',
+  Other:'<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>'
+};
+
+/* ================================================================
+   UTILITIES
+   ================================================================ */
+function fmt(n){return '\u00a5'+n.toLocaleString('en-US')}
+
+function statusBadge(s){
+  const m={Approved:'badge-approved',Pending:'badge-pending',Rejected:'badge-rejected',Draft:'badge-draft',Open:'badge-open',Closed:'badge-closed',Paid:'badge-paid'};
+  return '<span class="badge '+(m[s]||'badge-draft')+'">'+s+'</span>';
+}
+
+function ltColor(name){const t=LEAVE_TYPES.find(l=>l.name===name);return t?t.color:'#6f6f6f'}
+
+function showToast(msg){
+  const c=document.getElementById('toastContainer');
+  const t=document.createElement('div');
+  t.className='toast';
+  t.innerHTML='<div class="toast-icon success"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div><span>'+msg+'</span>';
+  c.appendChild(t);
+  requestAnimationFrame(()=>{requestAnimationFrame(()=>{t.classList.add('show')})});
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400)},3500);
+}
+
+/* ================================================================
+   NAVIGATION
+   ================================================================ */
+let currentPage='dashboard';
+
+function navigateTo(page){
+  currentPage=page;
+  document.querySelectorAll('.rail-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+page));
+
+  const titles={dashboard:'Dashboard',leave:'Leave Management',salary:'Salary & Payslips',expenses:'Expense Claims',tickets:'Support Tickets',profile:'My Profile'};
+  document.getElementById('topBarTitle').textContent=titles[page]||page;
+  document.getElementById('topBarBreadcrumb').textContent='';
+
+  const plusIcon='<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>';
+  const actions={
+    leave:'<button class="btn btn-primary" onclick="openSlideOver(\'new-leave\')">'+plusIcon+' New Leave</button>',
+    expenses:'<button class="btn btn-primary" onclick="openSlideOver(\'new-expense\')">'+plusIcon+' New Expense</button>',
+    tickets:'<button class="btn btn-primary" onclick="openSlideOver(\'new-ticket\')">'+plusIcon+' New Ticket</button>'
+  };
+  document.getElementById('topBarActions').innerHTML=actions[page]||'';
+  updateSecondaryNav(page);
+}
+
+/* ================================================================
+   SECONDARY NAV
+   ================================================================ */
+function updateSecondaryNav(page){
+  const title=document.getElementById('secNavTitle');
+  const content=document.getElementById('secNavContent');
+
+  if(page==='dashboard'){
+    title.textContent='Quick Links';
+    content.innerHTML=`
+      <a class="sec-nav-item" onclick="navigateTo('leave')"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Leave Requests</a>
+      <a class="sec-nav-item" onclick="navigateTo('salary')"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 1v8m0 0v1"/></svg>Latest Payslip</a>
+      <a class="sec-nav-item" onclick="navigateTo('expenses')"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>My Expenses</a>
+      <a class="sec-nav-item" onclick="navigateTo('tickets')"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>Support Tickets</a>
+      <div class="sec-nav-divider"></div>
+      <a class="sec-nav-item" onclick="openSlideOver('new-leave')"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>New Leave Request</a>
+      <a class="sec-nav-item" onclick="openSlideOver('new-expense')"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>New Expense Claim</a>`;
+  } else if(page==='leave'){
+    title.textContent='Leave Balances';
+    let h='';
+    LEAVE_TYPES.forEach(lt=>{
+      h+='<div class="sec-nav-balance"><span class="sec-nav-balance-label"><span class="sec-nav-balance-dot" style="background:'+lt.color+'"></span>'+lt.name+'</span><span class="sec-nav-balance-count">'+(lt.total-lt.used)+'</span></div>';
+    });
+    h+='<div class="sec-nav-divider"></div><div style="padding:4px 12px;font-size:.714rem;color:var(--text-tertiary)">Total remaining: <strong style="color:var(--text-primary);font-family:var(--font-mono)">'+LEAVE_TYPES.reduce((s,l)=>s+l.total-l.used,0)+'</strong> days</div>';
+    content.innerHTML=h;
+  } else if(page==='salary'){
+    title.textContent='Payslip History';
+    content.innerHTML=SLIPS.map((s,i)=>'<a class="sec-nav-item'+(i===0?' active':'')+'" onclick="showSalaryDetail('+i+')">'+s.month+'</a>').join('');
+  } else if(page==='expenses'){
+    title.textContent='Categories';
+    const cats=[...new Set(EXPENSES.map(e=>e.category))];
+    let h='<a class="sec-nav-item active">All Expenses</a>';
+    cats.forEach(c=>{const n=EXPENSES.filter(e=>e.category===c).length;h+='<a class="sec-nav-item">'+c+' <span style="margin-left:auto;font-size:.714rem;color:var(--text-tertiary)">'+n+'</span></a>'});
+    content.innerHTML=h;
+  } else if(page==='tickets'){
+    title.textContent='Filters';
+    const oC=TICKETS.filter(t=>t.status==='Open').length,cC=TICKETS.filter(t=>t.status==='Closed').length;
+    content.innerHTML=`
+      <a class="sec-nav-item active">All Tickets</a>
+      <a class="sec-nav-item">Open <span style="margin-left:auto;font-size:.714rem;color:var(--text-tertiary)">${oC}</span></a>
+      <a class="sec-nav-item">Closed <span style="margin-left:auto;font-size:.714rem;color:var(--text-tertiary)">${cC}</span></a>
+      <div class="sec-nav-divider"></div>
+      <div style="padding:4px 12px;font-size:.714rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-tertiary)">By Priority</div>
+      <a class="sec-nav-item"><span class="sec-nav-balance-dot" style="background:var(--status-red)"></span>High</a>
+      <a class="sec-nav-item"><span class="sec-nav-balance-dot" style="background:var(--status-yellow)"></span>Medium</a>
+      <a class="sec-nav-item"><span class="sec-nav-balance-dot" style="background:var(--status-gray)"></span>Low</a>`;
+  } else if(page==='profile'){
+    title.textContent='Account';
+    content.innerHTML=`
+      <a class="sec-nav-item active" onclick="switchProfileTab('personal')">Personal Info</a>
+      <a class="sec-nav-item" onclick="switchProfileTab('company')">Company Info</a>
+      <a class="sec-nav-item" onclick="switchProfileTab('bank')">Bank Details</a>
+      <div class="sec-nav-divider"></div>
+      <div style="padding:8px 12px;font-size:.785rem;color:var(--text-tertiary)"><div style="margin-bottom:4px">Joined</div><div style="color:var(--text-primary);font-family:var(--font-mono);font-size:.785rem">${EMP.joinDate}</div></div>
+      <div style="padding:8px 12px;font-size:.785rem;color:var(--text-tertiary)"><div style="margin-bottom:4px">Reports to</div><div style="color:var(--text-primary)">${EMP.manager}</div></div>`;
+  }
+}
+
+let secNavCollapsed=false;
+function toggleSecondaryNav(){
+  secNavCollapsed=!secNavCollapsed;
+  document.getElementById('secondaryNav').classList.toggle('collapsed',secNavCollapsed);
+  document.getElementById('secNavToggle').style.display=secNavCollapsed?'flex':'none';
+}
+
+/* ================================================================
+   SLIDE-OVER
+   ================================================================ */
+let currentSlideOver=null;
+function openSlideOver(id){
+  closeSlideOver();
+  currentSlideOver=id;
+  document.getElementById('slideOverBackdrop').classList.add('open');
+  const el=document.getElementById('slideOver-'+id);
+  if(el)el.classList.add('open');
+}
+function closeSlideOver(){
+  document.getElementById('slideOverBackdrop').classList.remove('open');
+  document.querySelectorAll('.slide-over').forEach(s=>s.classList.remove('open'));
+  currentSlideOver=null;
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&currentSlideOver)closeSlideOver()});
+
+/* ================================================================
+   LEAVE
+   ================================================================ */
+function renderLeaveBalances(){
+  document.getElementById('leaveBalanceCards').innerHTML=LEAVE_TYPES.map(lt=>{
+    const r=lt.total-lt.used;
+    return '<div class="balance-card"><div class="balance-card-stripe" style="background:'+lt.color+'"></div><div class="balance-card-type">'+lt.name+'</div><div class="balance-card-num"><span class="balance-card-used">'+r+'</span><span class="balance-card-total">/ '+lt.total+' days</span></div></div>';
+  }).join('');
+}
+
+let leaveFilter='all';
+function renderLeaveTable(){
+  const data=leaveFilter==='all'?LEAVES:LEAVES.filter(l=>l.status===leaveFilter);
+  document.getElementById('leaveTableBody').innerHTML=data.map((l,i)=>{
+    const c=ltColor(l.type),eid='le-'+i;
+    let ap='';
+    if(l.status==='Approved'){
+      ap='<div class="approval-timeline"><div class="approval-step"><div class="approval-step-dot" style="background:var(--status-blue)"></div><span class="approval-step-label">Submitted by '+EMP.name+'</span><span class="approval-step-date">'+l.applied+'</span></div><div class="approval-step"><div class="approval-step-dot" style="background:var(--status-green)"></div><span class="approval-step-label">Approved by '+l.approver+'</span><span class="approval-step-date">'+l.approvedDate+'</span></div></div>';
+    } else if(l.status==='Pending'){
+      ap='<div class="approval-timeline"><div class="approval-step"><div class="approval-step-dot" style="background:var(--status-blue)"></div><span class="approval-step-label">Submitted by '+EMP.name+'</span><span class="approval-step-date">'+l.applied+'</span></div><div class="approval-step"><div class="approval-step-dot" style="background:var(--status-yellow)"></div><span class="approval-step-label">Awaiting approval from '+EMP.manager+'</span><span class="approval-step-date">Pending</span></div></div>';
+    } else if(l.status==='Rejected'){
+      ap='<div class="approval-timeline"><div class="approval-step"><div class="approval-step-dot" style="background:var(--status-blue)"></div><span class="approval-step-label">Submitted by '+EMP.name+'</span><span class="approval-step-date">'+l.applied+'</span></div><div class="approval-step"><div class="approval-step-dot" style="background:var(--status-red)"></div><span class="approval-step-label">Rejected by '+l.approver+'</span><span class="approval-step-date">'+l.approvedDate+'</span></div></div>'+(l.rejectReason?'<div style="font-size:.785rem;color:var(--status-red);margin-top:4px;padding-left:18px">'+l.rejectReason+'</div>':'');
+    }
+    return '<tr><td><span class="expand-toggle" onclick="toggleExpand(\''+eid+'\',this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></span></td><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+c+';margin-right:8px;vertical-align:middle"></span>'+l.type+'</td><td class="tnum">'+l.from+'</td><td class="tnum">'+l.to+'</td><td class="tnum">'+l.days+'</td><td>'+statusBadge(l.status)+'</td><td class="tnum">'+l.applied+'</td></tr><tr class="expand-row" id="'+eid+'"><td colspan="7"><div style="margin-bottom:8px;font-size:.785rem;color:var(--text-tertiary)"><strong style="color:var(--text-secondary)">Reason:</strong> '+l.reason+'</div>'+ap+'</td></tr>';
+  }).join('');
+}
+
+function toggleExpand(id,el){document.getElementById(id).classList.toggle('open');el.classList.toggle('open')}
+function filterLeaves(f,chip){leaveFilter=f;document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));chip.classList.add('active');renderLeaveTable()}
+
+/* ================================================================
+   SALARY
+   ================================================================ */
+function renderSalary(){
+  const s=SLIPS[0];
+  document.getElementById('featuredPayslip').innerHTML=`
+    <div><div class="featured-payslip-label">Latest Payslip</div><div class="featured-payslip-month">${s.month}</div><div><span class="featured-payslip-amount">${fmt(s.net)}</span><span class="featured-payslip-currency">CNY</span></div></div>
+    <div class="featured-payslip-right">
+      <div><div class="featured-payslip-stat-label">Gross Pay</div><div class="featured-payslip-stat-val tnum">${fmt(s.gross)}</div></div>
+      <div><div class="featured-payslip-stat-label">Deductions</div><div class="featured-payslip-stat-val tnum">${fmt(s.deductions)}</div></div>
+      <div><div class="featured-payslip-stat-label">Pay Date</div><div class="featured-payslip-stat-val tnum">${s.payDate}</div></div>
+    </div>`;
+  document.getElementById('salaryTableBody').innerHTML=SLIPS.map((s,i)=>`
+    <tr><td style="font-weight:var(--fw-medium)">${s.month}</td><td class="tnum">${fmt(s.gross)}</td><td class="tnum">${fmt(s.deductions)}</td><td class="tnum" style="font-weight:var(--fw-semibold)">${fmt(s.net)}</td><td>${statusBadge(s.status)}</td><td class="tnum">${s.payDate}</td><td><button class="btn btn-ghost" onclick="showSalaryDetail(${i})" style="font-size:.785rem;color:var(--text-link)">View Detail</button></td></tr>`).join('');
+}
+
+function showSalaryDetail(idx){
+  const s=SLIPS[idx];
+  document.getElementById('salaryDetailTitle').textContent=s.month+' Payslip';
+  const dedTotal=SAL_DETAIL.deductions.reduce((a,d)=>a+d.amount,0);
+  const factor=s.gross/42000;
+  let h=`<div style="text-align:center;padding:var(--sp-6) 0;border-bottom:1px solid var(--border-subtle);margin-bottom:var(--sp-5)"><div class="section-label">Net Pay</div><div style="font-family:var(--font-mono);font-feature-settings:'tnum';font-size:2rem;font-weight:var(--fw-semibold);color:var(--text-primary);line-height:1.2">${fmt(s.net)}</div><div style="font-size:.785rem;color:var(--text-tertiary);margin-top:4px">Paid on ${s.payDate}</div></div><div class="section-label">Earnings</div><table class="data-table" style="margin-bottom:var(--sp-5)"><tbody>`;
+  SAL_DETAIL.earnings.forEach(e=>{h+='<tr><td>'+e.item+'</td><td class="tnum" style="text-align:right;font-weight:var(--fw-medium)">'+fmt(Math.round(e.amount*factor))+'</td></tr>'});
+  h+='<tr style="border-top:2px solid var(--border-strong)"><td style="font-weight:var(--fw-semibold)">Total Earnings</td><td class="tnum" style="text-align:right;font-weight:var(--fw-semibold)">'+fmt(s.gross)+'</td></tr></tbody></table>';
+  h+='<div class="section-label">Deductions</div><table class="data-table"><tbody>';
+  SAL_DETAIL.deductions.forEach(d=>{h+='<tr><td>'+d.item+'</td><td class="tnum" style="text-align:right;font-weight:var(--fw-medium);color:var(--status-red)">&minus;'+fmt(Math.round(d.amount*(s.deductions/dedTotal)))+'</td></tr>'});
+  h+='<tr style="border-top:2px solid var(--border-strong)"><td style="font-weight:var(--fw-semibold)">Total Deductions</td><td class="tnum" style="text-align:right;font-weight:var(--fw-semibold);color:var(--status-red)">&minus;'+fmt(s.deductions)+'</td></tr></tbody></table>';
+  document.getElementById('salaryDetailBody').innerHTML=h;
+  openSlideOver('salary-detail');
+}
+
+/* ================================================================
+   EXPENSES
+   ================================================================ */
+function renderExpenses(){
+  const total=EXPENSES.reduce((s,e)=>s+e.amount,0);
+  const pending=EXPENSES.filter(e=>e.status==='Pending').reduce((s,e)=>s+e.amount,0);
+  const approved=EXPENSES.filter(e=>e.status==='Approved').reduce((s,e)=>s+e.amount,0);
+  document.getElementById('expenseSummary').innerHTML=`
+    <div class="summary-stat"><div class="summary-stat-val tnum">${fmt(total)}</div><div class="summary-stat-label">Total Claims</div></div>
+    <div class="summary-stat"><div class="summary-stat-val tnum" style="color:var(--status-green)">${fmt(approved)}</div><div class="summary-stat-label">Approved</div></div>
+    <div class="summary-stat"><div class="summary-stat-val tnum" style="color:var(--status-amber-text)">${fmt(pending)}</div><div class="summary-stat-label">Pending</div></div>
+    <div class="summary-stat"><div class="summary-stat-val tnum">${EXPENSES.length}</div><div class="summary-stat-label">Total Records</div></div>`;
+
+  const bgC={Travel:'var(--status-blue-bg)',Meals:'var(--status-green-bg)',Software:'var(--status-purple-bg)',Equipment:'var(--status-gray-bg)',Office:'var(--status-amber-bg)',Other:'var(--status-gray-bg)'};
+  const icC={Travel:'var(--status-blue)',Meals:'var(--status-green)',Software:'var(--status-purple)',Equipment:'var(--status-gray)',Office:'var(--status-amber-text)',Other:'var(--status-gray)'};
+  document.getElementById('expenseGrid').innerHTML=EXPENSES.map(e=>{
+    const icon=CATEGORY_ICONS[e.category]||CATEGORY_ICONS.Other;
+    return `<div class="expense-card"><div class="expense-card-top"><div class="expense-card-icon" style="background:${bgC[e.category]||bgC.Other};color:${icC[e.category]||icC.Other}">${icon}</div><div class="expense-card-amount tnum">${fmt(e.amount)}</div></div><div class="expense-card-desc">${e.desc}</div><div class="expense-card-meta"><span>${e.category}</span><span>&middot;</span><span class="tnum">${e.date}</span></div><div class="expense-card-footer">${statusBadge(e.status)}<span style="font-family:var(--font-mono);font-size:.714rem;color:var(--text-tertiary)">${e.id}</span></div></div>`;
+  }).join('');
+}
+
+/* ================================================================
+   TICKETS
+   ================================================================ */
+function renderTickets(){
+  const pColors={High:'var(--status-red)',Medium:'var(--status-yellow)',Low:'var(--status-gray)',Urgent:'var(--status-red)'};
+  const pOrder={Urgent:-1,High:0,Medium:1,Low:2};
+  const open=TICKETS.filter(t=>t.status==='Open').sort((a,b)=>(pOrder[a.priority]??99)-(pOrder[b.priority]??99));
+  const closed=TICKETS.filter(t=>t.status==='Closed');
+  let h='';
+  if(open.length){
+    h+=`<div class="ticket-group"><div class="ticket-group-header"><div class="ticket-group-dot" style="background:var(--status-blue)"></div><span class="ticket-group-label">Open</span><span class="ticket-group-count">${open.length} tickets</span></div>`;
+    open.forEach(t=>{h+=ticketHtml(t,pColors)});h+='</div>';
+  }
+  if(closed.length){
+    h+=`<div class="ticket-group"><div class="ticket-group-header"><div class="ticket-group-dot" style="background:var(--status-purple)"></div><span class="ticket-group-label">Closed</span><span class="ticket-group-count">${closed.length} tickets</span></div>`;
+    closed.forEach(t=>{h+=ticketHtml(t,pColors)});h+='</div>';
+  }
+  document.getElementById('ticketsContent').innerHTML=h;
+}
+
+function ticketHtml(t,pc){
+  return `<div class="ticket-item" onclick="this.classList.toggle('expanded')"><div class="ticket-item-top"><div class="ticket-item-subject">${t.subject}</div><div class="ticket-item-id">${t.id}</div></div><div class="ticket-item-meta">${statusBadge(t.status)}<span style="display:inline-flex;align-items:center;gap:4px"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${pc[t.priority]}"></span>${t.priority}</span><span>${t.category}</span><span class="tnum">${t.created}</span></div><div class="ticket-item-expand">${t.desc}</div></div>`;
+}
+
+/* ================================================================
+   PROFILE TABS
+   ================================================================ */
+function switchProfileTab(tab){
+  document.querySelectorAll('.profile-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  document.querySelectorAll('.profile-section').forEach(s=>s.classList.toggle('active',s.id==='profile-'+tab));
+}
+
+/* ================================================================
+   FORM SUBMISSIONS
+   ================================================================ */
+function submitLeave(){
+  const type=document.getElementById('newLeaveType').value;
+  const from=document.getElementById('newLeaveFrom').value;
+  const to=document.getElementById('newLeaveTo').value;
+  const reason=document.getElementById('newLeaveReason').value;
+  if(!type||!from||!to){alert('Please fill in leave type, from date, and to date.');return}
+  const days=Math.max(1,Math.ceil((new Date(to)-new Date(from))/(864e5))+1);
+  LEAVES.unshift({id:'LV-'+String(LEAVES.length+1).padStart(3,'0'),type,from,to,days,status:'Pending',applied:new Date().toISOString().split('T')[0],approver:null,approvedDate:null,reason:reason||'No reason provided'});
+  closeSlideOver();renderLeaveTable();
+  document.getElementById('newLeaveType').value='';document.getElementById('newLeaveFrom').value='';document.getElementById('newLeaveTo').value='';document.getElementById('newLeaveReason').value='';
+  showToast('Leave request submitted successfully');
+  if(currentPage!=='leave')navigateTo('leave');
+}
+
+function submitExpense(){
+  const desc=document.getElementById('newExpDesc').value;
+  const cat=document.getElementById('newExpCategory').value;
+  const amt=parseFloat(document.getElementById('newExpAmount').value);
+  const date=document.getElementById('newExpDate').value;
+  const notes=document.getElementById('newExpNotes').value;
+  if(!desc||!cat||!amt||!date){alert('Please fill in description, category, amount, and date.');return}
+  EXPENSES.unshift({id:'EXP-'+String(EXPENSES.length+1).padStart(3,'0'),desc,category:cat,amount:amt,date,status:'Pending',notes:notes||''});
+  closeSlideOver();renderExpenses();
+  document.getElementById('newExpDesc').value='';document.getElementById('newExpCategory').value='';document.getElementById('newExpAmount').value='';document.getElementById('newExpDate').value='';document.getElementById('newExpNotes').value='';
+  showToast('Expense claim submitted successfully');
+  if(currentPage!=='expenses')navigateTo('expenses');
+}
+
+function submitTicket(){
+  const subject=document.getElementById('newTicketSubject').value;
+  const cat=document.getElementById('newTicketCategory').value;
+  const priority=document.getElementById('newTicketPriority').value;
+  const desc=document.getElementById('newTicketDesc').value;
+  if(!subject||!cat||!desc){alert('Please fill in subject, category, and description.');return}
+  TICKETS.unshift({id:'TK-'+String(TICKETS.length+1).padStart(3,'0'),subject,category:cat,priority,desc,status:'Open',created:new Date().toISOString().split('T')[0]});
+  closeSlideOver();renderTickets();
+  document.getElementById('newTicketSubject').value='';document.getElementById('newTicketCategory').value='';document.getElementById('newTicketPriority').value='Medium';document.getElementById('newTicketDesc').value='';
+  showToast('Support ticket created successfully');
+  if(currentPage!=='tickets')navigateTo('tickets');
+}
+
+/* ================================================================
+   INIT
+   ================================================================ */
+function init(){
+  const now=new Date();
+  const h=now.getHours();
+  const greeting=h<12?'Good morning':h<18?'Good afternoon':'Good evening';
+  document.querySelector('.welcome-greeting').textContent=greeting+', Rui';
+  document.getElementById('dashDate').textContent=now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  renderLeaveBalances();renderLeaveTable();renderSalary();renderExpenses();renderTickets();
+  updateSecondaryNav('dashboard');
+}
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>

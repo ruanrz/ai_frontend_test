@@ -1,0 +1,2289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RampingUp — Employee Portal (Cohere Edition)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;0,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ========================================================================
+   RESET & DESIGN TOKENS
+   ======================================================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Typography */
+  --serif: 'Source Serif 4', Georgia, serif;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: 'JetBrains Mono', 'Menlo', monospace;
+
+  /* Cohere palette */
+  --black: #000000;
+  --secondary: #6b6b6b;
+  --muted: #93939f;
+  --bg-page: #fafafa;
+  --bg-main: #ffffff;
+  --border: #d9d9dd;
+  --border-strong: #b8b8be;
+  --blue: #1863dc;
+  --blue-10: rgba(24, 99, 220, 0.10);
+  --blue-20: rgba(24, 99, 220, 0.20);
+
+  /* Leave type colors */
+  --leave-blue: #1863dc;
+  --leave-purple: #7c3aed;
+  --leave-teal: #059669;
+  --leave-amber: #d97706;
+
+  /* Status semantic */
+  --green: #059669;
+  --green-10: rgba(5, 150, 105, 0.10);
+  --red: #dc2626;
+  --red-10: rgba(220, 38, 38, 0.10);
+  --amber: #d97706;
+  --amber-10: rgba(217, 119, 6, 0.10);
+
+  /* Spacing & Shape */
+  --radius: 6px;
+  --radius-lg: 12px;
+  --radius-card: 22px;
+  --transition: 0.18s ease;
+
+  /* Layout */
+  --nav-width: 48px;
+  --util-height: 32px;
+  --max-w: 1200px;
+}
+
+html { font-size: 14px; }
+
+body {
+  font-family: var(--sans);
+  color: var(--black);
+  background: var(--bg-page);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+button {
+  font-family: var(--sans);
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: inherit;
+}
+
+input, select, textarea {
+  font-family: var(--sans);
+  font-size: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  outline: none;
+  color: var(--black);
+  background: var(--bg-main);
+  transition: border-color var(--transition);
+  width: 100%;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--blue);
+}
+
+textarea { resize: vertical; min-height: 80px; }
+select { appearance: auto; }
+
+.tnum {
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+.mono {
+  font-family: var(--mono);
+  font-size: 13px;
+}
+
+/* ========================================================================
+   UTILITY BAR — 32px top strip
+   ======================================================================== */
+.util-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  height: var(--util-height);
+  background: var(--bg-page);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px 0 64px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.util-bar__left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.util-bar__left svg {
+  width: 10px;
+  height: 10px;
+  opacity: 0.5;
+}
+
+.util-bar__breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.util-bar__breadcrumb span {
+  color: var(--muted);
+}
+
+.util-bar__breadcrumb .crumb-active {
+  color: var(--secondary);
+  font-weight: 500;
+}
+
+.util-bar__right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.util-bar__date {
+  color: var(--muted);
+}
+
+.util-bar__notif {
+  position: relative;
+  cursor: pointer;
+  color: var(--secondary);
+  display: flex;
+  align-items: center;
+}
+
+.util-bar__notif svg {
+  width: 14px;
+  height: 14px;
+}
+
+.util-bar__notif-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 6px;
+  height: 6px;
+  background: var(--blue);
+  border-radius: 50%;
+}
+
+.util-bar__avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--black);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity var(--transition);
+}
+
+.util-bar__avatar:hover { opacity: 0.8; }
+
+/* ========================================================================
+   LEFT MINI-NAV — 48px icon rail
+   ======================================================================== */
+.mini-nav {
+  position: fixed;
+  top: var(--util-height);
+  left: 0;
+  bottom: 0;
+  width: var(--nav-width);
+  background: var(--bg-main);
+  border-right: 1px solid var(--border);
+  z-index: 150;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 0;
+  gap: 4px;
+}
+
+.mini-nav__logo {
+  width: 28px;
+  height: 28px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mini-nav__logo svg {
+  width: 24px;
+  height: 24px;
+}
+
+.mini-nav__item {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--secondary);
+  cursor: pointer;
+  transition: all var(--transition);
+  text-decoration: none;
+}
+
+.mini-nav__item:hover {
+  background: var(--bg-page);
+  color: var(--black);
+  text-decoration: none;
+}
+
+.mini-nav__item.active {
+  background: var(--blue-10);
+  color: var(--blue);
+}
+
+.mini-nav__item svg {
+  width: 18px;
+  height: 18px;
+}
+
+.mini-nav__tooltip {
+  position: absolute;
+  left: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--black);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition);
+  z-index: 300;
+}
+
+.mini-nav__item:hover .mini-nav__tooltip {
+  opacity: 1;
+}
+
+.mini-nav__spacer {
+  flex: 1;
+}
+
+/* ========================================================================
+   MAIN CONTENT AREA
+   ======================================================================== */
+.main-area {
+  margin-top: var(--util-height);
+  margin-left: var(--nav-width);
+  min-height: calc(100vh - var(--util-height));
+}
+
+.page {
+  display: none;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 48px 40px 80px;
+}
+
+.page.active {
+  display: block;
+}
+
+/* ========================================================================
+   EDITORIAL PAGE HEADER
+   ======================================================================== */
+.page-header {
+  margin-bottom: 40px;
+}
+
+.page-header__title {
+  font-family: var(--serif);
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--black);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.page-header__subtitle {
+  font-size: 15px;
+  color: var(--secondary);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+.page-header__row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.page-header__actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ========================================================================
+   BUTTONS
+   ======================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all var(--transition);
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.btn-primary {
+  background: var(--black);
+  color: #fff;
+  border: 1px solid var(--black);
+}
+
+.btn-primary:hover {
+  background: #1a1a1a;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--secondary);
+  border: 1px solid var(--border);
+}
+
+.btn-ghost:hover {
+  color: var(--blue);
+  border-color: var(--blue);
+}
+
+.btn-link {
+  background: transparent;
+  color: var(--secondary);
+  border: none;
+  padding: 8px 12px;
+}
+
+.btn-link:hover {
+  color: var(--blue);
+}
+
+.btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ========================================================================
+   CARDS — 22px Cohere signature radius
+   ======================================================================== */
+.card {
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  transition: border-color var(--transition);
+}
+
+.card:hover {
+  border-color: var(--border-strong);
+}
+
+.card--flat {
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 24px;
+}
+
+/* ========================================================================
+   TAGS / PILLS
+   ======================================================================== */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.tag--approved, .tag--paid, .tag--closed {
+  background: var(--green-10);
+  color: var(--green);
+}
+
+.tag--pending, .tag--open {
+  background: var(--amber-10);
+  color: var(--amber);
+}
+
+.tag--rejected {
+  background: var(--red-10);
+  color: var(--red);
+}
+
+.tag--draft {
+  background: rgba(147, 147, 159, 0.10);
+  color: var(--muted);
+}
+
+.tag--blue {
+  background: rgba(24, 99, 220, 0.10);
+  color: #1863dc;
+}
+
+.tag--purple {
+  background: rgba(124, 58, 237, 0.10);
+  color: #7c3aed;
+}
+
+.tag--teal {
+  background: rgba(5, 150, 105, 0.10);
+  color: #059669;
+}
+
+.tag--amber {
+  background: rgba(217, 119, 6, 0.10);
+  color: #d97706;
+}
+
+/* ========================================================================
+   GRID LAYOUTS
+   ======================================================================== */
+.grid-2x2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+/* ========================================================================
+   METRIC TILE
+   ======================================================================== */
+.metric-tile {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  background: var(--bg-main);
+  transition: border-color var(--transition);
+}
+
+.metric-tile:hover {
+  border-color: var(--border-strong);
+}
+
+.metric-tile__label {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.metric-tile__value {
+  font-family: var(--mono);
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--black);
+  line-height: 1.2;
+}
+
+.metric-tile__sub {
+  font-size: 13px;
+  color: var(--secondary);
+  margin-top: 4px;
+}
+
+/* ========================================================================
+   SECTION HEADING (serif)
+   ======================================================================== */
+.section-heading {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--black);
+  margin-bottom: 20px;
+  letter-spacing: -0.01em;
+}
+
+.section-heading--sm {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--black);
+  margin-bottom: 16px;
+}
+
+/* ========================================================================
+   TIMELINE (Dashboard activity)
+   ======================================================================== */
+.timeline {
+  position: relative;
+  padding-left: 24px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: var(--border);
+}
+
+.timeline__item {
+  position: relative;
+  padding-bottom: 20px;
+}
+
+.timeline__item:last-child {
+  padding-bottom: 0;
+}
+
+.timeline__dot {
+  position: absolute;
+  left: -24px;
+  top: 6px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  background: var(--bg-main);
+}
+
+.timeline__item--active .timeline__dot {
+  border-color: var(--blue);
+  background: var(--blue-10);
+}
+
+.timeline__title {
+  font-size: 14px;
+  color: var(--black);
+  font-weight: 500;
+}
+
+.timeline__meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ========================================================================
+   DATA TABLE
+   ======================================================================== */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table thead {
+  border-bottom: 1px solid var(--border);
+}
+
+.data-table th {
+  padding: 10px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  text-align: left;
+}
+
+.data-table td {
+  padding: 14px 12px;
+  font-size: 14px;
+  border-bottom: 1px solid #eeeeef;
+  color: var(--black);
+}
+
+.data-table tbody tr {
+  transition: background var(--transition);
+}
+
+.data-table tbody tr:hover {
+  background: var(--bg-page);
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ========================================================================
+   LEAVE BALANCE BARS
+   ======================================================================== */
+.balance-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+}
+
+.balance-row + .balance-row {
+  border-top: 1px solid #eeeeef;
+}
+
+.balance-label {
+  width: 140px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--black);
+  flex-shrink: 0;
+}
+
+.balance-bar-wrap {
+  flex: 1;
+  height: 8px;
+  background: #eeeeef;
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.balance-bar-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.6s ease;
+}
+
+.balance-nums {
+  width: 80px;
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--secondary);
+  flex-shrink: 0;
+}
+
+/* ========================================================================
+   LEAVE REQUEST CARD
+   ======================================================================== */
+.leave-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 20px 24px;
+  background: var(--bg-main);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: border-color var(--transition);
+}
+
+.leave-card:hover {
+  border-color: var(--border-strong);
+}
+
+.leave-card + .leave-card {
+  margin-top: 10px;
+}
+
+.leave-card__type {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--black);
+}
+
+.leave-card__dates {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--secondary);
+  margin-top: 2px;
+}
+
+.leave-card__info {
+  flex: 1;
+}
+
+.leave-card__days {
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--black);
+  text-align: center;
+  min-width: 60px;
+}
+
+.leave-card__days-label {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ========================================================================
+   SALARY — Featured number
+   ======================================================================== */
+.featured-number {
+  font-family: var(--mono);
+  font-size: 48px;
+  font-weight: 500;
+  color: var(--black);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.featured-label {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.detail-list {
+  list-style: none;
+}
+
+.detail-list__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eeeeef;
+  font-size: 14px;
+}
+
+.detail-list__item:last-child {
+  border-bottom: none;
+}
+
+.detail-list__label {
+  color: var(--secondary);
+}
+
+.detail-list__value {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--black);
+  font-weight: 500;
+}
+
+/* ========================================================================
+   EXPENSE CARD
+   ======================================================================== */
+.expense-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 20px 24px;
+  background: var(--bg-main);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: border-color var(--transition);
+}
+
+.expense-card:hover {
+  border-color: var(--border-strong);
+}
+
+.expense-card + .expense-card {
+  margin-top: 10px;
+}
+
+.expense-card__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--bg-page);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--secondary);
+}
+
+.expense-card__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.expense-card__info {
+  flex: 1;
+}
+
+.expense-card__title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--black);
+}
+
+.expense-card__meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.expense-card__amount {
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--black);
+  text-align: right;
+}
+
+.expense-card__date {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  text-align: right;
+  margin-top: 2px;
+}
+
+/* ========================================================================
+   TICKET CARD with priority border
+   ======================================================================== */
+.ticket-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 20px 24px;
+  background: var(--bg-main);
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  transition: border-color var(--transition);
+  cursor: pointer;
+}
+
+.ticket-card:hover {
+  border-color: var(--border-strong);
+}
+
+.ticket-card + .ticket-card {
+  margin-top: 10px;
+}
+
+.ticket-card__priority-bar {
+  width: 4px;
+  height: 40px;
+  border-radius: 100px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.ticket-card__priority-bar--high { background: var(--red); }
+.ticket-card__priority-bar--medium { background: var(--amber); }
+.ticket-card__priority-bar--low { background: var(--border-strong); }
+
+.ticket-card__info {
+  flex: 1;
+}
+
+.ticket-card__subject {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--black);
+}
+
+.ticket-card__meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ticket-card__detail {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #eeeeef;
+  font-size: 13px;
+  color: var(--secondary);
+  line-height: 1.6;
+  display: none;
+}
+
+.ticket-card.expanded .ticket-card__detail {
+  display: block;
+}
+
+.ticket-card__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* ========================================================================
+   PROFILE
+   ======================================================================== */
+.profile-photo-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 40px;
+  background: var(--bg-main);
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--black);
+  color: #fff;
+  font-size: 28px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.profile-name {
+  font-family: var(--serif);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--black);
+}
+
+.profile-role {
+  font-size: 15px;
+  color: var(--secondary);
+  margin-top: 2px;
+}
+
+.profile-id {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.profile-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-top: 32px;
+  margin-bottom: 24px;
+}
+
+.profile-tab {
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition);
+  background: none;
+}
+
+.profile-tab:hover {
+  color: var(--secondary);
+}
+
+.profile-tab.active {
+  color: var(--black);
+  border-bottom-color: var(--black);
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.profile-field {
+  padding: 14px 0;
+  border-bottom: 1px solid #eeeeef;
+}
+
+.profile-field:nth-child(odd) {
+  padding-right: 24px;
+}
+
+.profile-field:nth-child(even) {
+  padding-left: 24px;
+  border-left: 1px solid #eeeeef;
+}
+
+.profile-field__label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.profile-field__value {
+  font-size: 14px;
+  color: var(--black);
+}
+
+/* ========================================================================
+   MODAL
+   ======================================================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+}
+
+.modal-overlay.open {
+  display: flex;
+}
+
+.modal {
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  width: 520px;
+  max-width: 90vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 32px;
+}
+
+.modal__title {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--black);
+  margin-bottom: 24px;
+}
+
+.modal__field {
+  margin-bottom: 18px;
+}
+
+.modal__label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--secondary);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.modal__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+/* ========================================================================
+   MONTH GROUP (Expenses)
+   ======================================================================== */
+.month-group {
+  margin-bottom: 32px;
+}
+
+.month-group__label {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--secondary);
+  margin-bottom: 12px;
+  padding-left: 4px;
+}
+
+/* ========================================================================
+   SUMMARY ROW
+   ======================================================================== */
+.summary-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.summary-item {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 20px 24px;
+  background: var(--bg-main);
+  text-align: center;
+}
+
+.summary-item__value {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--black);
+}
+
+.summary-item__label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ========================================================================
+   SALARY TWO-COLUMN
+   ======================================================================== */
+.salary-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.salary-col {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  background: var(--bg-main);
+}
+
+.salary-col__title {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--black);
+  margin-bottom: 16px;
+}
+
+.salary-col__total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.salary-col__total-value {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* ========================================================================
+   RESPONSIVE
+   ======================================================================== */
+@media (max-width: 768px) {
+  .mini-nav { display: none; }
+  .main-area { margin-left: 0; }
+  .util-bar { padding-left: 16px; }
+  .page { padding: 32px 16px 60px; }
+  .grid-2x2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .salary-columns { grid-template-columns: 1fr; }
+  .profile-grid { grid-template-columns: 1fr; }
+  .profile-field:nth-child(even) {
+    padding-left: 0;
+    border-left: none;
+  }
+  .profile-field:nth-child(odd) {
+    padding-right: 0;
+  }
+  .page-header__title { font-size: 24px; }
+  .featured-number { font-size: 36px; }
+  .modal { width: 95vw; padding: 24px; }
+  .page-header__row { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- ====================================================================
+     UTILITY BAR
+     ==================================================================== -->
+<div class="util-bar">
+  <div class="util-bar__left">
+    <div class="util-bar__breadcrumb" id="breadcrumb">
+      <span>RampingUp</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span>Employee Portal</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span class="crumb-active" id="breadcrumbPage">Dashboard</span>
+    </div>
+  </div>
+  <div class="util-bar__right">
+    <span class="util-bar__date" id="utilDate"></span>
+    <div class="util-bar__notif">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <div class="util-bar__notif-dot"></div>
+    </div>
+    <div class="util-bar__avatar" onclick="navigateTo('profile')">ZR</div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     MINI NAV
+     ==================================================================== -->
+<nav class="mini-nav" id="miniNav">
+  <div class="mini-nav__logo" onclick="navigateTo('dashboard')">
+    <svg viewBox="80 46 82 82" width="24" height="24"><path d="M110.39,71.82c.85,0,1.42.88,1.06,1.66l-4.55,9.9-.06.13-.67,1.46-6.4,13.93c-.19.42-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l5.95-12.96.67-1.46,5.06-11.01c.19-.41.61-.68,1.06-.68h10.58Z" fill="#000"/><path d="M151.2,83.51h-10.58c-.46,0-.87-.27-1.06-.68l-4.3-9.35c-.36-.77.21-1.66,1.06-1.66h10.58c.46,0,.87.27,1.06.68l4.3,9.35c.36.77-.21,1.66-1.06,1.66Z" fill="#47fa22"/><path d="M126.07,73.48l-4.3,9.35c-.19.41-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l4.3-9.35c.19-.41.61-.68,1.06-.68h10.58c.85,0,1.42.88,1.06,1.66Z" fill="#000"/><path d="M125.69,99.59h-10.59c-.46,0-.87-.27-1.06-.68l-5.64-12.28c-.36-.77.21-1.66,1.06-1.66h10.59c.46,0,.87.27,1.06.68l5.64,12.28c.36.77-.21,1.66-1.06,1.66Z" fill="#000"/><path d="M152.93,86.63l-5.64,12.28c-.19.42-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l5.64-12.28c.19-.42.61-.68,1.06-.68h10.58c.85,0,1.42.88,1.06,1.66Z" fill="#47fa22"/></svg>
+  </div>
+
+  <a class="mini-nav__item active" data-page="dashboard" onclick="navigateTo('dashboard')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    <span class="mini-nav__tooltip">Dashboard</span>
+  </a>
+  <a class="mini-nav__item" data-page="leave" onclick="navigateTo('leave')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    <span class="mini-nav__tooltip">Leave</span>
+  </a>
+  <a class="mini-nav__item" data-page="salary" onclick="navigateTo('salary')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+    <span class="mini-nav__tooltip">Salary</span>
+  </a>
+  <a class="mini-nav__item" data-page="expenses" onclick="navigateTo('expenses')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 4H3v16h18V4z"/><path d="M21 10H3M7 15h4"/></svg>
+    <span class="mini-nav__tooltip">Expenses</span>
+  </a>
+  <a class="mini-nav__item" data-page="tickets" onclick="navigateTo('tickets')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/></svg>
+    <span class="mini-nav__tooltip">Tickets</span>
+  </a>
+
+  <div class="mini-nav__spacer"></div>
+
+  <a class="mini-nav__item" data-page="profile" onclick="navigateTo('profile')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span class="mini-nav__tooltip">Profile</span>
+  </a>
+</nav>
+
+<!-- ====================================================================
+     MAIN CONTENT
+     ==================================================================== -->
+<div class="main-area">
+
+  <!-- ==================== DASHBOARD ==================== -->
+  <div class="page active" id="page-dashboard"></div>
+
+  <!-- ==================== LEAVE ==================== -->
+  <div class="page" id="page-leave"></div>
+
+  <!-- ==================== SALARY ==================== -->
+  <div class="page" id="page-salary"></div>
+
+  <!-- ==================== EXPENSES ==================== -->
+  <div class="page" id="page-expenses"></div>
+
+  <!-- ==================== TICKETS ==================== -->
+  <div class="page" id="page-tickets"></div>
+
+  <!-- ==================== PROFILE ==================== -->
+  <div class="page" id="page-profile"></div>
+</div>
+
+<!-- ====================================================================
+     MODALS
+     ==================================================================== -->
+<!-- New Leave -->
+<div class="modal-overlay" id="modal-leave">
+  <div class="modal">
+    <div class="modal__title">New Leave Request</div>
+    <div class="modal__field">
+      <label class="modal__label">Leave Type</label>
+      <select id="leaveFormType">
+        <option value="">Select type...</option>
+        <option value="Annual Leave">Annual Leave</option>
+        <option value="Sick Leave">Sick Leave</option>
+        <option value="Personal Leave">Personal Leave</option>
+        <option value="Compensatory">Compensatory Leave</option>
+      </select>
+    </div>
+    <div class="modal__row">
+      <div class="modal__field">
+        <label class="modal__label">From</label>
+        <input type="date" id="leaveFormFrom">
+      </div>
+      <div class="modal__field">
+        <label class="modal__label">To</label>
+        <input type="date" id="leaveFormTo">
+      </div>
+    </div>
+    <div class="modal__field">
+      <label class="modal__label">Reason</label>
+      <textarea id="leaveFormReason" placeholder="Describe the reason for your leave request..."></textarea>
+    </div>
+    <div class="modal__actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-leave')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitLeave()">Submit Request</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Expense -->
+<div class="modal-overlay" id="modal-expense">
+  <div class="modal">
+    <div class="modal__title">New Expense Claim</div>
+    <div class="modal__field">
+      <label class="modal__label">Description</label>
+      <input type="text" id="expenseFormDesc" placeholder="Brief description of the expense...">
+    </div>
+    <div class="modal__row">
+      <div class="modal__field">
+        <label class="modal__label">Category</label>
+        <select id="expenseFormCat">
+          <option value="">Select category...</option>
+          <option value="Travel">Travel</option>
+          <option value="Equipment">Equipment</option>
+          <option value="Meals">Meals</option>
+          <option value="Transportation">Transportation</option>
+          <option value="Communication">Communication</option>
+        </select>
+      </div>
+      <div class="modal__field">
+        <label class="modal__label">Amount (CNY)</label>
+        <input type="number" id="expenseFormAmount" placeholder="0.00">
+      </div>
+    </div>
+    <div class="modal__field">
+      <label class="modal__label">Date</label>
+      <input type="date" id="expenseFormDate">
+    </div>
+    <div class="modal__actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-expense')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitExpense()">Submit Claim</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Ticket -->
+<div class="modal-overlay" id="modal-ticket">
+  <div class="modal">
+    <div class="modal__title">New Support Ticket</div>
+    <div class="modal__field">
+      <label class="modal__label">Subject</label>
+      <input type="text" id="ticketFormSubject" placeholder="Summarize the issue...">
+    </div>
+    <div class="modal__row">
+      <div class="modal__field">
+        <label class="modal__label">Category</label>
+        <select id="ticketFormCat">
+          <option value="">Select category...</option>
+          <option value="IT Support">IT Support</option>
+          <option value="HR">HR</option>
+          <option value="Facilities">Facilities</option>
+          <option value="Finance">Finance</option>
+        </select>
+      </div>
+      <div class="modal__field">
+        <label class="modal__label">Priority</label>
+        <select id="ticketFormPriority">
+          <option value="Low">Low</option>
+          <option value="Medium" selected>Medium</option>
+          <option value="High">High</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal__field">
+      <label class="modal__label">Description</label>
+      <textarea id="ticketFormDesc" placeholder="Provide detailed information about the issue..."></textarea>
+    </div>
+    <div class="modal__actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-ticket')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitTicket()">Create Ticket</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// ========================================================================
+// MOCK DATA
+// ========================================================================
+const EMP = {
+  name: 'Zhang Rui',
+  initials: 'ZR',
+  role: 'Software Engineer',
+  department: 'Engineering',
+  employeeId: 'EMP-2024-0032',
+  email: 'zhang.rui@rampingup.com',
+  phone: '+86 138 8888 0032',
+  joinDate: '2024-03-15',
+  manager: 'Li Wei',
+  location: 'Shanghai, China',
+  contractType: 'Full-time',
+  gender: 'Male',
+  dob: '1995-06-20',
+  bankName: 'China Merchants Bank',
+  bankAccount: '**** **** **** 6789',
+};
+
+const LEAVE_TYPES = [
+  { type: 'Annual Leave',  total: 15, used: 7,  color: '#1863dc', tag: 'blue'   },
+  { type: 'Sick Leave',    total: 10, used: 2,  color: '#7c3aed', tag: 'purple' },
+  { type: 'Personal Leave',total: 5,  used: 1,  color: '#059669', tag: 'teal'   },
+  { type: 'Compensatory',  total: 3,  used: 0,  color: '#d97706', tag: 'amber'  },
+];
+
+const LEAVES = [
+  { id: 'LV-2401', type: 'Annual Leave',   from: '2025-03-10', to: '2025-03-14', days: 5, status: 'Approved', approver: 'Li Wei'  },
+  { id: 'LV-2402', type: 'Sick Leave',     from: '2025-02-20', to: '2025-02-21', days: 2, status: 'Approved', approver: 'Li Wei'  },
+  { id: 'LV-2403', type: 'Annual Leave',   from: '2025-04-05', to: '2025-04-06', days: 2, status: 'Pending',  approver: 'Li Wei'  },
+  { id: 'LV-2404', type: 'Personal Leave', from: '2025-01-15', to: '2025-01-15', days: 1, status: 'Approved', approver: 'Li Wei'  },
+  { id: 'LV-2405', type: 'Annual Leave',   from: '2025-05-01', to: '2025-05-02', days: 2, status: 'Draft',    approver: '-'       },
+  { id: 'LV-2406', type: 'Sick Leave',     from: '2024-12-10', to: '2024-12-10', days: 1, status: 'Rejected', approver: 'Li Wei'  },
+];
+
+const SLIPS = [
+  { id: 'SS-202503', period: 'March 2025',    payDate: '2025-03-25', gross: 32000, deductions: 6820, net: 25180, status: 'Paid' },
+  { id: 'SS-202502', period: 'February 2025', payDate: '2025-02-25', gross: 32000, deductions: 6820, net: 25180, status: 'Paid' },
+  { id: 'SS-202501', period: 'January 2025',  payDate: '2025-01-25', gross: 32000, deductions: 6820, net: 25180, status: 'Paid' },
+  { id: 'SS-202412', period: 'December 2024', payDate: '2024-12-25', gross: 30000, deductions: 6380, net: 23620, status: 'Paid' },
+  { id: 'SS-202411', period: 'November 2024', payDate: '2024-11-25', gross: 30000, deductions: 6380, net: 23620, status: 'Paid' },
+];
+
+const SAL_DETAIL = {
+  earnings: [
+    { component: 'Basic Salary',       amount: 20000 },
+    { component: 'Housing Allowance',   amount: 5000  },
+    { component: 'Transport Allowance', amount: 2000  },
+    { component: 'Meal Allowance',      amount: 1500  },
+    { component: 'Performance Bonus',   amount: 3500  },
+  ],
+  deductions: [
+    { component: 'Pension Insurance (8%)',       amount: 2560 },
+    { component: 'Medical Insurance (2%)',       amount: 640  },
+    { component: 'Unemployment Insurance (0.5%)',amount: 160  },
+    { component: 'Housing Fund (12%)',           amount: 2400 },
+    { component: 'Individual Income Tax',        amount: 1060 },
+  ],
+};
+
+const EXPENSES = [
+  { id: 'EC-2401', date: '2025-03-18', category: 'Travel',         description: 'Business trip to Beijing',       amount: 4580, status: 'Pending'  },
+  { id: 'EC-2402', date: '2025-03-05', category: 'Equipment',      description: 'External monitor purchase',      amount: 2899, status: 'Approved' },
+  { id: 'EC-2403', date: '2025-02-20', category: 'Meals',          description: 'Client dinner - Project Alpha',  amount: 860,  status: 'Approved' },
+  { id: 'EC-2404', date: '2025-02-10', category: 'Transportation', description: 'Monthly taxi reimbursement',     amount: 1200, status: 'Rejected' },
+  { id: 'EC-2405', date: '2025-01-28', category: 'Communication',  description: 'Annual phone plan',              amount: 1680, status: 'Approved' },
+];
+
+const TICKETS = [
+  { id: 'TK-0089', subject: 'VPN access not working from home',       category: 'IT Support',  priority: 'High',   status: 'Open',    created: '2025-03-20', updated: '2025-03-21' },
+  { id: 'TK-0088', subject: 'Request for additional software license', category: 'IT Support',  priority: 'Medium', status: 'Pending', created: '2025-03-18', updated: '2025-03-19' },
+  { id: 'TK-0085', subject: 'Office desk lamp replacement',           category: 'Facilities',  priority: 'Low',    status: 'Closed',  created: '2025-03-10', updated: '2025-03-15' },
+  { id: 'TK-0082', subject: 'Payslip discrepancy for February',       category: 'HR',          priority: 'High',   status: 'Closed',  created: '2025-03-02', updated: '2025-03-05' },
+  { id: 'TK-0079', subject: 'Meeting room booking system error',      category: 'IT Support',  priority: 'Medium', status: 'Open',    created: '2025-02-28', updated: '2025-03-01' },
+];
+
+// ========================================================================
+// UTILITY FUNCTIONS
+// ========================================================================
+function fmtCNY(n) {
+  return '\u00A5' + n.toLocaleString('en-US');
+}
+
+function fmtDate(d) {
+  const dt = new Date(d);
+  return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function fmtDateShort(d) {
+  const dt = new Date(d);
+  return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function statusTag(status) {
+  const cls = {
+    'Approved': 'approved', 'Paid': 'paid', 'Closed': 'closed',
+    'Pending': 'pending', 'Open': 'open',
+    'Rejected': 'rejected', 'Draft': 'draft',
+  };
+  return `<span class="tag tag--${cls[status] || 'draft'}">${status}</span>`;
+}
+
+function leaveTypeTag(type) {
+  const lt = LEAVE_TYPES.find(l => l.type === type);
+  return lt ? `<span class="tag tag--${lt.tag}">${type}</span>` : `<span class="tag tag--draft">${type}</span>`;
+}
+
+function getCategoryIcon(cat) {
+  const icons = {
+    'Travel': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.4-.1.9.3 1.1l5.6 3.2-3 3-2.3-.8c-.4-.1-.8 0-1 .3l-.2.3c-.2.3-.1.7.1 1l2.4 2.4 2.4 2.4c.3.3.7.3 1 .1l.3-.2c.3-.2.4-.6.3-1l-.8-2.3 3-3 3.2 5.6c.2.4.7.5 1.1.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>',
+    'Equipment': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>',
+    'Meals': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><path d="M6 1v3M10 1v3M14 1v3"/></svg>',
+    'Transportation': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17H4a2 2 0 01-2-2V5a2 2 0 012-2h16a2 2 0 012 2v10a2 2 0 01-2 2h-1"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="17.5" r="2.5"/><path d="M10 17h4"/></svg>',
+    'Communication': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.44 2.62.94 2.81.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.9.36 1.83.64 2.81.7A2 2 0 0122 16.92z"/></svg>',
+  };
+  return icons[cat] || icons['Equipment'];
+}
+
+function getMonthKey(dateStr) {
+  const dt = new Date(dateStr);
+  return dt.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+}
+
+// ========================================================================
+// NAVIGATION
+// ========================================================================
+const PAGE_NAMES = {
+  dashboard: 'Dashboard',
+  leave: 'Leave',
+  salary: 'Salary',
+  expenses: 'Expenses',
+  tickets: 'Tickets',
+  profile: 'Profile',
+};
+
+function navigateTo(page) {
+  // Update pages
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('page-' + page);
+  if (target) target.classList.add('active');
+
+  // Update mini nav
+  document.querySelectorAll('.mini-nav__item').forEach(item => {
+    item.classList.toggle('active', item.dataset.page === page);
+  });
+
+  // Update breadcrumb
+  document.getElementById('breadcrumbPage').textContent = PAGE_NAMES[page] || page;
+
+  // Render page
+  renderPage(page);
+}
+
+function renderPage(page) {
+  const container = document.getElementById('page-' + page);
+  if (!container || container.dataset.rendered) return;
+  container.dataset.rendered = '1';
+
+  switch (page) {
+    case 'dashboard': renderDashboard(container); break;
+    case 'leave':     renderLeave(container);     break;
+    case 'salary':    renderSalary(container);     break;
+    case 'expenses':  renderExpenses(container);   break;
+    case 'tickets':   renderTickets(container);    break;
+    case 'profile':   renderProfile(container);    break;
+  }
+}
+
+// ========================================================================
+// MODAL HELPERS
+// ========================================================================
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// Close modals on overlay click
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('modal-overlay')) {
+    e.target.classList.remove('open');
+  }
+});
+
+// Close on Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+  }
+});
+
+// ========================================================================
+// FORM SUBMISSIONS
+// ========================================================================
+function submitLeave() {
+  const type = document.getElementById('leaveFormType').value;
+  const from = document.getElementById('leaveFormFrom').value;
+  const to   = document.getElementById('leaveFormTo').value;
+  const reason = document.getElementById('leaveFormReason').value;
+
+  if (!type || !from || !to) {
+    alert('Please fill in all required fields.');
+    return;
+  }
+
+  const fromD = new Date(from);
+  const toD   = new Date(to);
+  const days  = Math.max(1, Math.round((toD - fromD) / (1000 * 60 * 60 * 24)) + 1);
+
+  LEAVES.unshift({
+    id: 'LV-' + (2407 + LEAVES.length),
+    type, from, to, days,
+    status: 'Pending',
+    approver: EMP.manager,
+  });
+
+  closeModal('modal-leave');
+  document.getElementById('leaveFormType').value = '';
+  document.getElementById('leaveFormFrom').value = '';
+  document.getElementById('leaveFormTo').value = '';
+  document.getElementById('leaveFormReason').value = '';
+
+  // Re-render
+  const container = document.getElementById('page-leave');
+  container.dataset.rendered = '';
+  renderPage('leave');
+}
+
+function submitExpense() {
+  const desc   = document.getElementById('expenseFormDesc').value;
+  const cat    = document.getElementById('expenseFormCat').value;
+  const amount = parseFloat(document.getElementById('expenseFormAmount').value);
+  const date   = document.getElementById('expenseFormDate').value;
+
+  if (!desc || !cat || !amount || !date) {
+    alert('Please fill in all required fields.');
+    return;
+  }
+
+  EXPENSES.unshift({
+    id: 'EC-' + (2406 + EXPENSES.length),
+    date, category: cat, description: desc,
+    amount, status: 'Pending',
+  });
+
+  closeModal('modal-expense');
+  document.getElementById('expenseFormDesc').value = '';
+  document.getElementById('expenseFormCat').value = '';
+  document.getElementById('expenseFormAmount').value = '';
+  document.getElementById('expenseFormDate').value = '';
+
+  const container = document.getElementById('page-expenses');
+  container.dataset.rendered = '';
+  renderPage('expenses');
+}
+
+function submitTicket() {
+  const subject  = document.getElementById('ticketFormSubject').value;
+  const cat      = document.getElementById('ticketFormCat').value;
+  const priority = document.getElementById('ticketFormPriority').value;
+  const desc     = document.getElementById('ticketFormDesc').value;
+
+  if (!subject || !cat || !desc) {
+    alert('Please fill in all required fields.');
+    return;
+  }
+
+  const today = new Date().toISOString().split('T')[0];
+  TICKETS.unshift({
+    id: 'TK-' + String(90 + TICKETS.length).padStart(4, '0'),
+    subject, category: cat, priority,
+    status: 'Open', created: today, updated: today,
+  });
+
+  closeModal('modal-ticket');
+  document.getElementById('ticketFormSubject').value = '';
+  document.getElementById('ticketFormCat').value = '';
+  document.getElementById('ticketFormPriority').value = 'Medium';
+  document.getElementById('ticketFormDesc').value = '';
+
+  const container = document.getElementById('page-tickets');
+  container.dataset.rendered = '';
+  renderPage('tickets');
+}
+
+// ========================================================================
+// RENDER: DASHBOARD
+// ========================================================================
+function renderDashboard(el) {
+  const totalLeave = LEAVE_TYPES.reduce((s, l) => s + l.total, 0);
+  const usedLeave  = LEAVE_TYPES.reduce((s, l) => s + l.used, 0);
+  const pendingLeaves = LEAVES.filter(l => l.status === 'Pending').length;
+  const pendingExpenses = EXPENSES.filter(e => e.status === 'Pending').length;
+  const openTickets = TICKETS.filter(t => t.status === 'Open' || t.status === 'Pending').length;
+  const latestNet = SLIPS[0].net;
+
+  el.innerHTML = `
+    <div class="page-header">
+      <div class="page-header__title">Welcome back, ${EMP.name}</div>
+      <div class="page-header__subtitle">${EMP.role} &middot; ${EMP.department} &middot; ${EMP.location}</div>
+    </div>
+
+    <div class="grid-2x2" style="margin-bottom: 32px;">
+      <div class="metric-tile" onclick="navigateTo('leave')" style="cursor:pointer">
+        <div class="metric-tile__label">Leave Balance</div>
+        <div class="metric-tile__value tnum">${totalLeave - usedLeave} <span style="font-size:16px;color:var(--muted)">/ ${totalLeave} days</span></div>
+        <div class="metric-tile__sub">${pendingLeaves} request${pendingLeaves !== 1 ? 's' : ''} pending</div>
+      </div>
+      <div class="metric-tile" onclick="navigateTo('salary')" style="cursor:pointer">
+        <div class="metric-tile__label">Latest Net Pay</div>
+        <div class="metric-tile__value tnum">${fmtCNY(latestNet)}</div>
+        <div class="metric-tile__sub">${SLIPS[0].period}</div>
+      </div>
+      <div class="metric-tile" onclick="navigateTo('expenses')" style="cursor:pointer">
+        <div class="metric-tile__label">Expense Claims</div>
+        <div class="metric-tile__value tnum">${EXPENSES.length}</div>
+        <div class="metric-tile__sub">${pendingExpenses} pending approval</div>
+      </div>
+      <div class="metric-tile" onclick="navigateTo('tickets')" style="cursor:pointer">
+        <div class="metric-tile__label">Support Tickets</div>
+        <div class="metric-tile__value tnum">${openTickets}</div>
+        <div class="metric-tile__sub">open or in progress</div>
+      </div>
+    </div>
+
+    <div class="section-heading">Recent Activity</div>
+    <div class="card--flat" style="padding: 28px 32px;">
+      <div class="timeline">
+        <div class="timeline__item timeline__item--active">
+          <div class="timeline__dot"></div>
+          <div class="timeline__title">Leave request submitted</div>
+          <div class="timeline__meta">Annual Leave &middot; May 1 - May 2 &middot; 2 days &middot; Draft</div>
+        </div>
+        <div class="timeline__item">
+          <div class="timeline__dot"></div>
+          <div class="timeline__title">Expense claim approved</div>
+          <div class="timeline__meta">External monitor purchase &middot; ${fmtCNY(2899)} &middot; Mar 5</div>
+        </div>
+        <div class="timeline__item">
+          <div class="timeline__dot"></div>
+          <div class="timeline__title">Salary slip available</div>
+          <div class="timeline__meta">${SLIPS[0].period} &middot; Net ${fmtCNY(latestNet)} &middot; ${fmtDate(SLIPS[0].payDate)}</div>
+        </div>
+        <div class="timeline__item">
+          <div class="timeline__dot"></div>
+          <div class="timeline__title">Ticket resolved</div>
+          <div class="timeline__meta">Payslip discrepancy for February &middot; Closed Mar 5</div>
+        </div>
+        <div class="timeline__item">
+          <div class="timeline__dot"></div>
+          <div class="timeline__title">Leave approved</div>
+          <div class="timeline__meta">Annual Leave &middot; Mar 10 - Mar 14 &middot; 5 days &middot; Approved by ${EMP.manager}</div>
+        </div>
+        <div class="timeline__item">
+          <div class="timeline__dot"></div>
+          <div class="timeline__title">New support ticket opened</div>
+          <div class="timeline__meta">VPN access not working from home &middot; High priority &middot; Mar 20</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:16px;margin-top:32px;">
+      <div style="flex:1;">
+        <div class="section-heading">Leave Overview</div>
+        <div class="card--flat">
+          ${LEAVE_TYPES.map(lt => {
+            const pct = lt.total > 0 ? (lt.used / lt.total * 100) : 0;
+            return `
+              <div class="balance-row">
+                <div class="balance-label">${lt.type}</div>
+                <div class="balance-bar-wrap">
+                  <div class="balance-bar-fill" style="width:${pct}%;background:${lt.color}"></div>
+                </div>
+                <div class="balance-nums">${lt.used} / ${lt.total}</div>
+              </div>`;
+          }).join('')}
+        </div>
+      </div>
+      <div style="flex:1;">
+        <div class="section-heading">Quick Actions</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button class="btn btn-ghost" style="justify-content:flex-start;padding:14px 20px;" onclick="navigateTo('leave');setTimeout(()=>openModal('modal-leave'),100)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:16px;height:16px"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            Request Leave
+          </button>
+          <button class="btn btn-ghost" style="justify-content:flex-start;padding:14px 20px;" onclick="navigateTo('expenses');setTimeout(()=>openModal('modal-expense'),100)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:16px;height:16px"><path d="M21 4H3v16h18V4z"/><path d="M21 10H3M7 15h4"/></svg>
+            Submit Expense
+          </button>
+          <button class="btn btn-ghost" style="justify-content:flex-start;padding:14px 20px;" onclick="navigateTo('tickets');setTimeout(()=>openModal('modal-ticket'),100)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/></svg>
+            Open Ticket
+          </button>
+          <button class="btn btn-ghost" style="justify-content:flex-start;padding:14px 20px;" onclick="navigateTo('salary')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:16px;height:16px"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+            View Payslips
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ========================================================================
+// RENDER: LEAVE
+// ========================================================================
+function renderLeave(el) {
+  el.innerHTML = `
+    <div class="page-header">
+      <div class="page-header__row">
+        <div>
+          <div class="page-header__title">Leave Management</div>
+          <div class="page-header__subtitle">Track your leave balances and manage requests</div>
+        </div>
+        <div class="page-header__actions">
+          <button class="btn btn-primary" onclick="openModal('modal-leave')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            New Request
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-heading">Balance Overview</div>
+    <div class="card--flat" style="margin-bottom: 40px;">
+      ${LEAVE_TYPES.map(lt => {
+        const remaining = lt.total - lt.used;
+        const pct = lt.total > 0 ? (lt.used / lt.total * 100) : 0;
+        return `
+          <div class="balance-row">
+            <div class="balance-label" style="display:flex;align-items:center;gap:8px;">
+              <span style="width:8px;height:8px;border-radius:50%;background:${lt.color};flex-shrink:0;"></span>
+              ${lt.type}
+            </div>
+            <div class="balance-bar-wrap">
+              <div class="balance-bar-fill" style="width:${pct}%;background:${lt.color}"></div>
+            </div>
+            <div class="balance-nums">${remaining} remaining</div>
+          </div>`;
+      }).join('')}
+    </div>
+
+    <div class="section-heading">Requests</div>
+    <div id="leaveList">
+      ${LEAVES.map(lv => `
+        <div class="leave-card">
+          <div class="leave-card__info">
+            <div class="leave-card__type" style="display:flex;align-items:center;gap:8px;">
+              ${leaveTypeTag(lv.type)}
+              <span class="mono" style="font-size:12px;color:var(--muted)">${lv.id}</span>
+            </div>
+            <div class="leave-card__dates">
+              ${fmtDateShort(lv.from)}${lv.from !== lv.to ? ' \u2014 ' + fmtDateShort(lv.to) : ''} &middot; Approver: ${lv.approver}
+            </div>
+          </div>
+          <div class="leave-card__days">
+            <div>${lv.days}</div>
+            <div class="leave-card__days-label">day${lv.days > 1 ? 's' : ''}</div>
+          </div>
+          ${statusTag(lv.status)}
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ========================================================================
+// RENDER: SALARY
+// ========================================================================
+function renderSalary(el) {
+  const latest = SLIPS[0];
+  const totalEarnings   = SAL_DETAIL.earnings.reduce((s, e) => s + e.amount, 0);
+  const totalDeductions = SAL_DETAIL.deductions.reduce((s, d) => s + d.amount, 0);
+
+  el.innerHTML = `
+    <div class="page-header">
+      <div class="page-header__title">Compensation</div>
+      <div class="page-header__subtitle">Your salary details and payment history</div>
+    </div>
+
+    <div class="card--flat" style="margin-bottom: 40px; padding: 40px;">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;">
+        <div>
+          <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;font-weight:500;margin-bottom:8px;">Latest Net Pay &middot; ${latest.period}</div>
+          <div class="featured-number">${fmtCNY(latest.net)}</div>
+          <div class="featured-label">Paid on ${fmtDate(latest.payDate)}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Gross</div>
+          <div class="mono" style="font-size:18px;font-weight:500;">${fmtCNY(latest.gross)}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px;">Deductions</div>
+          <div class="mono" style="font-size:18px;font-weight:500;color:var(--red);">\u2212${fmtCNY(latest.deductions)}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="salary-columns">
+      <div class="salary-col">
+        <div class="salary-col__title">Earnings</div>
+        <ul class="detail-list">
+          ${SAL_DETAIL.earnings.map(e => `
+            <li class="detail-list__item">
+              <span class="detail-list__label">${e.component}</span>
+              <span class="detail-list__value">${fmtCNY(e.amount)}</span>
+            </li>
+          `).join('')}
+        </ul>
+        <div class="salary-col__total">
+          <span>Total Earnings</span>
+          <span class="salary-col__total-value mono">${fmtCNY(totalEarnings)}</span>
+        </div>
+      </div>
+      <div class="salary-col">
+        <div class="salary-col__title">Deductions</div>
+        <ul class="detail-list">
+          ${SAL_DETAIL.deductions.map(d => `
+            <li class="detail-list__item">
+              <span class="detail-list__label">${d.component}</span>
+              <span class="detail-list__value" style="color:var(--red)">\u2212${fmtCNY(d.amount)}</span>
+            </li>
+          `).join('')}
+        </ul>
+        <div class="salary-col__total">
+          <span>Total Deductions</span>
+          <span class="salary-col__total-value mono" style="color:var(--red)">\u2212${fmtCNY(totalDeductions)}</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:40px;">
+      <div class="section-heading">Payment History</div>
+      <div class="card--flat" style="padding:0;overflow:hidden;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Period</th>
+              <th>Pay Date</th>
+              <th style="text-align:right">Gross</th>
+              <th style="text-align:right">Deductions</th>
+              <th style="text-align:right">Net Pay</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${SLIPS.map(s => `
+              <tr>
+                <td class="mono" style="font-size:12px;color:var(--muted)">${s.id}</td>
+                <td style="font-weight:500">${s.period}</td>
+                <td>${fmtDate(s.payDate)}</td>
+                <td class="mono tnum" style="text-align:right">${fmtCNY(s.gross)}</td>
+                <td class="mono tnum" style="text-align:right;color:var(--red)">\u2212${fmtCNY(s.deductions)}</td>
+                <td class="mono tnum" style="text-align:right;font-weight:500">${fmtCNY(s.net)}</td>
+                <td>${statusTag(s.status)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+// ========================================================================
+// RENDER: EXPENSES
+// ========================================================================
+function renderExpenses(el) {
+  const totalPending  = EXPENSES.filter(e => e.status === 'Pending').reduce((s, e) => s + e.amount, 0);
+  const totalApproved = EXPENSES.filter(e => e.status === 'Approved').reduce((s, e) => s + e.amount, 0);
+  const totalAll      = EXPENSES.reduce((s, e) => s + e.amount, 0);
+
+  // Group by month
+  const grouped = {};
+  EXPENSES.forEach(ex => {
+    const key = getMonthKey(ex.date);
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(ex);
+  });
+
+  el.innerHTML = `
+    <div class="page-header">
+      <div class="page-header__row">
+        <div>
+          <div class="page-header__title">Expense Claims</div>
+          <div class="page-header__subtitle">Submit and track your expense reimbursements</div>
+        </div>
+        <div class="page-header__actions">
+          <button class="btn btn-primary" onclick="openModal('modal-expense')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            New Claim
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-item">
+        <div class="summary-item__value tnum">${fmtCNY(totalAll)}</div>
+        <div class="summary-item__label">Total Claims</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-item__value tnum">${fmtCNY(totalApproved)}</div>
+        <div class="summary-item__label">Approved</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-item__value tnum">${fmtCNY(totalPending)}</div>
+        <div class="summary-item__label">Pending</div>
+      </div>
+    </div>
+
+    ${Object.entries(grouped).map(([month, items]) => `
+      <div class="month-group">
+        <div class="month-group__label">${month}</div>
+        ${items.map(ex => `
+          <div class="expense-card">
+            <div class="expense-card__icon">${getCategoryIcon(ex.category)}</div>
+            <div class="expense-card__info">
+              <div class="expense-card__title">${ex.description}</div>
+              <div class="expense-card__meta">${ex.category} &middot; ${ex.id}</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="expense-card__amount tnum">${fmtCNY(ex.amount)}</div>
+              <div class="expense-card__date">${fmtDateShort(ex.date)}</div>
+            </div>
+            <div style="min-width:80px;text-align:right;">
+              ${statusTag(ex.status)}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `).join('')}
+  `;
+}
+
+// ========================================================================
+// RENDER: TICKETS
+// ========================================================================
+function renderTickets(el) {
+  const openCount    = TICKETS.filter(t => t.status === 'Open').length;
+  const pendingCount = TICKETS.filter(t => t.status === 'Pending').length;
+  const closedCount  = TICKETS.filter(t => t.status === 'Closed').length;
+
+  el.innerHTML = `
+    <div class="page-header">
+      <div class="page-header__row">
+        <div>
+          <div class="page-header__title">Support</div>
+          <div class="page-header__subtitle">Get help from IT, HR, and facilities teams</div>
+        </div>
+        <div class="page-header__actions">
+          <button class="btn btn-primary" onclick="openModal('modal-ticket')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            New Ticket
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-item">
+        <div class="summary-item__value tnum">${openCount}</div>
+        <div class="summary-item__label">Open</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-item__value tnum">${pendingCount}</div>
+        <div class="summary-item__label">In Progress</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-item__value tnum">${closedCount}</div>
+        <div class="summary-item__label">Resolved</div>
+      </div>
+    </div>
+
+    <div id="ticketList">
+      ${TICKETS.map(tk => `
+        <div class="ticket-card" onclick="this.classList.toggle('expanded')">
+          <div class="ticket-card__priority-bar ticket-card__priority-bar--${tk.priority.toLowerCase()}"></div>
+          <div class="ticket-card__info">
+            <div class="ticket-card__subject">${tk.subject}</div>
+            <div class="ticket-card__meta">
+              <span class="mono" style="font-size:11px;color:var(--muted)">${tk.id}</span>
+              <span>${tk.category}</span>
+              <span>Created ${fmtDateShort(tk.created)}</span>
+            </div>
+            <div class="ticket-card__detail">
+              <p>This ticket was created on ${fmtDate(tk.created)} and last updated on ${fmtDate(tk.updated)}.</p>
+              <p style="margin-top:8px;">Category: ${tk.category} &middot; Priority: ${tk.priority} &middot; Assigned to the ${tk.category} team for resolution.</p>
+            </div>
+          </div>
+          <div class="ticket-card__right">
+            ${statusTag(tk.status)}
+            <span class="tag tag--${tk.priority === 'High' ? 'rejected' : tk.priority === 'Medium' ? 'pending' : 'draft'}" style="font-size:11px;">${tk.priority}</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ========================================================================
+// RENDER: PROFILE
+// ========================================================================
+function renderProfile(el) {
+  el.innerHTML = `
+    <div class="page-header">
+      <div class="page-header__title">My Profile</div>
+    </div>
+
+    <div class="profile-photo-card">
+      <div class="profile-avatar">${EMP.initials}</div>
+      <div>
+        <div class="profile-name">${EMP.name}</div>
+        <div class="profile-role">${EMP.role} &middot; ${EMP.department}</div>
+        <div class="profile-id mono">${EMP.employeeId}</div>
+      </div>
+    </div>
+
+    <div class="profile-tabs" id="profileTabs">
+      <button class="profile-tab active" data-tab="personal" onclick="switchProfileTab('personal')">Personal</button>
+      <button class="profile-tab" data-tab="employment" onclick="switchProfileTab('employment')">Employment</button>
+      <button class="profile-tab" data-tab="financial" onclick="switchProfileTab('financial')">Financial</button>
+    </div>
+
+    <div class="profile-tab-content" id="profileTabContent">
+      <div class="profile-section" data-tab="personal">
+        <div class="profile-grid">
+          <div class="profile-field">
+            <div class="profile-field__label">Full Name</div>
+            <div class="profile-field__value">${EMP.name}</div>
+          </div>
+          <div class="profile-field">
+            <div class="profile-field__label">Gender</div>
+            <div class="profile-field__value">${EMP.gender}</div>
+          </div>
+          <div class="profile-field">
+            <div class="profile-field__label">Date of Birth</div>
+            <div class="profile-field__value">${fmtDate(EMP.dob)}</div>
+          </div>
+          <div class="profile-field">
+            <div class="profile-field__label">Email</div>
+            <div class="profile-field__value">${EMP.email}</div>
+          </div>
+          <div class="profile-field">
+            <div class="profile-field__label">Phone</div>
+            <div class="profile-field__value">${EMP.phone}</div>
+          </div>
+          <div class="profile-field">
+            <div class="profile-field__label">Location</div>
+            <div class="profile-field__value">${EMP.location}</div>
+          </div>
+        </div>
+      </div>
+      <div class="profile-section" data-tab="employment" style="display:none;">
+        <div class="profile-grid">
+          <div class="profile-field">
+            <div class="profile-field__label">Employee ID</div>
+            <div class="profile-field__value mono">${EMP.employeeId}</div>
+          </div>
+          <div class="profile-field">
+            <div class="profile-field__label">Department</div>
+            <div class="profile-field__value">${EMP.department}</div>
+          </div>
+          <div class="profile-field">
+            <div class="profile-field__label">Role</div>
+            <div class="profile-field__value">${EMP.role}</div>
+          </div>
+          <div class="profile-field">
+            <div class="profile-field__label">Contract Type</div>
+            <div class="profile-field__value">${EMP.contractType}</div>
+          </div>
+          <div class="profile-field">
+            <div class="profile-field__label">Join Date</div>
+            <div class="profile-field__value">${fmtDate(EMP.joinDate)}</div>
+          </div>
+          <div class="profile-field">
+            <div class="profile-field__label">Reporting Manager</div>
+            <div class="profile-field__value">${EMP.manager}</div>
+          </div>
+        </div>
+      </div>
+      <div class="profile-section" data-tab="financial" style="display:none;">
+        <div class="profile-grid">
+          <div class="profile-field">
+            <div class="profile-field__label">Bank Name</div>
+            <div class="profile-field__value">${EMP.bankName}</div>
+          </div>
+          <div class="profile-field">
+            <div class="profile-field__label">Account Number</div>
+            <div class="profile-field__value mono">${EMP.bankAccount}</div>
+          </div>
+          <div class="profile-field">
+            <div class="profile-field__label">Latest Gross Salary</div>
+            <div class="profile-field__value mono">${fmtCNY(SLIPS[0].gross)}</div>
+          </div>
+          <div class="profile-field">
+            <div class="profile-field__label">Latest Net Salary</div>
+            <div class="profile-field__value mono">${fmtCNY(SLIPS[0].net)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function switchProfileTab(tab) {
+  document.querySelectorAll('#profileTabs .profile-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tab);
+  });
+  document.querySelectorAll('#profileTabContent .profile-section').forEach(s => {
+    s.style.display = s.dataset.tab === tab ? 'block' : 'none';
+  });
+}
+
+// ========================================================================
+// INIT
+// ========================================================================
+(function init() {
+  // Set date
+  const now = new Date();
+  document.getElementById('utilDate').textContent = now.toLocaleDateString('en-US', {
+    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+  });
+
+  // Render initial page
+  renderPage('dashboard');
+
+  // Handle hash navigation
+  function handleHash() {
+    const hash = window.location.hash.replace('#/', '') || 'dashboard';
+    navigateTo(hash);
+  }
+
+  window.addEventListener('hashchange', handleHash);
+  if (window.location.hash) handleHash();
+})();
+</script>
+</body>
+</html>

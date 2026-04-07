@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>RampingUp — Employee Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{
+  font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  color:rgba(0,0,0,0.9);background:#f7f6f3;line-height:1.5;min-height:100vh;
+}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input,select,textarea{font-family:inherit;font-size:14px}
+table{border-collapse:collapse;width:100%}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,0.2)}
+
+/* ============================================================
+   TOP NAVIGATION BAR
+   ============================================================ */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;
+  height:45px;padding:0 16px;
+  background:#fff;
+  border-bottom:1px solid rgba(0,0,0,0.08);
+  backdrop-filter:blur(8px);
+}
+.topbar-logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.topbar-logo svg{flex-shrink:0}
+
+.topbar-divider{
+  width:1px;height:20px;background:rgba(0,0,0,0.08);margin:0 14px;flex-shrink:0;
+}
+
+.topbar-nav{
+  display:flex;align-items:center;gap:2px;
+  height:100%;
+}
+.topbar-nav a{
+  position:relative;
+  display:flex;align-items:center;gap:5px;
+  height:100%;padding:0 12px;
+  font-size:14px;font-weight:500;
+  color:rgba(0,0,0,0.45);
+  transition:color .15s;
+  white-space:nowrap;
+}
+.topbar-nav a svg{width:16px;height:16px;opacity:.65}
+.topbar-nav a:hover{color:rgba(0,0,0,0.75)}
+.topbar-nav a.active{color:rgba(0,0,0,0.9)}
+.topbar-nav a.active svg{opacity:1}
+.topbar-nav a.active::after{
+  content:'';position:absolute;bottom:0;left:12px;right:12px;
+  height:2px;background:rgba(0,0,0,0.85);border-radius:2px 2px 0 0;
+}
+
+.topbar-spacer{flex:1}
+
+.topbar-actions{display:flex;align-items:center;gap:2px;flex-shrink:0}
+.topbar-btn{
+  display:flex;align-items:center;justify-content:center;
+  width:30px;height:30px;border-radius:4px;
+  color:rgba(0,0,0,0.45);transition:background .12s,color .12s;
+}
+.topbar-btn:hover{background:rgba(0,0,0,0.04);color:rgba(0,0,0,0.75)}
+.topbar-btn svg{width:18px;height:18px}
+
+.user-pill{
+  display:flex;align-items:center;gap:7px;
+  padding:3px 10px 3px 4px;border-radius:20px;
+  transition:background .12s;margin-left:6px;
+}
+.user-pill:hover{background:rgba(0,0,0,0.04)}
+.user-pill .avatar{
+  width:26px;height:26px;border-radius:50%;
+  background:#0075de;color:#fff;font-size:11px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;
+}
+.user-pill .uname{font-size:13px;font-weight:500;color:rgba(0,0,0,0.7)}
+
+/* Search trigger */
+.search-trigger{
+  display:flex;align-items:center;gap:6px;
+  padding:4px 10px;border-radius:6px;
+  background:rgba(0,0,0,0.035);color:rgba(0,0,0,0.38);
+  font-size:13px;height:30px;transition:background .12s;
+  margin-right:6px;border:1px solid rgba(0,0,0,0.06);
+}
+.search-trigger:hover{background:rgba(0,0,0,0.06)}
+.search-trigger svg{width:14px;height:14px}
+.search-trigger kbd{
+  font-family:inherit;font-size:11px;font-weight:600;
+  background:rgba(255,255,255,0.9);padding:1px 5px;border-radius:3px;
+  color:rgba(0,0,0,0.38);border:1px solid rgba(0,0,0,0.08);
+  line-height:1.4;
+}
+
+/* Notification dot */
+.notif-dot{position:relative}
+.notif-dot::after{
+  content:'';position:absolute;top:4px;right:4px;
+  width:7px;height:7px;border-radius:50%;
+  background:#eb5757;border:1.5px solid #fff;
+}
+
+/* ============================================================
+   MAIN CONTENT AREA
+   ============================================================ */
+.page-wrap{
+  max-width:960px;margin:0 auto;padding:36px 52px 80px;
+}
+@media(max-width:768px){
+  .page-wrap{padding:24px 16px 60px}
+}
+
+/* Page header */
+.page-header{margin-bottom:28px}
+.page-header h1{
+  font-size:34px;font-weight:700;letter-spacing:-0.025em;
+  color:rgba(0,0,0,0.9);line-height:1.2;
+}
+.page-header .page-desc{
+  font-size:15px;color:rgba(0,0,0,0.45);margin-top:6px;line-height:1.5;
+}
+
+/* ============================================================
+   METRIC CARDS
+   ============================================================ */
+.metric-row{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:12px;margin-bottom:24px;
+}
+.metric-card{
+  background:#fff;border:1px solid rgba(0,0,0,0.06);
+  border-radius:8px;padding:18px 20px;
+  transition:box-shadow .15s;
+}
+.metric-card:hover{box-shadow:0 1px 6px rgba(0,0,0,0.06)}
+.metric-card .mc-label{
+  font-size:11px;color:rgba(0,0,0,0.45);font-weight:600;
+  text-transform:uppercase;letter-spacing:0.06em;
+}
+.metric-card .mc-value{
+  font-size:30px;font-weight:700;margin-top:6px;letter-spacing:-0.02em;
+  color:rgba(0,0,0,0.9);
+}
+.metric-card .mc-sub{font-size:12px;color:rgba(0,0,0,0.38);margin-top:2px}
+
+/* ============================================================
+   SECTION TOGGLE (Notion collapsible)
+   ============================================================ */
+.section-toggle{
+  display:flex;align-items:center;gap:4px;
+  padding:6px 0;margin:24px 0 10px;cursor:pointer;user-select:none;
+}
+.section-toggle .arrow{
+  width:22px;height:22px;display:flex;align-items:center;justify-content:center;
+  border-radius:4px;transition:background .12s;
+  color:rgba(0,0,0,0.35);
+}
+.section-toggle:hover .arrow{background:rgba(0,0,0,0.06)}
+.section-toggle .arrow svg{width:16px;height:16px;transition:transform .15s}
+.section-toggle.collapsed .arrow svg{transform:rotate(-90deg)}
+.section-toggle h2{font-size:15px;font-weight:600;color:rgba(0,0,0,0.85)}
+.section-toggle .count{
+  font-size:12px;color:rgba(0,0,0,0.35);font-weight:400;
+  background:rgba(0,0,0,0.04);padding:1px 7px;border-radius:10px;
+  margin-left:4px;
+}
+
+.section-body{overflow:hidden;transition:max-height .2s ease}
+.section-body.collapsed{max-height:0 !important;overflow:hidden}
+
+/* ============================================================
+   NOTION TABLE
+   ============================================================ */
+.n-table-wrap{
+  background:#fff;border:1px solid rgba(0,0,0,0.06);
+  border-radius:8px;overflow:hidden;
+}
+.n-table{width:100%}
+.n-table thead{background:rgba(0,0,0,0.018)}
+.n-table th{
+  font-size:11px;font-weight:600;color:rgba(0,0,0,0.45);
+  text-align:left;padding:8px 16px;
+  border-bottom:1px solid rgba(0,0,0,0.06);
+  text-transform:uppercase;letter-spacing:0.06em;
+  white-space:nowrap;
+}
+.n-table td{
+  font-size:14px;padding:10px 16px;
+  border-bottom:1px solid rgba(0,0,0,0.035);
+  color:rgba(0,0,0,0.75);
+}
+.n-table tbody tr{transition:background .08s}
+.n-table tbody tr:hover{background:rgba(0,0,0,0.018)}
+.n-table tbody tr:last-child td{border-bottom:none}
+.n-table .cell-id{color:rgba(0,0,0,0.38);font-size:13px;font-family:'SF Mono',Monaco,Menlo,monospace}
+
+/* ============================================================
+   STATUS BADGES
+   ============================================================ */
+.badge{
+  display:inline-flex;align-items:center;
+  font-size:12px;font-weight:500;
+  padding:2px 8px;border-radius:3px;white-space:nowrap;
+}
+.badge-approved{background:#dbeddb;color:#0f7b6c}
+.badge-pending{background:#fdecd3;color:#cf8d2e}
+.badge-rejected{background:#fbe4e4;color:#eb5757}
+.badge-draft{background:#f1f1ef;color:#9b9a97}
+.badge-open{background:#d3e5ef;color:#2473a3}
+.badge-closed{background:#dbeddb;color:#0f7b6c}
+.badge-high{background:#fbe4e4;color:#eb5757}
+.badge-medium{background:#fdecd3;color:#cf8d2e}
+.badge-low{background:#f1f1ef;color:#9b9a97}
+
+/* ============================================================
+   GALLERY VIEW (salary)
+   ============================================================ */
+.gallery-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));
+  gap:14px;
+}
+.gallery-card{
+  background:#fff;border:1px solid rgba(0,0,0,0.06);
+  border-radius:8px;padding:22px;
+  transition:box-shadow .15s,border-color .15s;cursor:pointer;
+}
+.gallery-card:hover{
+  box-shadow:0 2px 10px rgba(0,0,0,0.06);
+  border-color:rgba(0,0,0,0.12);
+}
+.gallery-card .gc-title{
+  font-size:16px;font-weight:600;margin-bottom:14px;
+  color:rgba(0,0,0,0.9);letter-spacing:-0.01em;
+}
+.gallery-card .gc-prop{
+  display:flex;justify-content:space-between;
+  font-size:13px;padding:4px 0;
+}
+.gallery-card .gc-label{color:rgba(0,0,0,0.45)}
+.gallery-card .gc-value{color:rgba(0,0,0,0.75);font-weight:500}
+.gallery-card .gc-net{
+  margin-top:14px;padding-top:14px;
+  border-top:1px solid rgba(0,0,0,0.06);
+  display:flex;justify-content:space-between;align-items:baseline;
+}
+.gallery-card .gc-net .gc-label{font-size:13px;color:rgba(0,0,0,0.45)}
+.gallery-card .gc-net .gc-value{
+  font-size:22px;font-weight:700;color:rgba(0,0,0,0.9);
+  letter-spacing:-0.02em;
+}
+
+/* ============================================================
+   KANBAN BOARD (tickets)
+   ============================================================ */
+.kanban-board{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px}
+.kanban-col{flex:1;min-width:240px;max-width:320px}
+.kanban-col-header{
+  font-size:12px;font-weight:600;color:rgba(0,0,0,0.5);
+  padding:8px 4px 10px;display:flex;align-items:center;gap:8px;
+  text-transform:uppercase;letter-spacing:0.05em;
+}
+.kanban-col-header .col-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+}
+.kanban-col-header .col-count{
+  font-size:12px;font-weight:400;color:rgba(0,0,0,0.3);
+  background:rgba(0,0,0,0.04);padding:0 6px;border-radius:8px;
+}
+.kanban-cards{display:flex;flex-direction:column;gap:8px}
+.kanban-card{
+  background:#fff;border:1px solid rgba(0,0,0,0.06);
+  border-radius:8px;padding:14px 16px;
+  transition:box-shadow .15s,border-color .15s;cursor:pointer;
+}
+.kanban-card:hover{
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  border-color:rgba(0,0,0,0.12);
+}
+.kanban-card .kc-title{font-size:14px;font-weight:500;color:rgba(0,0,0,0.85);margin-bottom:10px;line-height:1.4}
+.kanban-card .kc-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.kanban-card .kc-tag{
+  font-size:11px;font-weight:500;padding:2px 7px;border-radius:3px;
+  background:rgba(0,0,0,0.04);color:rgba(0,0,0,0.55);
+}
+.kanban-card .kc-id{font-size:12px;color:rgba(0,0,0,0.3);font-family:'SF Mono',Monaco,Menlo,monospace}
+.kanban-card .kc-date{font-size:12px;color:rgba(0,0,0,0.35);margin-top:10px}
+
+/* ============================================================
+   LIST VIEW (expenses)
+   ============================================================ */
+.list-view{
+  background:#fff;border:1px solid rgba(0,0,0,0.06);
+  border-radius:8px;overflow:hidden;
+}
+.list-row{
+  display:flex;align-items:center;padding:14px 18px;
+  border-bottom:1px solid rgba(0,0,0,0.04);
+  transition:background .08s;gap:14px;
+}
+.list-row:last-child{border-bottom:none}
+.list-row:hover{background:rgba(0,0,0,0.018)}
+.list-row .lr-icon{
+  width:36px;height:36px;border-radius:8px;
+  background:rgba(0,0,0,0.035);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.list-row .lr-icon svg{width:16px;height:16px;color:rgba(0,0,0,0.45)}
+.list-row .lr-main{flex:1;min-width:0}
+.list-row .lr-title{font-size:14px;font-weight:500;color:rgba(0,0,0,0.85)}
+.list-row .lr-sub{font-size:12px;color:rgba(0,0,0,0.38);margin-top:2px}
+.list-row .lr-props{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.list-row .lr-amount{font-size:14px;font-weight:600;color:rgba(0,0,0,0.75);white-space:nowrap}
+
+/* ============================================================
+   PROPERTY BLOCK (profile)
+   ============================================================ */
+.prop-block{
+  background:#fff;border:1px solid rgba(0,0,0,0.06);
+  border-radius:8px;overflow:hidden;margin-bottom:16px;
+}
+.prop-block-header{
+  font-size:11px;font-weight:600;color:rgba(0,0,0,0.42);
+  text-transform:uppercase;letter-spacing:0.06em;
+  padding:12px 20px;border-bottom:1px solid rgba(0,0,0,0.05);
+  background:rgba(0,0,0,0.018);
+}
+.prop-row{
+  display:flex;padding:11px 20px;
+  border-bottom:1px solid rgba(0,0,0,0.035);
+  font-size:14px;
+}
+.prop-row:last-child{border-bottom:none}
+.prop-row .prop-label{
+  width:180px;flex-shrink:0;color:rgba(0,0,0,0.42);font-weight:500;
+  font-size:13px;
+}
+.prop-row .prop-value{color:rgba(0,0,0,0.8)}
+
+/* ============================================================
+   LEAVE BALANCE BARS
+   ============================================================ */
+.leave-bal-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:12px;margin-bottom:24px;
+}
+.leave-bal-card{
+  background:#fff;border:1px solid rgba(0,0,0,0.06);
+  border-radius:8px;padding:16px 18px;
+}
+.leave-bal-card .lb-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.leave-bal-card .lb-type{font-size:13px;font-weight:600;color:rgba(0,0,0,0.78)}
+.leave-bal-card .lb-nums{font-size:12px;color:rgba(0,0,0,0.38)}
+.leave-bal-card .lb-bar{height:5px;border-radius:3px;background:rgba(0,0,0,0.06);overflow:hidden}
+.leave-bal-card .lb-bar-fill{height:100%;border-radius:3px;transition:width .4s ease}
+.leave-bal-card .lb-remaining{font-size:12px;color:rgba(0,0,0,0.38);margin-top:8px}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.action-bar{display:flex;align-items:center;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 12px;border-radius:6px;
+  font-size:13px;font-weight:500;
+  border:1px solid rgba(0,0,0,0.12);
+  color:rgba(0,0,0,0.65);
+  background:#fff;
+  transition:background .1s,border-color .1s,box-shadow .1s;
+  height:32px;
+}
+.btn:hover{background:rgba(0,0,0,0.025);border-color:rgba(0,0,0,0.18)}
+.btn svg{width:14px;height:14px}
+.btn-primary{
+  background:#0075de;color:#fff;border-color:#0075de;
+}
+.btn-primary:hover{background:#006acc;border-color:#006acc;box-shadow:0 1px 3px rgba(0,117,222,0.2)}
+
+.view-controls{
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;color:rgba(0,0,0,0.45);
+}
+.view-controls .vc-label{font-weight:500}
+.view-controls select{
+  padding:5px 8px;border-radius:6px;
+  border:1px solid rgba(0,0,0,0.1);
+  background:#fff;color:rgba(0,0,0,0.65);
+  font-size:13px;height:32px;
+}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+.modal-overlay{
+  display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(15,15,15,0.6);
+  justify-content:center;align-items:flex-start;
+  padding-top:min(12vh,100px);
+}
+.modal-overlay.show{display:flex}
+.modal{
+  background:#fff;border-radius:12px;
+  width:100%;max-width:520px;
+  box-shadow:0 12px 40px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.05);
+  animation:modalSlide .2s ease;
+}
+@keyframes modalSlide{from{opacity:0;transform:translateY(-10px) scale(.98)}to{opacity:1;transform:none}}
+.modal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px 0;
+}
+.modal-header h3{font-size:18px;font-weight:600;letter-spacing:-0.01em}
+.modal-close{
+  width:28px;height:28px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(0,0,0,0.35);transition:background .12s,color .12s;
+}
+.modal-close:hover{background:rgba(0,0,0,0.06);color:rgba(0,0,0,0.6)}
+.modal-close svg{width:16px;height:16px}
+.modal-body{padding:20px 24px 24px}
+
+.form-group{margin-bottom:16px}
+.form-group label{
+  display:block;font-size:12px;font-weight:600;
+  color:rgba(0,0,0,0.42);margin-bottom:6px;
+  text-transform:uppercase;letter-spacing:0.05em;
+}
+.form-group input,
+.form-group select,
+.form-group textarea{
+  width:100%;padding:8px 11px;border-radius:6px;
+  border:1px solid rgba(0,0,0,0.1);
+  background:rgba(0,0,0,0.018);
+  color:rgba(0,0,0,0.8);
+  transition:border-color .15s,box-shadow .15s;
+  line-height:1.5;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{
+  outline:none;border-color:#0075de;
+  box-shadow:0 0 0 3px rgba(0,117,222,0.1);
+  background:#fff;
+}
+.form-group input::placeholder,
+.form-group textarea::placeholder{color:rgba(0,0,0,0.3)}
+.form-group textarea{resize:vertical;min-height:80px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.modal-footer{
+  display:flex;justify-content:flex-end;gap:8px;
+  padding:0 24px 20px;
+}
+
+/* ============================================================
+   SALARY DETAIL MODAL
+   ============================================================ */
+.sal-section{margin-bottom:20px}
+.sal-section h4{
+  font-size:11px;font-weight:600;color:rgba(0,0,0,0.42);
+  text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;
+}
+.sal-row{
+  display:flex;justify-content:space-between;
+  padding:5px 0;font-size:14px;
+}
+.sal-row .sr-label{color:rgba(0,0,0,0.6)}
+.sal-row .sr-value{font-weight:500;color:rgba(0,0,0,0.85)}
+.sal-total{
+  display:flex;justify-content:space-between;
+  padding:10px 0 0;margin-top:8px;
+  border-top:1px solid rgba(0,0,0,0.08);
+  font-size:14px;font-weight:600;
+}
+
+/* ============================================================
+   QUICK ACTIONS (dashboard)
+   ============================================================ */
+.quick-actions{display:flex;gap:10px;margin:20px 0 32px;flex-wrap:wrap}
+.quick-action{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 18px;border-radius:8px;
+  background:#fff;border:1px solid rgba(0,0,0,0.06);
+  font-size:13px;font-weight:500;color:rgba(0,0,0,0.65);
+  transition:background .1s,box-shadow .12s,border-color .12s;cursor:pointer;
+}
+.quick-action:hover{
+  background:rgba(0,0,0,0.01);
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);
+  border-color:rgba(0,0,0,0.1);
+}
+.quick-action .qa-icon{
+  width:30px;height:30px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;
+}
+
+/* ============================================================
+   SEARCH OVERLAY
+   ============================================================ */
+.search-overlay{
+  display:none;position:fixed;inset:0;z-index:300;
+  background:rgba(15,15,15,0.5);
+  justify-content:center;align-items:flex-start;
+  padding-top:min(12vh,100px);
+}
+.search-overlay.show{display:flex}
+.search-box{
+  background:#fff;border-radius:12px;
+  width:100%;max-width:560px;
+  box-shadow:0 16px 50px rgba(0,0,0,0.18),0 0 0 1px rgba(0,0,0,0.04);
+  animation:modalSlide .15s ease;overflow:hidden;
+}
+.search-input-wrap{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 18px;border-bottom:1px solid rgba(0,0,0,0.06);
+}
+.search-input-wrap svg{width:18px;height:18px;color:rgba(0,0,0,0.3);flex-shrink:0}
+.search-input-wrap input{
+  flex:1;border:none;outline:none;
+  font-size:16px;color:rgba(0,0,0,0.9);
+  background:transparent;
+}
+.search-input-wrap input::placeholder{color:rgba(0,0,0,0.3)}
+.search-results{padding:6px;max-height:340px;overflow-y:auto}
+.search-results .sr-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-radius:6px;cursor:pointer;
+  transition:background .08s;
+}
+.search-results .sr-item:hover{background:rgba(0,0,0,0.04)}
+.search-results .sr-icon{
+  width:28px;height:28px;border-radius:6px;
+  background:rgba(0,0,0,0.04);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;
+}
+.search-results .sr-text{font-size:14px;color:rgba(0,0,0,0.75);flex:1}
+.search-results .sr-hint{font-size:12px;color:rgba(0,0,0,0.35);flex-shrink:0}
+.search-hint{padding:16px;font-size:13px;color:rgba(0,0,0,0.35);text-align:center}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,0.88);color:#fff;
+  padding:10px 20px;border-radius:8px;
+  font-size:14px;font-weight:500;z-index:400;
+  animation:toastIn .2s ease;
+  box-shadow:0 4px 16px rgba(0,0,0,0.18);
+}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) none}}
+
+/* ============================================================
+   PROFILE HEADER
+   ============================================================ */
+.profile-header{
+  display:flex;align-items:center;gap:20px;margin-bottom:32px;
+}
+.profile-avatar{
+  width:68px;height:68px;border-radius:50%;
+  background:linear-gradient(135deg,#0075de 0%,#47fa22 100%);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:24px;font-weight:700;flex-shrink:0;
+  box-shadow:0 2px 8px rgba(0,117,222,0.2);
+}
+.profile-info h1{font-size:28px;font-weight:700;letter-spacing:-0.02em;line-height:1.2}
+.profile-info .profile-sub{font-size:14px;color:rgba(0,0,0,0.45);margin-top:4px}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media(max-width:640px){
+  .topbar-nav{gap:0;overflow-x:auto}
+  .topbar-nav a{padding:0 8px;font-size:13px}
+  .topbar-nav a svg{display:none}
+  .search-trigger{display:none}
+  .user-pill .uname{display:none}
+  .kanban-board{flex-direction:column}
+  .kanban-col{max-width:100%}
+  .form-row{grid-template-columns:1fr}
+  .prop-row{flex-direction:column;gap:3px}
+  .prop-row .prop-label{width:auto}
+  .page-header h1{font-size:26px}
+  .metric-card .mc-value{font-size:24px}
+  .topbar-divider{margin:0 8px}
+}
+
+/* ============================================================
+   ANIMATION
+   ============================================================ */
+.fade-in{animation:fadeIn .22s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<!-- ============================== TOP BAR ============================== -->
+<header class="topbar">
+  <a class="topbar-logo" href="#dashboard">
+    <svg viewBox="80 46 82 82" width="24" height="24" style="flex-shrink:0">
+      <path d="M110.39,71.82c.85,0,1.42.88,1.06,1.66l-4.55,9.9-.06.13-.67,1.46-6.4,13.93c-.19.42-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l5.95-12.96.67-1.46,5.06-11.01c.19-.41.61-.68,1.06-.68h10.58Z" fill="#000"/>
+      <path d="M151.2,83.51h-10.58c-.46,0-.87-.27-1.06-.68l-4.3-9.35c-.36-.77.21-1.66,1.06-1.66h10.58c.46,0,.87.27,1.06.68l4.3,9.35c.36.77-.21,1.66-1.06,1.66Z" fill="#47fa22"/>
+      <path d="M126.07,73.48l-4.3,9.35c-.19.41-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l4.3-9.35c.19-.41.61-.68,1.06-.68h10.58c.85,0,1.42.88,1.06,1.66Z" fill="#000"/>
+      <path d="M125.69,99.59h-10.59c-.46,0-.87-.27-1.06-.68l-5.64-12.28c-.36-.77.21-1.66,1.06-1.66h10.59c.46,0,.87.27,1.06.68l5.64,12.28c.36.77-.21,1.66-1.06,1.66Z" fill="#000"/>
+      <path d="M152.93,86.63l-5.64,12.28c-.19.42-.61.68-1.06.68h-10.58c-.85,0-1.42-.88-1.06-1.66l5.64-12.28c.19-.42.61-.68,1.06-.68h10.58c.85,0,1.42.88,1.06,1.66Z" fill="#47fa22"/>
+    </svg>
+    <span style="font-weight:600;font-size:15px;color:rgba(0,0,0,0.9)">RampingUp</span>
+  </a>
+
+  <div class="topbar-divider"></div>
+
+  <nav class="topbar-nav" id="mainNav">
+    <a href="#dashboard" class="active" data-page="dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Home
+    </a>
+    <a href="#leave" data-page="leave">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+      Leave
+    </a>
+    <a href="#salary" data-page="salary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Salary
+    </a>
+    <a href="#expenses" data-page="expenses">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+      Expenses
+    </a>
+    <a href="#tickets" data-page="tickets">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Tickets
+    </a>
+    <a href="#profile" data-page="profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Profile
+    </a>
+  </nav>
+
+  <div class="topbar-spacer"></div>
+
+  <div class="topbar-actions">
+    <button class="search-trigger" id="searchTrigger" onclick="openSearch()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Search
+      <kbd>/</kbd>
+    </button>
+    <button class="topbar-btn notif-dot" title="Notifications" onclick="showToast('No new notifications')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </button>
+    <button class="user-pill" onclick="navigateTo('profile')" title="Zhang Rui">
+      <span class="avatar">ZR</span>
+      <span class="uname">Zhang Rui</span>
+    </button>
+  </div>
+</header>
+
+<!-- ============================== SEARCH OVERLAY ============================== -->
+<div class="search-overlay" id="searchOverlay">
+  <div class="search-box">
+    <div class="search-input-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="searchInput" placeholder="Search pages, records..." autofocus/>
+    </div>
+    <div class="search-results" id="searchResults">
+      <div class="search-hint">Type to search across all pages and records</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== PAGE CONTENT ============================== -->
+<div id="appContent"></div>
+
+<!-- ============================== MODALS ============================== -->
+
+<!-- New Leave Request -->
+<div class="modal-overlay" id="leaveModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>New Leave Request</h3>
+      <button class="modal-close" onclick="closeModal('leaveModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Leave Type</label>
+        <select id="lf-type">
+          <option value="">Select leave type...</option>
+          <option>Annual Leave</option>
+          <option>Sick Leave</option>
+          <option>Personal Leave</option>
+          <option>Compensatory</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>From Date</label>
+          <input type="date" id="lf-from"/>
+        </div>
+        <div class="form-group">
+          <label>To Date</label>
+          <input type="date" id="lf-to"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Reason</label>
+        <textarea id="lf-reason" placeholder="Describe the reason for your leave request..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('leaveModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitLeave()">Submit Request</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Expense Claim -->
+<div class="modal-overlay" id="expenseModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>New Expense Claim</h3>
+      <button class="modal-close" onclick="closeModal('expenseModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" id="ef-desc" placeholder="What is this expense for?"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category</label>
+          <select id="ef-cat">
+            <option value="">Select category...</option>
+            <option>Travel</option>
+            <option>Equipment</option>
+            <option>Meals</option>
+            <option>Transport</option>
+            <option>Communication</option>
+            <option>Office Supplies</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Amount (CNY)</label>
+          <input type="number" id="ef-amt" placeholder="0.00" step="0.01"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="ef-date"/>
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="ef-notes" placeholder="Additional notes or details..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('expenseModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitExpense()">Submit Claim</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Ticket -->
+<div class="modal-overlay" id="ticketModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>New Ticket</h3>
+      <button class="modal-close" onclick="closeModal('ticketModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Subject</label>
+        <input type="text" id="tf-subj" placeholder="Briefly describe the issue..."/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category</label>
+          <select id="tf-cat">
+            <option value="">Select category...</option>
+            <option>IT Support</option>
+            <option>HR</option>
+            <option>Facilities</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Priority</label>
+          <select id="tf-pri">
+            <option value="">Select priority...</option>
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="tf-desc" placeholder="Provide details about your issue..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('ticketModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitTicket()">Create Ticket</button>
+    </div>
+  </div>
+</div>
+
+<!-- Salary Detail Modal -->
+<div class="modal-overlay" id="salaryDetailModal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <h3 id="salDetailTitle">Payslip Detail</h3>
+      <button class="modal-close" onclick="closeModal('salaryDetailModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    </div>
+    <div class="modal-body" id="salDetailBody"></div>
+  </div>
+</div>
+
+
+<script>
+/* ================================================================
+   DATA
+   ================================================================ */
+const EMP = { name:'Zhang Rui', initials:'ZR', role:'Software Engineer', dept:'Engineering', id:'EMP-2024-0032', email:'zhang.rui@rampingup.com', phone:'+86 138 8888 0032', joinDate:'2024-03-15', manager:'Li Wei', location:'Shanghai, China', contract:'Full-time', gender:'Male', dob:'1995-06-20', bank:'China Merchants Bank', bankAcct:'**** **** **** 6789' };
+
+const LEAVE_TYPES = [
+  {type:'Annual Leave',total:15,used:7,color:'#0075de'},
+  {type:'Sick Leave',total:10,used:2,color:'#6940a5'},
+  {type:'Personal Leave',total:5,used:1,color:'#eb5757'},
+  {type:'Compensatory',total:3,used:0,color:'#0f7b6c'}
+];
+
+const LEAVES = [
+  {id:'LV-2401',type:'Annual Leave',from:'2025-03-10',to:'2025-03-14',days:5,status:'Approved',approver:'Li Wei'},
+  {id:'LV-2402',type:'Sick Leave',from:'2025-02-20',to:'2025-02-21',days:2,status:'Approved',approver:'Li Wei'},
+  {id:'LV-2403',type:'Annual Leave',from:'2025-04-05',to:'2025-04-06',days:2,status:'Pending',approver:'Li Wei'},
+  {id:'LV-2404',type:'Personal Leave',from:'2025-01-15',to:'2025-01-15',days:1,status:'Approved',approver:'Li Wei'},
+  {id:'LV-2405',type:'Annual Leave',from:'2025-05-01',to:'2025-05-02',days:2,status:'Draft',approver:'-'},
+  {id:'LV-2406',type:'Sick Leave',from:'2024-12-10',to:'2024-12-10',days:1,status:'Rejected',approver:'Li Wei'}
+];
+
+const SLIPS = [
+  {id:'SS-202503',period:'March 2025',payDate:'2025-03-25',gross:32000,ded:6820,net:25180},
+  {id:'SS-202502',period:'February 2025',payDate:'2025-02-25',gross:32000,ded:6820,net:25180},
+  {id:'SS-202501',period:'January 2025',payDate:'2025-01-25',gross:32000,ded:6820,net:25180},
+  {id:'SS-202412',period:'December 2024',payDate:'2024-12-25',gross:30000,ded:6380,net:23620},
+  {id:'SS-202411',period:'November 2024',payDate:'2024-11-25',gross:30000,ded:6380,net:23620}
+];
+
+const SAL_DETAIL = {
+  earn:[{c:'Basic Salary',a:20000},{c:'Housing Allowance',a:5000},{c:'Transport',a:2000},{c:'Meal',a:1500},{c:'Performance Bonus',a:3500}],
+  ded:[{c:'Pension (8%)',a:2560},{c:'Medical (2%)',a:640},{c:'Unemployment (0.5%)',a:160},{c:'Housing Fund (12%)',a:2400},{c:'Income Tax',a:1060}]
+};
+
+const EXPENSES = [
+  {id:'EC-2401',date:'2025-03-18',cat:'Travel',desc:'Business trip to Beijing',amt:4580,status:'Pending'},
+  {id:'EC-2402',date:'2025-03-05',cat:'Equipment',desc:'External monitor',amt:2899,status:'Approved'},
+  {id:'EC-2403',date:'2025-02-20',cat:'Meals',desc:'Client dinner',amt:860,status:'Approved'},
+  {id:'EC-2404',date:'2025-02-10',cat:'Transport',desc:'Monthly taxi',amt:1200,status:'Rejected'},
+  {id:'EC-2405',date:'2025-01-28',cat:'Communication',desc:'Phone plan',amt:1680,status:'Approved'}
+];
+
+const TICKETS = [
+  {id:'TK-0089',subj:'VPN access not working',cat:'IT Support',pri:'High',status:'Open',created:'2025-03-20'},
+  {id:'TK-0088',subj:'Additional software license',cat:'IT Support',pri:'Medium',status:'Pending',created:'2025-03-18'},
+  {id:'TK-0085',subj:'Desk lamp replacement',cat:'Facilities',pri:'Low',status:'Closed',created:'2025-03-10'},
+  {id:'TK-0082',subj:'Payslip discrepancy Feb',cat:'HR',pri:'High',status:'Closed',created:'2025-03-02'},
+  {id:'TK-0079',subj:'Meeting room booking error',cat:'IT Support',pri:'Medium',status:'Open',created:'2025-02-28'}
+];
+
+/* ================================================================
+   HELPERS
+   ================================================================ */
+const $ = id => document.getElementById(id);
+const fmt = n => n.toLocaleString('en-US');
+const fmtCNY = n => '\u00a5' + n.toLocaleString('en-US');
+
+function badgeClass(status) {
+  const m = {approved:'badge-approved',pending:'badge-pending',rejected:'badge-rejected',draft:'badge-draft',open:'badge-open',closed:'badge-closed'};
+  return m[status.toLowerCase()] || 'badge-draft';
+}
+
+function priBadgeClass(pri) {
+  const m = {high:'badge-high',medium:'badge-medium',low:'badge-low'};
+  return m[pri.toLowerCase()] || 'badge-low';
+}
+
+function catIcon(cat) {
+  const icons = {
+    Travel:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.4-.1.9.3 1.1l5.7 3.2-3 3L4 14c-.3 0-.5.1-.7.3l-.2.3c-.2.4 0 .8.3 1l2.8 1.2 1.2 2.8c.2.3.6.5 1 .3l.3-.2c.2-.2.3-.4.3-.7l-.4-2.4 3-3 3.2 5.7c.2.4.7.5 1.1.3l.5-.3c.4-.2.6-.6.5-1.1Z"/></svg>',
+    Equipment:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>',
+    Meals:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><path d="M6 1v3"/><path d="M10 1v3"/><path d="M14 1v3"/></svg>',
+    Transport:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L17 10l-2-4H7L5 10l-3.5 1.1C.7 11.3 0 12.1 0 13v3c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>',
+    Communication:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.59.67 2.34a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.74-1.24a2 2 0 0 1 2.11-.45c.75.31 1.53.54 2.34.67A2 2 0 0 1 22 16.92Z"/></svg>',
+  };
+  return icons[cat] || '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>';
+}
+
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 18) return 'Good afternoon';
+  return 'Good evening';
+}
+
+function formatDate(str) {
+  const d = new Date(str + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+}
+
+function formatDateShort(str) {
+  const d = new Date(str + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+}
+
+/* ================================================================
+   SECTION COLLAPSE
+   ================================================================ */
+function toggleSection(sectionId) {
+  const body = $(sectionId);
+  const toggle = body.previousElementSibling;
+  if (body.classList.contains('collapsed')) {
+    body.classList.remove('collapsed');
+    body.style.maxHeight = body.scrollHeight + 'px';
+    toggle.classList.remove('collapsed');
+  } else {
+    body.style.maxHeight = '0px';
+    body.classList.add('collapsed');
+    toggle.classList.add('collapsed');
+  }
+}
+
+/* ================================================================
+   ROUTING
+   ================================================================ */
+let currentPage = 'dashboard';
+
+function navigateTo(page) {
+  window.location.hash = page;
+}
+
+function renderPage(page) {
+  currentPage = page;
+  const el = $('appContent');
+  document.querySelectorAll('.topbar-nav a').forEach(a => {
+    a.classList.toggle('active', a.dataset.page === page);
+  });
+  const renderers = {
+    dashboard: renderDashboard,
+    leave: renderLeave,
+    salary: renderSalary,
+    expenses: renderExpenses,
+    tickets: renderTickets,
+    profile: renderProfile
+  };
+  const fn = renderers[page] || renderDashboard;
+  el.innerHTML = '<div class="page-wrap fade-in">' + fn() + '</div>';
+  // Init collapsible sections
+  document.querySelectorAll('.section-body:not(.collapsed)').forEach(b => {
+    b.style.maxHeight = b.scrollHeight + 'px';
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+window.addEventListener('hashchange', () => {
+  renderPage(window.location.hash.slice(1) || 'dashboard');
+});
+
+/* ================================================================
+   DASHBOARD
+   ================================================================ */
+function renderDashboard() {
+  const totalLeave = LEAVE_TYPES.reduce((s,l) => s + l.total, 0);
+  const usedLeave = LEAVE_TYPES.reduce((s,l) => s + l.used, 0);
+  const pendingLeaves = LEAVES.filter(l => l.status === 'Pending').length;
+  const pendingExpenses = EXPENSES.filter(e => e.status === 'Pending').length;
+  const openTickets = TICKETS.filter(t => t.status === 'Open' || t.status === 'Pending').length;
+  const latestNet = SLIPS[0] ? fmtCNY(SLIPS[0].net) : '-';
+
+  return `
+    <div style="font-size:14px;color:rgba(0,0,0,0.42);margin-bottom:4px">${getGreeting()}, ${EMP.name.split(' ')[0]}</div>
+    <div class="page-header"><h1>Dashboard</h1></div>
+
+    <div class="quick-actions">
+      <button class="quick-action" onclick="openModal('leaveModal')">
+        <span class="qa-icon" style="background:#e8f3ff">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0075de" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+        </span>
+        Request Leave
+      </button>
+      <button class="quick-action" onclick="openModal('expenseModal')">
+        <span class="qa-icon" style="background:#fdf1e8">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#cf8d2e" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+        </span>
+        Submit Expense
+      </button>
+      <button class="quick-action" onclick="openModal('ticketModal')">
+        <span class="qa-icon" style="background:#ece8fd">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6940a5" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </span>
+        New Ticket
+      </button>
+      <button class="quick-action" onclick="navigateTo('salary')">
+        <span class="qa-icon" style="background:#e3f9e5">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f7b6c" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </span>
+        View Payslip
+      </button>
+    </div>
+
+    <div class="metric-row">
+      <div class="metric-card">
+        <div class="mc-label">Leave Balance</div>
+        <div class="mc-value">${totalLeave - usedLeave}</div>
+        <div class="mc-sub">${usedLeave} used of ${totalLeave} total days</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-label">Pending Requests</div>
+        <div class="mc-value">${pendingLeaves + pendingExpenses}</div>
+        <div class="mc-sub">${pendingLeaves} leave, ${pendingExpenses} expense</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-label">Open Tickets</div>
+        <div class="mc-value">${openTickets}</div>
+        <div class="mc-sub">${TICKETS.filter(t=>t.status==='Open').length} open, ${TICKETS.filter(t=>t.status==='Pending').length} in progress</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-label">Latest Net Pay</div>
+        <div class="mc-value">${latestNet}</div>
+        <div class="mc-sub">${SLIPS[0] ? SLIPS[0].period : ''}</div>
+      </div>
+    </div>
+
+    <!-- Leave Balance Section -->
+    <div class="section-toggle" onclick="toggleSection('dashLeaveBody')">
+      <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></span>
+      <h2>Leave Balance</h2>
+    </div>
+    <div class="section-body" id="dashLeaveBody">
+      <div class="leave-bal-grid">
+        ${LEAVE_TYPES.map(l => {
+          const remaining = l.total - l.used;
+          const pct = l.total > 0 ? (l.used / l.total * 100) : 0;
+          return `<div class="leave-bal-card">
+            <div class="lb-header">
+              <span class="lb-type">${l.type}</span>
+              <span class="lb-nums">${l.used} / ${l.total}</span>
+            </div>
+            <div class="lb-bar"><div class="lb-bar-fill" style="width:${pct}%;background:${l.color}"></div></div>
+            <div class="lb-remaining">${remaining} day${remaining !== 1 ? 's' : ''} remaining</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- Recent Leave Requests -->
+    <div class="section-toggle" onclick="toggleSection('dashRecentLeave')">
+      <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></span>
+      <h2>Recent Leave Requests</h2>
+      <span class="count">${LEAVES.length}</span>
+    </div>
+    <div class="section-body" id="dashRecentLeave">
+      <div class="n-table-wrap">
+        <table class="n-table">
+          <thead><tr><th>ID</th><th>Type</th><th>Period</th><th>Days</th><th>Status</th></tr></thead>
+          <tbody>
+            ${LEAVES.slice(0,4).map(l => `<tr>
+              <td class="cell-id">${l.id}</td>
+              <td>${l.type}</td>
+              <td>${formatDateShort(l.from)}${l.from !== l.to ? ' \u2014 ' + formatDateShort(l.to) : ''}</td>
+              <td>${l.days}</td>
+              <td><span class="badge ${badgeClass(l.status)}">${l.status}</span></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:10px">
+        <button class="btn" onclick="navigateTo('leave')" style="font-size:13px">View all leave requests &rarr;</button>
+      </div>
+    </div>
+
+    <!-- Recent Expenses -->
+    <div class="section-toggle" onclick="toggleSection('dashRecentExp')">
+      <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></span>
+      <h2>Recent Expenses</h2>
+      <span class="count">${EXPENSES.length}</span>
+    </div>
+    <div class="section-body" id="dashRecentExp">
+      <div class="n-table-wrap">
+        <table class="n-table">
+          <thead><tr><th>ID</th><th>Description</th><th>Category</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody>
+            ${EXPENSES.slice(0,3).map(e => `<tr>
+              <td class="cell-id">${e.id}</td>
+              <td>${e.desc}</td>
+              <td>${e.cat}</td>
+              <td style="font-weight:500">${fmtCNY(e.amt)}</td>
+              <td><span class="badge ${badgeClass(e.status)}">${e.status}</span></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:10px">
+        <button class="btn" onclick="navigateTo('expenses')" style="font-size:13px">View all expenses &rarr;</button>
+      </div>
+    </div>
+
+    <!-- Recent Tickets -->
+    <div class="section-toggle" onclick="toggleSection('dashRecentTix')">
+      <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></span>
+      <h2>Recent Tickets</h2>
+      <span class="count">${TICKETS.length}</span>
+    </div>
+    <div class="section-body" id="dashRecentTix">
+      <div class="n-table-wrap">
+        <table class="n-table">
+          <thead><tr><th>ID</th><th>Subject</th><th>Category</th><th>Priority</th><th>Status</th></tr></thead>
+          <tbody>
+            ${TICKETS.slice(0,3).map(t => `<tr>
+              <td class="cell-id">${t.id}</td>
+              <td>${t.subj}</td>
+              <td>${t.cat}</td>
+              <td><span class="badge ${priBadgeClass(t.pri)}">${t.pri}</span></td>
+              <td><span class="badge ${badgeClass(t.status)}">${t.status}</span></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:10px">
+        <button class="btn" onclick="navigateTo('tickets')" style="font-size:13px">View all tickets &rarr;</button>
+      </div>
+    </div>
+  `;
+}
+
+/* ================================================================
+   LEAVE PAGE
+   ================================================================ */
+function renderLeave() {
+  return `
+    <div class="page-header">
+      <h1>Leave</h1>
+      <div class="page-desc">Manage your time off requests and view your leave balance</div>
+    </div>
+
+    <div class="leave-bal-grid">
+      ${LEAVE_TYPES.map(l => {
+        const remaining = l.total - l.used;
+        const pct = l.total > 0 ? (l.used / l.total * 100) : 0;
+        return `<div class="leave-bal-card">
+          <div class="lb-header">
+            <span class="lb-type">${l.type}</span>
+            <span class="lb-nums">${l.used} / ${l.total}</span>
+          </div>
+          <div class="lb-bar"><div class="lb-bar-fill" style="width:${pct}%;background:${l.color}"></div></div>
+          <div class="lb-remaining">${remaining} day${remaining !== 1 ? 's' : ''} remaining</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div class="action-bar">
+      <button class="btn btn-primary" onclick="openModal('leaveModal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+        New Request
+      </button>
+      <div style="flex:1"></div>
+      <div class="view-controls">
+        <span class="vc-label">Filter</span>
+        <select onchange="filterLeaveTable(this.value)" id="leaveFilter">
+          <option value="all">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+          <option value="Draft">Draft</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="n-table-wrap">
+      <table class="n-table" id="leaveTable">
+        <thead>
+          <tr><th>ID</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Approver</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          ${LEAVES.map(l => `<tr data-status="${l.status}">
+            <td class="cell-id">${l.id}</td>
+            <td>${l.type}</td>
+            <td>${formatDate(l.from)}</td>
+            <td>${formatDate(l.to)}</td>
+            <td>${l.days}</td>
+            <td style="color:rgba(0,0,0,0.5)">${l.approver}</td>
+            <td><span class="badge ${badgeClass(l.status)}">${l.status}</span></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function filterLeaveTable(val) {
+  document.querySelectorAll('#leaveTable tbody tr').forEach(r => {
+    r.style.display = (val === 'all' || r.dataset.status === val) ? '' : 'none';
+  });
+}
+
+/* ================================================================
+   SALARY PAGE (Gallery View)
+   ================================================================ */
+function renderSalary() {
+  const totalEarned = SLIPS.reduce((s,p) => s + p.net, 0);
+  return `
+    <div class="page-header">
+      <h1>Salary</h1>
+      <div class="page-desc">Your payslips displayed as a gallery. Click any card for the full breakdown.</div>
+    </div>
+
+    <div class="metric-row" style="margin-bottom:28px">
+      <div class="metric-card">
+        <div class="mc-label">Latest Net Pay</div>
+        <div class="mc-value">${fmtCNY(SLIPS[0].net)}</div>
+        <div class="mc-sub">${SLIPS[0].period}</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-label">Total Earned (${SLIPS.length} months)</div>
+        <div class="mc-value">${fmtCNY(totalEarned)}</div>
+        <div class="mc-sub">After deductions</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-label">Current Gross</div>
+        <div class="mc-value">${fmtCNY(SLIPS[0].gross)}</div>
+        <div class="mc-sub">Before deductions</div>
+      </div>
+    </div>
+
+    <div class="gallery-grid">
+      ${SLIPS.map(s => `
+        <div class="gallery-card" onclick="showSalaryDetail('${s.id}','${s.period}',${s.gross},${s.ded},${s.net})">
+          <div class="gc-title">${s.period}</div>
+          <div class="gc-prop"><span class="gc-label">Pay Date</span><span class="gc-value">${formatDate(s.payDate)}</span></div>
+          <div class="gc-prop"><span class="gc-label">Gross</span><span class="gc-value">${fmtCNY(s.gross)}</span></div>
+          <div class="gc-prop"><span class="gc-label">Deductions</span><span class="gc-value" style="color:#eb5757">\u2212${fmtCNY(s.ded)}</span></div>
+          <div class="gc-net">
+            <span class="gc-label">Net Pay</span>
+            <span class="gc-value">${fmtCNY(s.net)}</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function showSalaryDetail(id, period, gross, ded, net) {
+  $('salDetailTitle').textContent = period + ' Payslip';
+  const totalEarn = SAL_DETAIL.earn.reduce((s,e) => s + e.a, 0);
+  const totalDed = SAL_DETAIL.ded.reduce((s,d) => s + d.a, 0);
+
+  $('salDetailBody').innerHTML = `
+    <div style="display:flex;justify-content:space-between;margin-bottom:20px;padding:14px 18px;background:rgba(0,0,0,0.02);border-radius:8px;border:1px solid rgba(0,0,0,0.04)">
+      <div>
+        <div style="font-size:11px;color:rgba(0,0,0,0.42);font-weight:600;text-transform:uppercase;letter-spacing:.06em">Net Pay</div>
+        <div style="font-size:26px;font-weight:700;margin-top:4px;letter-spacing:-.02em">${fmtCNY(net)}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:11px;color:rgba(0,0,0,0.42);font-weight:600;text-transform:uppercase;letter-spacing:.06em">Period</div>
+        <div style="font-size:14px;font-weight:500;margin-top:6px;color:rgba(0,0,0,0.65)">${period}</div>
+      </div>
+    </div>
+
+    <div class="sal-section">
+      <h4>Earnings</h4>
+      ${SAL_DETAIL.earn.map(e => `<div class="sal-row"><span class="sr-label">${e.c}</span><span class="sr-value">${fmtCNY(e.a)}</span></div>`).join('')}
+      <div class="sal-total"><span>Total Earnings</span><span>${fmtCNY(totalEarn)}</span></div>
+    </div>
+
+    <div class="sal-section">
+      <h4>Deductions</h4>
+      ${SAL_DETAIL.ded.map(d => `<div class="sal-row"><span class="sr-label">${d.c}</span><span class="sr-value" style="color:#eb5757">\u2212${fmtCNY(d.a)}</span></div>`).join('')}
+      <div class="sal-total"><span>Total Deductions</span><span style="color:#eb5757">\u2212${fmtCNY(totalDed)}</span></div>
+    </div>
+  `;
+  openModal('salaryDetailModal');
+}
+
+/* ================================================================
+   EXPENSES PAGE (List View)
+   ================================================================ */
+function renderExpenses() {
+  const totalPending = EXPENSES.filter(e => e.status === 'Pending').reduce((s,e) => s + e.amt, 0);
+  const totalApproved = EXPENSES.filter(e => e.status === 'Approved').reduce((s,e) => s + e.amt, 0);
+  return `
+    <div class="page-header">
+      <h1>Expenses</h1>
+      <div class="page-desc">Track and manage your expense claims</div>
+    </div>
+
+    <div class="metric-row" style="margin-bottom:28px">
+      <div class="metric-card">
+        <div class="mc-label">Total Claims</div>
+        <div class="mc-value">${EXPENSES.length}</div>
+        <div class="mc-sub">All time</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-label">Pending Amount</div>
+        <div class="mc-value">${fmtCNY(totalPending)}</div>
+        <div class="mc-sub">${EXPENSES.filter(e=>e.status==='Pending').length} claim${EXPENSES.filter(e=>e.status==='Pending').length !== 1 ? 's' : ''} awaiting</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-label">Approved Total</div>
+        <div class="mc-value">${fmtCNY(totalApproved)}</div>
+        <div class="mc-sub">${EXPENSES.filter(e=>e.status==='Approved').length} claims approved</div>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn btn-primary" onclick="openModal('expenseModal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+        New Claim
+      </button>
+      <div style="flex:1"></div>
+      <div class="view-controls">
+        <span class="vc-label">Filter</span>
+        <select onchange="filterExpenses(this.value)">
+          <option value="all">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="list-view" id="expenseList">
+      ${EXPENSES.map(e => `
+        <div class="list-row" data-status="${e.status}">
+          <div class="lr-icon">${catIcon(e.cat)}</div>
+          <div class="lr-main">
+            <div class="lr-title">${e.desc}</div>
+            <div class="lr-sub">${e.id} &middot; ${e.cat} &middot; ${formatDate(e.date)}</div>
+          </div>
+          <div class="lr-props">
+            <span class="lr-amount">${fmtCNY(e.amt)}</span>
+            <span class="badge ${badgeClass(e.status)}">${e.status}</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function filterExpenses(val) {
+  document.querySelectorAll('#expenseList .list-row').forEach(r => {
+    r.style.display = (val === 'all' || r.dataset.status === val) ? '' : 'none';
+  });
+}
+
+/* ================================================================
+   TICKETS PAGE (Kanban Board)
+   ================================================================ */
+function renderTickets() {
+  const columns = [
+    { status:'Open', color:'#2473a3', tickets:TICKETS.filter(t => t.status === 'Open') },
+    { status:'Pending', color:'#cf8d2e', tickets:TICKETS.filter(t => t.status === 'Pending') },
+    { status:'Closed', color:'#0f7b6c', tickets:TICKETS.filter(t => t.status === 'Closed') }
+  ];
+
+  return `
+    <div class="page-header">
+      <h1>Tickets</h1>
+      <div class="page-desc">Support requests organized as a board by status</div>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn btn-primary" onclick="openModal('ticketModal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+        New Ticket
+      </button>
+    </div>
+
+    <div class="kanban-board">
+      ${columns.map(col => `
+        <div class="kanban-col">
+          <div class="kanban-col-header">
+            <span class="col-dot" style="background:${col.color}"></span>
+            ${col.status}
+            <span class="col-count">${col.tickets.length}</span>
+          </div>
+          <div class="kanban-cards">
+            ${col.tickets.length === 0
+              ? '<div style="padding:24px 12px;text-align:center;font-size:13px;color:rgba(0,0,0,0.25);border:1px dashed rgba(0,0,0,0.1);border-radius:8px">No tickets</div>'
+              : col.tickets.map(t => `
+              <div class="kanban-card">
+                <div class="kc-title">${t.subj}</div>
+                <div class="kc-meta">
+                  <span class="kc-id">${t.id}</span>
+                  <span class="kc-tag">${t.cat}</span>
+                  <span class="badge ${priBadgeClass(t.pri)}">${t.pri}</span>
+                </div>
+                <div class="kc-date">${formatDate(t.created)}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+/* ================================================================
+   PROFILE PAGE
+   ================================================================ */
+function renderProfile() {
+  return `
+    <div class="profile-header">
+      <div class="profile-avatar">${EMP.initials}</div>
+      <div class="profile-info">
+        <h1>${EMP.name}</h1>
+        <div class="profile-sub">${EMP.role} &middot; ${EMP.dept} &middot; ${EMP.location}</div>
+      </div>
+    </div>
+
+    <div class="prop-block">
+      <div class="prop-block-header">Personal Information</div>
+      <div class="prop-row"><span class="prop-label">Employee ID</span><span class="prop-value">${EMP.id}</span></div>
+      <div class="prop-row"><span class="prop-label">Full Name</span><span class="prop-value">${EMP.name}</span></div>
+      <div class="prop-row"><span class="prop-label">Gender</span><span class="prop-value">${EMP.gender}</span></div>
+      <div class="prop-row"><span class="prop-label">Date of Birth</span><span class="prop-value">${formatDate(EMP.dob)}</span></div>
+      <div class="prop-row"><span class="prop-label">Email</span><span class="prop-value">${EMP.email}</span></div>
+      <div class="prop-row"><span class="prop-label">Phone</span><span class="prop-value">${EMP.phone}</span></div>
+    </div>
+
+    <div class="prop-block">
+      <div class="prop-block-header">Employment Details</div>
+      <div class="prop-row"><span class="prop-label">Department</span><span class="prop-value">${EMP.dept}</span></div>
+      <div class="prop-row"><span class="prop-label">Role</span><span class="prop-value">${EMP.role}</span></div>
+      <div class="prop-row"><span class="prop-label">Contract Type</span><span class="prop-value">${EMP.contract}</span></div>
+      <div class="prop-row"><span class="prop-label">Reporting Manager</span><span class="prop-value">${EMP.manager}</span></div>
+      <div class="prop-row"><span class="prop-label">Location</span><span class="prop-value">${EMP.location}</span></div>
+      <div class="prop-row"><span class="prop-label">Join Date</span><span class="prop-value">${formatDate(EMP.joinDate)}</span></div>
+    </div>
+
+    <div class="prop-block">
+      <div class="prop-block-header">Bank Information</div>
+      <div class="prop-row"><span class="prop-label">Bank</span><span class="prop-value">${EMP.bank}</span></div>
+      <div class="prop-row"><span class="prop-label">Account Number</span><span class="prop-value">${EMP.bankAcct}</span></div>
+    </div>
+  `;
+}
+
+/* ================================================================
+   MODAL MANAGEMENT
+   ================================================================ */
+function openModal(id) {
+  $(id).classList.add('show');
+  document.body.style.overflow = 'hidden';
+  // Auto-focus first input
+  const firstInput = $(id).querySelector('input,select,textarea');
+  if (firstInput) setTimeout(() => firstInput.focus(), 120);
+}
+
+function closeModal(id) {
+  $(id).classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) {
+      overlay.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+  });
+});
+
+/* ================================================================
+   FORM SUBMISSIONS
+   ================================================================ */
+function submitLeave() {
+  const type = $('lf-type').value;
+  const from = $('lf-from').value;
+  const to = $('lf-to').value;
+  const reason = $('lf-reason').value;
+  if (!type || !from || !to) { alert('Please fill in leave type, from date, and to date.'); return; }
+  if (new Date(to) < new Date(from)) { alert('To date must be on or after from date.'); return; }
+  const diffDays = Math.ceil((new Date(to) - new Date(from)) / (1000*60*60*24)) + 1;
+  const newId = 'LV-' + (2400 + LEAVES.length + 1);
+  LEAVES.unshift({ id:newId, type, from, to, days:diffDays, status:'Pending', approver:'Li Wei' });
+  closeModal('leaveModal');
+  $('lf-type').value=''; $('lf-from').value=''; $('lf-to').value=''; $('lf-reason').value='';
+  renderPage(currentPage);
+  showToast('Leave request ' + newId + ' submitted successfully');
+}
+
+function submitExpense() {
+  const desc = $('ef-desc').value;
+  const cat = $('ef-cat').value;
+  const amt = parseFloat($('ef-amt').value);
+  const date = $('ef-date').value;
+  if (!desc || !cat || !amt || !date) { alert('Please fill in all required fields.'); return; }
+  const newId = 'EC-' + (2400 + EXPENSES.length + 1);
+  EXPENSES.unshift({ id:newId, date, cat, desc, amt, status:'Pending' });
+  closeModal('expenseModal');
+  $('ef-desc').value=''; $('ef-cat').value=''; $('ef-amt').value=''; $('ef-date').value=''; $('ef-notes').value='';
+  renderPage(currentPage);
+  showToast('Expense claim ' + newId + ' submitted successfully');
+}
+
+function submitTicket() {
+  const subj = $('tf-subj').value;
+  const cat = $('tf-cat').value;
+  const pri = $('tf-pri').value;
+  const desc = $('tf-desc').value;
+  if (!subj || !cat || !pri) { alert('Please fill in subject, category, and priority.'); return; }
+  const newId = 'TK-' + String(90 + TICKETS.length).padStart(4,'0');
+  const today = new Date().toISOString().split('T')[0];
+  TICKETS.unshift({ id:newId, subj, cat, pri, status:'Open', created:today });
+  closeModal('ticketModal');
+  $('tf-subj').value=''; $('tf-cat').value=''; $('tf-pri').value=''; $('tf-desc').value='';
+  renderPage(currentPage);
+  showToast('Ticket ' + newId + ' created successfully');
+}
+
+/* ================================================================
+   TOAST
+   ================================================================ */
+function showToast(msg) {
+  // Remove existing toast if any
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.transition = 'opacity .3s ease';
+    setTimeout(() => t.remove(), 300);
+  }, 2800);
+}
+
+/* ================================================================
+   SEARCH
+   ================================================================ */
+function openSearch() {
+  $('searchOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => { $('searchInput').value = ''; $('searchInput').focus(); }, 80);
+}
+
+function closeSearch() {
+  $('searchOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+  $('searchInput').value = '';
+  $('searchResults').innerHTML = '<div class="search-hint">Type to search across all pages and records</div>';
+}
+
+$('searchOverlay').addEventListener('click', e => {
+  if (e.target === $('searchOverlay')) closeSearch();
+});
+
+$('searchInput').addEventListener('input', function() {
+  const q = this.value.toLowerCase().trim();
+  if (!q) {
+    $('searchResults').innerHTML = '<div class="search-hint">Type to search across all pages and records</div>';
+    return;
+  }
+  let results = [];
+
+  // Pages
+  const pages = [
+    { name:'Dashboard', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>', page:'dashboard' },
+    { name:'Leave', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg>', page:'leave' },
+    { name:'Salary', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>', page:'salary' },
+    { name:'Expenses', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>', page:'expenses' },
+    { name:'Tickets', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/></svg>', page:'tickets' },
+    { name:'Profile', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>', page:'profile' },
+  ];
+  pages.forEach(p => {
+    if (p.name.toLowerCase().includes(q)) {
+      results.push(`<div class="sr-item" onclick="navigateTo('${p.page}');closeSearch()"><span class="sr-icon">${p.icon}</span><span class="sr-text">${p.name}</span><span class="sr-hint">Page</span></div>`);
+    }
+  });
+  // Leaves
+  LEAVES.forEach(l => {
+    if ((l.id + ' ' + l.type + ' ' + l.status).toLowerCase().includes(q)) {
+      results.push(`<div class="sr-item" onclick="navigateTo('leave');closeSearch()"><span class="sr-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg></span><span class="sr-text">${l.id} \u2014 ${l.type} (${l.days}d)</span><span class="sr-hint">${l.status}</span></div>`);
+    }
+  });
+  // Expenses
+  EXPENSES.forEach(e => {
+    if ((e.id + ' ' + e.desc + ' ' + e.cat).toLowerCase().includes(q)) {
+      results.push(`<div class="sr-item" onclick="navigateTo('expenses');closeSearch()"><span class="sr-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg></span><span class="sr-text">${e.id} \u2014 ${e.desc}</span><span class="sr-hint">${e.status}</span></div>`);
+    }
+  });
+  // Tickets
+  TICKETS.forEach(t => {
+    if ((t.id + ' ' + t.subj + ' ' + t.cat).toLowerCase().includes(q)) {
+      results.push(`<div class="sr-item" onclick="navigateTo('tickets');closeSearch()"><span class="sr-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/></svg></span><span class="sr-text">${t.id} \u2014 ${t.subj}</span><span class="sr-hint">${t.status}</span></div>`);
+    }
+  });
+  // Salary
+  SLIPS.forEach(s => {
+    if ((s.id + ' ' + s.period).toLowerCase().includes(q)) {
+      results.push(`<div class="sr-item" onclick="navigateTo('salary');closeSearch()"><span class="sr-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span><span class="sr-text">${s.period} \u2014 ${fmtCNY(s.net)}</span><span class="sr-hint">Payslip</span></div>`);
+    }
+  });
+
+  $('searchResults').innerHTML = results.length
+    ? results.slice(0, 10).join('')
+    : '<div class="search-hint">No results found for \u201c' + q + '\u201d</div>';
+});
+
+/* ================================================================
+   KEYBOARD SHORTCUTS
+   ================================================================ */
+document.addEventListener('keydown', e => {
+  // "/" to open search
+  if (e.key === '/' && !['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) {
+    e.preventDefault();
+    openSearch();
+  }
+  // Escape
+  if (e.key === 'Escape') {
+    if ($('searchOverlay').classList.contains('show')) { closeSearch(); return; }
+    document.querySelectorAll('.modal-overlay.show').forEach(m => {
+      m.classList.remove('show');
+      document.body.style.overflow = '';
+    });
+  }
+});
+
+/* ================================================================
+   INIT
+   ================================================================ */
+(function init() {
+  const page = window.location.hash.slice(1) || 'dashboard';
+  renderPage(page);
+})();
+</script>
+</body>
+</html>
