@@ -1,0 +1,2553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Employee Portal Brand — RampingUp</title>
+<style>
+/* =========================================================
+   IBM Carbon Design System — Employee Portal
+   Self-contained. No external dependencies.
+   ========================================================= */
+
+/* --- IBM Plex Sans via Google Fonts (inline @import) --- */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&family=Noto+Sans+SC:wght@300;400;600&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+/* --- Reset & Base --- */
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+}
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body {
+  font-family: 'IBM Plex Sans', 'Noto Sans SC', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: 0.16px;
+  line-height: 1.43;
+  color: #161616;
+  background: #ffffff;
+  overflow-x: hidden;
+}
+
+/* --- Carbon Token Variables --- */
+:root {
+  --cds-blue-60: #47FA22;
+  --cds-blue-70: #3bd416;
+  --cds-blue-80: #2ea810;
+  --cds-blue-10: rgba(71,250,34,0.06);
+  --cds-gray-10: #f4f4f4;
+  --cds-gray-20: #e0e0e0;
+  --cds-gray-30: #c6c6c6;
+  --cds-gray-50: #8d8d8d;
+  --cds-gray-70: #525252;
+  --cds-gray-80: #393939;
+  --cds-gray-90: #262626;
+  --cds-gray-100: #161616;
+  --cds-red-60: #da1e28;
+  --cds-green-50: #24a148;
+  --cds-yellow-30: #f1c21b;
+  --cds-white: #ffffff;
+  --cds-header-height: 48px;
+  --cds-nav-width: 256px;
+  --cds-focus: 0 0 0 2px #47FA22 inset;
+}
+
+/* --- Focus Accessibility --- */
+*:focus-visible {
+  outline: none;
+  box-shadow: var(--cds-focus);
+}
+button, a, input, select {
+  outline: none;
+}
+
+/* --- Scrollbar (subtle) --- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--cds-gray-30); }
+::-webkit-scrollbar-thumb:hover { background: var(--cds-gray-50); }
+
+/* =========================================================
+   UI SHELL — Header
+   ========================================================= */
+.cds-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--cds-header-height);
+  background: var(--cds-gray-100);
+  display: flex;
+  align-items: center;
+  z-index: 9000;
+  border-bottom: 1px solid var(--cds-gray-80);
+}
+.cds-header__hamburger {
+  width: 48px; height: 48px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--cds-white);
+  flex-shrink: 0;
+  transition: background 150ms;
+}
+.cds-header__hamburger:hover { background: var(--cds-gray-80); }
+.cds-header__hamburger svg { width: 20px; height: 20px; fill: currentColor; }
+
+.cds-header__logo {
+  display: flex; align-items: center; gap: 0;
+  height: 48px; padding: 0 16px 0 0;
+  text-decoration: none;
+  color: var(--cds-white);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.16px;
+  white-space: nowrap;
+  border-right: 1px solid var(--cds-gray-80);
+}
+.cds-header__logo-mark {
+  width: 4px; height: 20px;
+  background: var(--cds-blue-60);
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.cds-header__tabs {
+  display: flex; align-items: stretch;
+  height: 48px;
+  margin-left: 0;
+  flex-shrink: 0;
+}
+.cds-header__tab {
+  display: flex; align-items: center;
+  height: 48px;
+  padding: 0 16px;
+  color: var(--cds-gray-30);
+  font-size: 14px;
+  letter-spacing: 0.16px;
+  text-decoration: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+  transition: background 150ms, color 150ms;
+  font-family: inherit;
+}
+.cds-header__tab:hover { background: var(--cds-gray-80); color: var(--cds-white); }
+.cds-header__tab--active {
+  color: var(--cds-white);
+  border-bottom: 3px solid var(--cds-blue-60);
+}
+
+.cds-header__spacer { flex: 1; }
+
+.cds-header__actions {
+  display: flex; align-items: stretch;
+  height: 48px;
+  margin-left: auto;
+}
+.cds-header__action {
+  width: 48px; height: 48px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--cds-white);
+  position: relative;
+  transition: background 150ms;
+}
+.cds-header__action:hover { background: var(--cds-gray-80); }
+.cds-header__action svg { width: 20px; height: 20px; fill: currentColor; }
+
+.cds-header__avatar {
+  width: 48px; height: 48px;
+  background: var(--cds-blue-60);
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: #000;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.32px;
+  transition: background 150ms;
+  font-family: inherit;
+}
+.cds-header__avatar:hover { background: var(--cds-blue-70); }
+
+/* Notification badge */
+.cds-header__action--badge::after {
+  content: '';
+  position: absolute;
+  top: 12px; right: 12px;
+  width: 8px; height: 8px;
+  background: var(--cds-red-60);
+  border-radius: 50%;
+}
+
+/* =========================================================
+   UI SHELL — Left Navigation Panel
+   ========================================================= */
+.cds-sidenav {
+  position: fixed;
+  top: var(--cds-header-height);
+  left: 0;
+  bottom: 0;
+  width: var(--cds-nav-width);
+  background: var(--cds-gray-100);
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 8000;
+  transform: translateX(0);
+  transition: transform 200ms cubic-bezier(0.2, 0, 0.38, 0.9);
+  display: flex;
+  flex-direction: column;
+}
+.cds-sidenav--collapsed {
+  transform: translateX(-100%);
+}
+.cds-sidenav__items {
+  padding: 16px 0;
+  flex: 1;
+}
+.cds-sidenav__link {
+  display: flex; align-items: center; gap: 12px;
+  height: 32px;
+  padding: 0 16px;
+  color: var(--cds-gray-30);
+  font-size: 14px;
+  letter-spacing: 0.16px;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  position: relative;
+  transition: background 150ms, color 150ms;
+  font-family: inherit;
+}
+.cds-sidenav__link:hover {
+  background: var(--cds-gray-90);
+  color: var(--cds-white);
+}
+.cds-sidenav__link--active {
+  background: var(--cds-gray-90);
+  color: var(--cds-white);
+}
+.cds-sidenav__link--active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: var(--cds-blue-60);
+}
+.cds-sidenav__link svg {
+  width: 16px; height: 16px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+.cds-sidenav__divider {
+  height: 1px;
+  background: var(--cds-gray-80);
+  margin: 8px 16px;
+}
+.cds-sidenav__label {
+  padding: 8px 16px 4px;
+  font-size: 12px;
+  letter-spacing: 0.32px;
+  color: var(--cds-gray-50);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.cds-sidenav__footer {
+  padding: 16px;
+  border-top: 1px solid var(--cds-gray-80);
+  color: var(--cds-gray-50);
+  font-size: 12px;
+  letter-spacing: 0.32px;
+}
+.cds-sidenav__footer-name {
+  color: var(--cds-gray-30);
+  font-weight: 600;
+  margin-bottom: 2px;
+  font-size: 14px;
+}
+.cds-sidenav__footer-role {
+  color: var(--cds-gray-50);
+  font-size: 12px;
+}
+
+/* =========================================================
+   CONTENT AREA
+   ========================================================= */
+.cds-content {
+  margin-top: var(--cds-header-height);
+  margin-left: var(--cds-nav-width);
+  min-height: calc(100vh - var(--cds-header-height));
+  background: var(--cds-white);
+  transition: margin-left 200ms cubic-bezier(0.2, 0, 0.38, 0.9);
+}
+.cds-content--expanded {
+  margin-left: 0;
+}
+.cds-content__inner {
+  max-width: 1584px;
+  padding: 0;
+}
+
+/* --- Page Header / Breadcrumb --- */
+.cds-page-header {
+  padding: 32px 32px 24px;
+  background: var(--cds-white);
+  border-bottom: 1px solid var(--cds-gray-20);
+}
+.cds-breadcrumb {
+  display: flex; align-items: center; gap: 4px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  letter-spacing: 0.16px;
+}
+.cds-breadcrumb a {
+  color: #1a7a00;
+  text-decoration: none;
+}
+.cds-breadcrumb a:hover { text-decoration: underline; }
+.cds-breadcrumb__separator {
+  color: var(--cds-gray-50);
+  margin: 0 2px;
+}
+.cds-breadcrumb__current {
+  color: var(--cds-gray-70);
+}
+.cds-page-header__title {
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: 0;
+  line-height: 1.25;
+  color: var(--cds-gray-100);
+}
+.cds-page-header__subtitle {
+  font-size: 14px;
+  color: var(--cds-gray-70);
+  margin-top: 4px;
+}
+
+/* --- Page Body --- */
+.cds-page-body {
+  padding: 24px 32px 48px;
+}
+
+/* =========================================================
+   NOTIFICATION BANNER
+   ========================================================= */
+.cds-notification-banner {
+  background: var(--cds-blue-60);
+  color: #000;
+  padding: 12px 32px;
+  display: flex; align-items: center; gap: 12px;
+  font-size: 14px;
+}
+.cds-notification-banner svg { width: 20px; height: 20px; fill: currentColor; flex-shrink: 0; }
+.cds-notification-banner__close {
+  margin-left: auto;
+  background: transparent; border: none;
+  color: #000;
+  cursor: pointer;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+}
+.cds-notification-banner__close:hover { background: rgba(0,0,0,0.1); }
+.cds-notification-banner__close svg { width: 16px; height: 16px; fill: currentColor; }
+
+/* =========================================================
+   TILES
+   ========================================================= */
+.cds-tile-grid {
+  display: grid;
+  gap: 1px;
+  background: var(--cds-gray-20);
+}
+.cds-tile-grid--4 { grid-template-columns: repeat(4, 1fr); }
+.cds-tile-grid--3 { grid-template-columns: repeat(3, 1fr); }
+.cds-tile-grid--2 { grid-template-columns: repeat(2, 1fr); }
+
+.cds-tile {
+  background: var(--cds-gray-10);
+  padding: 16px;
+  cursor: default;
+  transition: background 150ms;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.cds-tile--clickable { cursor: pointer; }
+.cds-tile--clickable:hover { background: var(--cds-gray-20); }
+.cds-tile--white { background: var(--cds-white); }
+.cds-tile--white:hover { background: var(--cds-gray-10); }
+
+.cds-tile__label {
+  font-size: 12px;
+  letter-spacing: 0.32px;
+  text-transform: uppercase;
+  color: var(--cds-gray-70);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.cds-tile__value {
+  font-size: 36px;
+  font-weight: 300;
+  line-height: 1.15;
+  color: var(--cds-gray-100);
+}
+.cds-tile__trend {
+  font-size: 12px;
+  letter-spacing: 0.32px;
+  color: var(--cds-gray-50);
+  margin-top: 8px;
+}
+.cds-tile__trend--positive { color: var(--cds-green-50); }
+.cds-tile__trend--negative { color: var(--cds-red-60); }
+
+/* =========================================================
+   DATA TABLE (Carbon)
+   ========================================================= */
+.cds-data-table-wrap {
+  background: var(--cds-white);
+}
+.cds-data-table-toolbar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px;
+  background: var(--cds-gray-10);
+  border-bottom: 1px solid var(--cds-gray-20);
+  flex-wrap: wrap;
+}
+.cds-data-table-toolbar__search {
+  display: flex; align-items: center;
+  background: var(--cds-white);
+  border-bottom: 2px solid var(--cds-gray-50);
+  height: 40px;
+  padding: 0 12px;
+  flex: 1;
+  max-width: 320px;
+  transition: border-color 150ms;
+}
+.cds-data-table-toolbar__search:focus-within {
+  border-bottom-color: var(--cds-blue-60);
+}
+.cds-data-table-toolbar__search svg {
+  width: 16px; height: 16px; fill: var(--cds-gray-50); flex-shrink: 0; margin-right: 8px;
+}
+.cds-data-table-toolbar__search input {
+  border: none; background: transparent;
+  font-family: inherit; font-size: 14px; letter-spacing: 0.16px;
+  color: var(--cds-gray-100);
+  width: 100%; height: 100%;
+}
+.cds-data-table-toolbar__search input::placeholder { color: var(--cds-gray-50); }
+
+.cds-select {
+  position: relative;
+  display: inline-flex;
+}
+.cds-select select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--cds-white);
+  border: none;
+  border-bottom: 2px solid var(--cds-gray-50);
+  height: 40px;
+  padding: 0 36px 0 12px;
+  font-family: inherit;
+  font-size: 14px;
+  letter-spacing: 0.16px;
+  color: var(--cds-gray-100);
+  cursor: pointer;
+  min-width: 120px;
+  transition: border-color 150ms;
+  border-radius: 0;
+}
+.cds-select select:focus { border-bottom-color: var(--cds-blue-60); }
+.cds-select::after {
+  content: '';
+  position: absolute;
+  right: 12px; top: 50%;
+  transform: translateY(-50%);
+  width: 0; height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--cds-gray-70);
+  pointer-events: none;
+}
+
+.cds-data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.cds-data-table thead {
+  background: var(--cds-gray-80);
+}
+.cds-data-table thead th {
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.16px;
+  color: var(--cds-white);
+  text-align: left;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  position: relative;
+}
+.cds-data-table thead th:hover {
+  background: var(--cds-gray-70);
+}
+.cds-data-table thead th .cds-sort-icon {
+  display: inline-block;
+  margin-left: 4px;
+  opacity: 0.5;
+  font-size: 10px;
+}
+.cds-data-table tbody tr {
+  border-bottom: 1px solid var(--cds-gray-20);
+  transition: background 150ms;
+  cursor: pointer;
+}
+.cds-data-table tbody tr:hover {
+  background: var(--cds-gray-10);
+}
+.cds-data-table tbody td {
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--cds-gray-100);
+  vertical-align: middle;
+}
+.cds-data-table tbody td:first-child {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+}
+
+/* Expandable row detail */
+.cds-data-table__expanded-row {
+  display: none;
+}
+.cds-data-table__expanded-row.is-open {
+  display: table-row;
+}
+.cds-data-table__expanded-row td {
+  padding: 16px 16px 16px 48px;
+  background: var(--cds-gray-10);
+  border-bottom: 1px solid var(--cds-gray-20);
+}
+
+/* Checkbox column */
+.cds-data-table .cds-checkbox-cell {
+  width: 36px;
+  padding: 0 0 0 16px;
+}
+.cds-checkbox {
+  width: 16px; height: 16px;
+  accent-color: var(--cds-blue-60);
+  cursor: pointer;
+}
+
+/* Pagination */
+.cds-pagination {
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: 16px;
+  padding: 8px 16px;
+  background: var(--cds-gray-10);
+  border-top: 1px solid var(--cds-gray-20);
+  font-size: 14px;
+  color: var(--cds-gray-70);
+}
+.cds-pagination select {
+  appearance: none;
+  background: var(--cds-white);
+  border: none;
+  border-bottom: 1px solid var(--cds-gray-50);
+  padding: 4px 24px 4px 8px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--cds-gray-100);
+  cursor: pointer;
+  border-radius: 0;
+}
+.cds-pagination__nav {
+  display: flex; gap: 0;
+}
+.cds-pagination__btn {
+  width: 40px; height: 40px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--cds-gray-70);
+  transition: background 150ms;
+}
+.cds-pagination__btn:hover { background: var(--cds-gray-20); }
+.cds-pagination__btn:disabled { color: var(--cds-gray-30); cursor: not-allowed; }
+.cds-pagination__btn:disabled:hover { background: transparent; }
+.cds-pagination__btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+/* =========================================================
+   TAGS (pill-shaped — the one exception)
+   ========================================================= */
+.cds-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.32px;
+  white-space: nowrap;
+}
+.cds-tag--blue { background: rgba(71,250,34,0.1); color: #1a7a00; }
+.cds-tag--green { background: rgba(36,161,72,0.1); color: var(--cds-green-50); }
+.cds-tag--red { background: rgba(218,30,40,0.1); color: var(--cds-red-60); }
+.cds-tag--yellow { background: rgba(241,194,27,0.15); color: #8e6a00; }
+.cds-tag--gray { background: var(--cds-gray-10); color: var(--cds-gray-70); }
+.cds-tag--purple { background: rgba(138,63,252,0.1); color: #8a3ffc; }
+.cds-tag--teal { background: rgba(0,157,154,0.1); color: #009d9a; }
+.cds-tag--high { background: rgba(218,30,40,0.1); color: var(--cds-red-60); }
+.cds-tag--medium { background: rgba(241,194,27,0.15); color: #8e6a00; }
+.cds-tag--low { background: rgba(36,161,72,0.1); color: var(--cds-green-50); }
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+.cds-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 48px;
+  padding: 0 64px 0 16px;
+  border: none;
+  border-radius: 0;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.16px;
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  transition: background 150ms;
+  white-space: nowrap;
+}
+.cds-btn--primary {
+  background: var(--cds-blue-60); color: #000;
+}
+.cds-btn--primary:hover { background: var(--cds-blue-70); }
+.cds-btn--secondary {
+  background: var(--cds-gray-80); color: var(--cds-white);
+}
+.cds-btn--secondary:hover { background: var(--cds-gray-70); }
+.cds-btn--tertiary {
+  background: transparent; color: #1a7a00;
+  border: 1px solid var(--cds-blue-60);
+}
+.cds-btn--tertiary:hover { background: var(--cds-blue-10); }
+.cds-btn--ghost {
+  background: transparent; color: #1a7a00;
+  padding: 0 16px;
+}
+.cds-btn--ghost:hover { background: var(--cds-gray-10); }
+.cds-btn--sm { height: 32px; padding: 0 48px 0 12px; font-size: 13px; }
+.cds-btn--md { height: 40px; }
+.cds-btn--icon-only {
+  width: 48px; padding: 0; justify-content: center;
+}
+.cds-btn--icon-only.cds-btn--sm { width: 32px; }
+.cds-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+/* =========================================================
+   TABS (Content Switcher)
+   ========================================================= */
+.cds-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--cds-gray-20);
+  margin-bottom: 24px;
+}
+.cds-tab {
+  padding: 12px 16px;
+  font-size: 14px;
+  letter-spacing: 0.16px;
+  color: var(--cds-gray-70);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 150ms, border-color 150ms;
+  font-weight: 400;
+}
+.cds-tab:hover { color: var(--cds-gray-100); }
+.cds-tab--active {
+  color: var(--cds-gray-100);
+  border-bottom-color: var(--cds-blue-60);
+  font-weight: 600;
+}
+
+/* =========================================================
+   PROGRESS BAR
+   ========================================================= */
+.cds-progress {
+  margin-bottom: 16px;
+}
+.cds-progress__label {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 6px;
+}
+.cds-progress__name {
+  font-size: 14px; color: var(--cds-gray-100);
+}
+.cds-progress__value {
+  font-size: 14px; font-weight: 600;
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--cds-gray-100);
+}
+.cds-progress__track {
+  height: 8px;
+  background: var(--cds-gray-20);
+  width: 100%;
+  overflow: hidden;
+}
+.cds-progress__fill {
+  height: 100%;
+  transition: width 400ms cubic-bezier(0.2, 0, 0.38, 0.9);
+}
+
+/* =========================================================
+   SIDE PANEL (slides from right)
+   ========================================================= */
+.cds-side-panel-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(22,22,22,0.5);
+  z-index: 10000;
+}
+.cds-side-panel-overlay.is-open { display: block; }
+
+.cds-side-panel {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: 480px;
+  max-width: 90vw;
+  background: var(--cds-white);
+  z-index: 10001;
+  transform: translateX(100%);
+  transition: transform 200ms cubic-bezier(0.2, 0, 0.38, 0.9);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.cds-side-panel.is-open { transform: translateX(0); }
+
+.cds-side-panel__header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--cds-gray-20);
+  flex-shrink: 0;
+}
+.cds-side-panel__title {
+  font-size: 20px; font-weight: 300;
+  color: var(--cds-gray-100);
+}
+.cds-side-panel__close {
+  width: 40px; height: 40px;
+  background: transparent; border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--cds-gray-70);
+  transition: background 150ms;
+}
+.cds-side-panel__close:hover { background: var(--cds-gray-10); }
+.cds-side-panel__close svg { width: 20px; height: 20px; fill: currentColor; }
+.cds-side-panel__body {
+  padding: 24px;
+  flex: 1;
+}
+
+/* =========================================================
+   LABEL-VALUE PAIRS (Profile)
+   ========================================================= */
+.cds-label-value {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--cds-gray-20);
+}
+.cds-label-value__label {
+  font-size: 12px;
+  letter-spacing: 0.32px;
+  text-transform: uppercase;
+  color: var(--cds-gray-50);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.cds-label-value__value {
+  font-size: 16px;
+  color: var(--cds-gray-100);
+}
+
+/* Profile avatar */
+.cds-profile-hero {
+  display: flex; align-items: center; gap: 24px;
+  padding: 24px;
+  background: var(--cds-gray-10);
+  margin-bottom: 24px;
+}
+.cds-profile-avatar {
+  width: 80px; height: 80px;
+  background: var(--cds-blue-60);
+  display: flex; align-items: center; justify-content: center;
+  color: #000;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+.cds-profile-info__name {
+  font-size: 28px; font-weight: 300;
+  color: var(--cds-gray-100);
+}
+.cds-profile-info__role {
+  font-size: 14px; color: var(--cds-gray-70);
+  margin-top: 2px;
+}
+.cds-profile-info__id {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: var(--cds-gray-50);
+  margin-top: 4px;
+}
+
+/* Two-column grid */
+.cds-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* =========================================================
+   INLINE LOADING
+   ========================================================= */
+.cds-inline-loading {
+  display: flex; align-items: center; justify-content: center;
+  padding: 48px;
+}
+.cds-inline-loading__spinner {
+  width: 24px; height: 24px;
+  border: 3px solid var(--cds-gray-20);
+  border-top-color: #47FA22;
+  border-radius: 50%;
+  animation: cds-spin 600ms linear infinite;
+}
+@keyframes cds-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* =========================================================
+   STRUCTURED LIST (for Tickets)
+   ========================================================= */
+.cds-slist-item {
+  display: flex; align-items: flex-start;
+  padding: 16px;
+  border-bottom: 1px solid var(--cds-gray-20);
+  cursor: pointer;
+  transition: background 150ms;
+  position: relative;
+}
+.cds-slist-item:hover { background: var(--cds-gray-10); }
+.cds-slist-item--expanded { background: var(--cds-gray-10); }
+
+.cds-slist-item__priority {
+  width: 4px;
+  align-self: stretch;
+  flex-shrink: 0;
+  margin-right: 16px;
+}
+.cds-slist-item__priority--high { background: var(--cds-red-60); }
+.cds-slist-item__priority--medium { background: var(--cds-yellow-30); }
+.cds-slist-item__priority--low { background: var(--cds-green-50); }
+
+.cds-slist-item__content { flex: 1; min-width: 0; }
+.cds-slist-item__title {
+  font-size: 14px; font-weight: 600;
+  color: var(--cds-gray-100);
+  margin-bottom: 4px;
+}
+.cds-slist-item__meta {
+  display: flex; gap: 8px; align-items: center;
+  flex-wrap: wrap;
+}
+.cds-slist-item__date {
+  font-size: 12px;
+  color: var(--cds-gray-50);
+  letter-spacing: 0.32px;
+  margin-left: auto;
+  flex-shrink: 0;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.cds-slist-item__detail {
+  display: none;
+  padding: 12px 0 0 20px;
+  font-size: 14px;
+  color: var(--cds-gray-70);
+}
+.cds-slist-item__detail.is-open { display: block; }
+
+/* =========================================================
+   ACTIVITY LOG (Dashboard)
+   ========================================================= */
+.cds-activity-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--cds-gray-20);
+  font-size: 14px;
+}
+.cds-activity-item:nth-child(even) { background: var(--cds-gray-10); }
+.cds-activity-item__time {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--cds-gray-50);
+  letter-spacing: 0.32px;
+  white-space: nowrap;
+  min-width: 80px;
+  padding-top: 2px;
+}
+.cds-activity-item__text {
+  flex: 1;
+  color: var(--cds-gray-100);
+}
+.cds-activity-item__text strong { font-weight: 600; }
+
+/* =========================================================
+   SALARY DISPLAY
+   ========================================================= */
+.cds-salary-display {
+  padding: 32px 0;
+  text-align: left;
+}
+.cds-salary-display__label {
+  font-size: 12px;
+  letter-spacing: 0.32px;
+  text-transform: uppercase;
+  color: var(--cds-gray-50);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.cds-salary-display__amount {
+  font-size: 48px;
+  font-weight: 300;
+  color: var(--cds-gray-100);
+  font-family: 'IBM Plex Sans', 'Noto Sans SC', sans-serif;
+}
+.cds-salary-display__currency {
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--cds-gray-50);
+  margin-left: 4px;
+}
+.cds-salary-display__period {
+  font-size: 14px;
+  color: var(--cds-gray-50);
+  margin-top: 4px;
+}
+
+/* Earnings/Deductions row */
+.cds-breakdown-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--cds-gray-20);
+}
+.cds-breakdown-row__label { color: var(--cds-gray-100); font-size: 14px; }
+.cds-breakdown-row__amount {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cds-gray-100);
+}
+.cds-breakdown-row--total {
+  border-bottom: 2px solid var(--cds-gray-100);
+  font-weight: 600;
+}
+.cds-breakdown-row--total .cds-breakdown-row__label { font-weight: 600; }
+
+/* Section heading inside breakdown */
+.cds-breakdown-heading {
+  font-size: 12px;
+  letter-spacing: 0.32px;
+  text-transform: uppercase;
+  color: var(--cds-gray-50);
+  font-weight: 600;
+  padding: 16px 0 8px;
+  border-bottom: 1px solid var(--cds-gray-20);
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media (max-width: 1056px) {
+  .cds-tile-grid--4 { grid-template-columns: repeat(2, 1fr); }
+  .cds-2col { grid-template-columns: 1fr; }
+}
+@media (max-width: 672px) {
+  .cds-sidenav { transform: translateX(-100%); }
+  .cds-sidenav--mobile-open { transform: translateX(0); }
+  .cds-content { margin-left: 0; }
+  .cds-tile-grid--4, .cds-tile-grid--3 { grid-template-columns: 1fr; }
+  .cds-page-header { padding: 24px 16px 16px; }
+  .cds-page-body { padding: 16px; }
+  .cds-page-header__title { font-size: 22px; }
+  .cds-salary-display__amount { font-size: 36px; }
+  .cds-header__tabs { display: none; }
+  .cds-side-panel { width: 100%; }
+}
+
+/* =========================================================
+   UTILITY
+   ========================================================= */
+.mono { font-family: 'IBM Plex Mono', monospace; }
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+.mb-0 { margin-bottom: 0; }
+.mb-8 { margin-bottom: 8px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-24 { margin-bottom: 24px; }
+.mb-32 { margin-bottom: 32px; }
+.mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
+.hidden { display: none !important; }
+
+/* Section label inside page body */
+.cds-section-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--cds-gray-100);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--cds-gray-20);
+}
+
+/* Leave balance tile custom */
+.cds-leave-tile {
+  background: var(--cds-gray-10);
+  padding: 16px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.cds-leave-tile__type {
+  font-size: 14px; font-weight: 600;
+  color: var(--cds-gray-100);
+}
+.cds-leave-tile__numbers {
+  display: flex; gap: 24px;
+}
+.cds-leave-tile__stat-label {
+  font-size: 11px; letter-spacing: 0.32px;
+  text-transform: uppercase; color: var(--cds-gray-50);
+}
+.cds-leave-tile__stat-value {
+  font-size: 24px; font-weight: 300;
+  color: var(--cds-gray-100);
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* =========================================================
+   SUMMARY STAT TILES (expenses, tax)
+   ========================================================= */
+.cds-stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1px;
+  background: var(--cds-gray-20);
+  margin-bottom: 24px;
+}
+.cds-stat-tile {
+  background: var(--cds-gray-10);
+  padding: 16px;
+}
+.cds-stat-tile__label {
+  font-size: 12px; letter-spacing: 0.32px;
+  text-transform: uppercase; color: var(--cds-gray-70);
+  font-weight: 600; margin-bottom: 4px;
+}
+.cds-stat-tile__value {
+  font-size: 24px; font-weight: 300;
+  color: var(--cds-gray-100);
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* =========================================================
+   CREATE FORMS — Upload Zone, Line Items, Form Inputs
+   ========================================================= */
+.cds-form-group {
+  margin-bottom: 16px;
+}
+.cds-form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--cds-gray-70);
+  letter-spacing: 0.32px;
+  margin-bottom: 6px;
+}
+.cds-form-group input[type="text"],
+.cds-form-group input[type="number"],
+.cds-form-group input[type="date"],
+.cds-form-group select,
+.cds-form-group textarea {
+  width: 100%;
+  height: 40px;
+  padding: 0 16px;
+  border: none;
+  border-bottom: 2px solid var(--cds-gray-50);
+  border-radius: 0;
+  background: var(--cds-gray-10);
+  font-family: inherit;
+  font-size: 14px;
+  letter-spacing: 0.16px;
+  color: var(--cds-gray-100);
+  transition: border-color 150ms;
+}
+.cds-form-group input:focus,
+.cds-form-group select:focus,
+.cds-form-group textarea:focus {
+  outline: none;
+  border-bottom-color: var(--cds-blue-60);
+}
+.cds-form-group textarea {
+  min-height: 80px;
+  padding: 12px 16px;
+  resize: vertical;
+}
+.cds-form-group select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23525252' d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+.cds-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Upload zone (Carbon) */
+.cds-upload-zone {
+  border: 2px dashed var(--cds-gray-30);
+  border-radius: 0;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 150ms, background 150ms;
+}
+.cds-upload-zone:hover {
+  border-color: var(--cds-blue-60);
+  background: var(--cds-blue-10);
+}
+.cds-upload-icon { font-size: 24px; margin-bottom: 6px; }
+.cds-upload-text { font-size: 14px; font-weight: 400; color: var(--cds-gray-100); }
+.cds-upload-hint { font-size: 12px; color: var(--cds-gray-50); margin-top: 2px; }
+.cds-file-list { margin-top: 8px; }
+.cds-file-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--cds-gray-10);
+  border-bottom: 1px solid var(--cds-gray-20);
+  font-size: 13px;
+  color: var(--cds-gray-100);
+}
+.cds-file-list-item button {
+  background: none; border: none; cursor: pointer;
+  color: var(--cds-gray-50);
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 4px;
+  transition: color 150ms;
+}
+.cds-file-list-item button:hover { color: var(--cds-red-60); }
+
+/* Expense line items (Carbon) */
+.cds-line-items-container {
+  border: 1px solid var(--cds-gray-20);
+  border-radius: 0;
+  background: var(--cds-gray-10);
+  overflow: hidden;
+}
+.cds-line-item {
+  padding: 16px;
+  border-bottom: 1px solid var(--cds-gray-20);
+  background: var(--cds-gray-10);
+  position: relative;
+}
+.cds-line-item:last-of-type { border-bottom: none; }
+.cds-line-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.cds-line-item-num {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cds-gray-70);
+  letter-spacing: 0.32px;
+  text-transform: uppercase;
+}
+.cds-line-item-remove {
+  background: none; border: none; cursor: pointer;
+  color: var(--cds-gray-50);
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px 8px;
+  transition: color 150ms, background 150ms;
+}
+.cds-line-item-remove:hover { color: var(--cds-red-60); background: rgba(218,30,40,0.1); }
+.cds-line-item-remove:disabled { opacity: 0.3; pointer-events: none; }
+.cds-line-item-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.cds-line-item-grid .cds-form-group { margin-bottom: 0; }
+
+.cds-add-line-item-btn {
+  width: 100%;
+  padding: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.16px;
+  color: #1a7a00;
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--cds-gray-20);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 150ms;
+}
+.cds-add-line-item-btn:hover { background: var(--cds-blue-10); }
+
+.cds-expense-total {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 2px solid var(--cds-gray-100);
+}
+.cds-expense-total-label {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--cds-gray-70);
+}
+.cds-expense-total-value {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a7a00;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.cds-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--cds-gray-20);
+}
+.cds-form-actions button {
+  height: 48px;
+  padding: 0 32px;
+  font-family: inherit;
+  font-size: 14px;
+  letter-spacing: 0.16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 0;
+  transition: background 150ms;
+}
+.cds-form-actions .cds-form-cancel {
+  background: var(--cds-gray-10);
+  color: var(--cds-gray-100);
+  border: 1px solid var(--cds-gray-30);
+}
+.cds-form-actions .cds-form-cancel:hover { background: var(--cds-gray-20); }
+.cds-form-actions .cds-form-submit {
+  background: var(--cds-blue-60);
+  color: #000;
+}
+.cds-form-actions .cds-form-submit:hover { background: var(--cds-blue-70); }
+
+/* Approval Timeline */
+.approval-timeline { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--cds-gray-20); }
+.approval-title { font-size: 12px; font-weight: 600; color: var(--cds-gray-100); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.32px; font-family: 'IBM Plex Sans', 'Noto Sans SC', sans-serif; }
+.approval-steps { display: flex; flex-direction: column; gap: 0; }
+.approval-step { display: flex; gap: 12px; }
+.step-indicator { display: flex; flex-direction: column; align-items: center; width: 24px; flex-shrink: 0; }
+.step-dot { width: 24px; height: 24px; border-radius: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border: 2px solid var(--cds-gray-20); color: var(--cds-gray-50); background: var(--cds-gray-10); }
+.step-line { width: 2px; flex: 1; min-height: 24px; background: var(--cds-gray-20); }
+.step-content { padding-bottom: 20px; }
+.step-label { font-size: 14px; font-weight: 400; color: var(--cds-gray-100); font-family: 'IBM Plex Sans', 'Noto Sans SC', sans-serif; }
+.step-person { font-size: 12px; color: var(--cds-gray-50); margin-top: 2px; font-family: 'IBM Plex Sans', 'Noto Sans SC', sans-serif; }
+.step-date { font-size: 12px; color: var(--cds-gray-50); font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.32px; margin-top: 2px; }
+.step-done .step-dot { background: #24a148; border-color: #24a148; color: #fff; }
+.step-done .step-line { background: #24a148; }
+.step-current .step-dot { background: var(--cds-gray-10); border-color: #47FA22; color: #1a7a00; }
+.step-rejected .step-dot { background: #da1e28; border-color: #da1e28; color: #fff; }
+.step-rejected .step-line { background: #da1e28; }
+.step-waiting .step-dot { background: var(--cds-gray-10); border-color: var(--cds-gray-20); }
+.step-skipped .step-dot { background: var(--cds-gray-10); border-color: var(--cds-gray-20); opacity: 0.5; }
+.step-skipped .step-content { opacity: 0.4; text-decoration: line-through; }
+
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header class="cds-header">
+  <button class="cds-header__hamburger" id="navToggle" aria-label="Toggle navigation">
+    <svg viewBox="0 0 20 20"><rect y="3" width="20" height="2"/><rect y="9" width="20" height="2"/><rect y="15" width="20" height="2"/></svg>
+  </button>
+  <a class="cds-header__logo" href="#dashboard">
+    <span class="cds-header__logo-mark"></span>
+    RampingUp
+  </a>
+  <div class="cds-header__tabs">
+    <button class="cds-header__tab cds-header__tab--active">Employee Portal</button>
+    <button class="cds-header__tab" style="cursor:default;color:var(--cds-gray-70);">Employer Portal</button>
+  </div>
+  <div class="cds-header__spacer"></div>
+  <div class="cds-header__actions">
+    <button class="cds-header__action" aria-label="Search">
+      <svg viewBox="0 0 20 20"><path d="M15.2 13.8l3.4 3.4-1.4 1.4-3.4-3.4a7 7 0 1 1 1.4-1.4zM8 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/></svg>
+    </button>
+    <button class="cds-header__action cds-header__action--badge" aria-label="Notifications">
+      <svg viewBox="0 0 20 20"><path d="M10 20a2 2 0 0 1-2-2h4a2 2 0 0 1-2 2zm8-4H2v-1l2-2V8a6 6 0 0 1 5-5.91V1h2v1.09A6 6 0 0 1 16 8v5l2 2v1z"/></svg>
+    </button>
+    <button class="cds-header__avatar" id="avatarBtn" aria-label="User menu">ZR</button>
+  </div>
+</header>
+
+<!-- ============================================================
+     LEFT NAVIGATION
+     ============================================================ -->
+<nav class="cds-sidenav" id="sideNav">
+  <div class="cds-sidenav__items">
+    <div class="cds-sidenav__label">Main</div>
+    <a class="cds-sidenav__link cds-sidenav__link--active" href="#dashboard" data-page="dashboard">
+      <svg viewBox="0 0 16 16"><path d="M0 0h7v7H0zM9 0h7v7H9zM0 9h7v7H0zM9 9h7v7H9z"/></svg>
+      Dashboard
+    </a>
+    <a class="cds-sidenav__link" href="#leave" data-page="leave">
+      <svg viewBox="0 0 16 16"><path d="M13 2h-2V1h-1v1H6V1H5v1H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1zm0 11H3V6h10z"/></svg>
+      Leave Management
+    </a>
+    <a class="cds-sidenav__link" href="#salary" data-page="salary">
+      <svg viewBox="0 0 16 16"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm1 10H7V7h2zm0-5H7V4h2z"/></svg>
+      Salary
+    </a>
+    <div class="cds-sidenav__divider"></div>
+    <div class="cds-sidenav__label">Requests</div>
+    <a class="cds-sidenav__link" href="#expenses" data-page="expenses">
+      <svg viewBox="0 0 16 16"><path d="M14 3H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zm0 9H2V6h12z"/><rect x="3" y="8" width="4" height="1"/><rect x="3" y="10" width="2" height="1"/></svg>
+      Expenses
+    </a>
+    <a class="cds-sidenav__link" href="#tickets" data-page="tickets">
+      <svg viewBox="0 0 16 16"><path d="M14 1H2a1 1 0 0 0-1 1v12l3-2h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zm0 10H4l-2 1.3V2h12z"/></svg>
+      Tickets
+    </a>
+    <div class="cds-sidenav__divider"></div>
+    <div class="cds-sidenav__label">Account</div>
+    <a class="cds-sidenav__link" href="#profile" data-page="profile">
+      <svg viewBox="0 0 16 16"><path d="M8 8a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 1c-3.3 0-7 1.8-7 4v1h14v-1c0-2.2-3.7-4-7-4z"/></svg>
+      Profile
+    </a>
+  </div>
+  <div class="cds-sidenav__footer">
+    <div class="cds-sidenav__footer-name">Zhang Rui</div>
+    <div class="cds-sidenav__footer-role">Software Engineer</div>
+  </div>
+</nav>
+
+<!-- ============================================================
+     MAIN CONTENT
+     ============================================================ -->
+<div class="cds-content" id="mainContent">
+  <div class="cds-content__inner" id="pageContainer">
+    <!-- Pages rendered by JS -->
+  </div>
+</div>
+
+<!-- ============================================================
+     SIDE PANEL (for Salary Detail)
+     ============================================================ -->
+<div class="cds-side-panel-overlay" id="sidePanelOverlay"></div>
+<div class="cds-side-panel" id="sidePanel">
+  <div class="cds-side-panel__header">
+    <div class="cds-side-panel__title" id="sidePanelTitle">Salary Detail</div>
+    <button class="cds-side-panel__close" id="sidePanelClose" aria-label="Close">
+      <svg viewBox="0 0 20 20"><path d="M14.3 5.7L10 10l4.3 4.3-1.4 1.4L8.6 11.4l-4.3 4.3-1.4-1.4L7.2 10 2.9 5.7l1.4-1.4L6.6 8.6l4.3-4.3z"/></svg>
+    </button>
+  </div>
+  <div class="cds-side-panel__body" id="sidePanelBody"></div>
+</div>
+
+
+<script>
+/* =============================================================
+   DATA
+   ============================================================= */
+const EMPLOYEE = {
+  name: 'Zhang Rui', initials: 'ZR', role: 'Software Engineer',
+  department: 'Engineering', employeeId: 'EMP-2024-0032',
+  email: 'zhang.rui@rampingup.com', phone: '+86 138 8888 0032',
+  joinDate: '2024-03-15', manager: 'Li Wei', location: 'Shanghai, China',
+  contractType: 'Full-time', gender: 'Male', dob: '1995-06-20',
+  bankName: 'China Merchants Bank', bankAccount: '**** **** **** 6789',
+};
+const LEAVE_TYPES = [
+  { type: 'Annual Leave', total: 15, used: 7, color: '#47FA22' },
+  { type: 'Sick Leave', total: 10, used: 2, color: '#8a3ffc' },
+  { type: 'Personal Leave', total: 5, used: 1, color: '#009d9a' },
+  { type: 'Compensatory', total: 3, used: 0, color: '#24a148' },
+];
+const LEAVE_REQUESTS = [
+  { id: 'LV-2401', type: 'Annual Leave', from: '2025-03-10', to: '2025-03-14', days: 5, status: 'Approved', approver: 'Li Wei' },
+  { id: 'LV-2402', type: 'Sick Leave', from: '2025-02-20', to: '2025-02-21', days: 2, status: 'Approved', approver: 'Li Wei' },
+  { id: 'LV-2403', type: 'Annual Leave', from: '2025-04-05', to: '2025-04-06', days: 2, status: 'Pending', approver: 'Li Wei' },
+  { id: 'LV-2404', type: 'Personal Leave', from: '2025-01-15', to: '2025-01-15', days: 1, status: 'Approved', approver: 'Li Wei' },
+  { id: 'LV-2405', type: 'Annual Leave', from: '2025-05-01', to: '2025-05-02', days: 2, status: 'Draft', approver: '-' },
+  { id: 'LV-2406', type: 'Sick Leave', from: '2024-12-10', to: '2024-12-10', days: 1, status: 'Rejected', approver: 'Li Wei' },
+];
+const SALARY_SLIPS = [
+  { id: 'SS-202503', period: 'March 2025', payDate: '2025-03-25', gross: 32000, deductions: 6820, net: 25180, status: 'Paid' },
+  { id: 'SS-202502', period: 'February 2025', payDate: '2025-02-25', gross: 32000, deductions: 6820, net: 25180, status: 'Paid' },
+  { id: 'SS-202501', period: 'January 2025', payDate: '2025-01-25', gross: 32000, deductions: 6820, net: 25180, status: 'Paid' },
+  { id: 'SS-202412', period: 'December 2024', payDate: '2024-12-25', gross: 30000, deductions: 6380, net: 23620, status: 'Paid' },
+  { id: 'SS-202411', period: 'November 2024', payDate: '2024-11-25', gross: 30000, deductions: 6380, net: 23620, status: 'Paid' },
+  { id: 'SS-202410', period: 'October 2024', payDate: '2024-10-25', gross: 30000, deductions: 6380, net: 23620, status: 'Paid' },
+];
+const SALARY_DETAIL = {
+  earnings: [
+    { component: 'Basic Salary', amount: 20000 },
+    { component: 'Housing Allowance', amount: 5000 },
+    { component: 'Transport Allowance', amount: 2000 },
+    { component: 'Meal Allowance', amount: 1500 },
+    { component: 'Performance Bonus', amount: 3500 },
+  ],
+  deductions: [
+    { component: 'Pension Insurance (8%)', amount: 2560 },
+    { component: 'Medical Insurance (2%)', amount: 640 },
+    { component: 'Unemployment Insurance (0.5%)', amount: 160 },
+    { component: 'Housing Fund (12%)', amount: 2400 },
+    { component: 'Individual Income Tax', amount: 1060 },
+  ],
+};
+const EXPENSES = [
+  { id: 'EC-2401', date: '2025-03-18', category: 'Travel', description: 'Business trip to Beijing', amount: 4580, currency: 'CNY', status: 'Pending', items: 3 },
+  { id: 'EC-2402', date: '2025-03-05', category: 'Equipment', description: 'External monitor purchase', amount: 2899, currency: 'CNY', status: 'Approved', items: 1 },
+  { id: 'EC-2403', date: '2025-02-20', category: 'Meals', description: 'Client dinner - Project Alpha', amount: 860, currency: 'CNY', status: 'Approved', items: 1 },
+  { id: 'EC-2404', date: '2025-02-10', category: 'Transportation', description: 'Monthly taxi reimbursement', amount: 1200, currency: 'CNY', status: 'Rejected', items: 5 },
+  { id: 'EC-2405', date: '2025-01-28', category: 'Communication', description: 'Annual phone plan', amount: 1680, currency: 'CNY', status: 'Approved', items: 1 },
+];
+const TICKETS = [
+  { id: 'TK-0089', subject: 'VPN access not working from home', category: 'IT Support', priority: 'High', status: 'Open', created: '2025-03-20', updated: '2025-03-21' },
+  { id: 'TK-0088', subject: 'Request for additional software license', category: 'IT Support', priority: 'Medium', status: 'Pending', created: '2025-03-18', updated: '2025-03-19' },
+  { id: 'TK-0085', subject: 'Office desk lamp replacement', category: 'Facilities', priority: 'Low', status: 'Closed', created: '2025-03-10', updated: '2025-03-15' },
+  { id: 'TK-0082', subject: 'Payslip discrepancy for February', category: 'HR', priority: 'High', status: 'Closed', created: '2025-03-02', updated: '2025-03-05' },
+  { id: 'TK-0079', subject: 'Meeting room booking system error', category: 'IT Support', priority: 'Medium', status: 'Open', created: '2025-02-28', updated: '2025-03-01' },
+];
+
+const ACTIVITY_LOG = [
+  { time: '10:32 AM', text: 'Leave request <strong>LV-2403</strong> submitted for Apr 5\u20136', tag: 'Pending', tagClass: 'cds-tag--yellow' },
+  { time: '09:15 AM', text: 'March salary slip <strong>SS-202503</strong> is now available', tag: 'New', tagClass: 'cds-tag--blue' },
+  { time: 'Yesterday', text: 'Expense claim <strong>EC-2401</strong> submitted for approval', tag: 'Pending', tagClass: 'cds-tag--yellow' },
+  { time: 'Mar 19', text: 'Ticket <strong>TK-0089</strong> opened \u2014 VPN access issue', tag: 'Open', tagClass: 'cds-tag--red' },
+  { time: 'Mar 15', text: 'Leave request <strong>LV-2401</strong> approved by Li Wei', tag: 'Approved', tagClass: 'cds-tag--green' },
+  { time: 'Mar 05', text: 'Expense claim <strong>EC-2402</strong> approved \u2014 CNY 2,899', tag: 'Approved', tagClass: 'cds-tag--green' },
+];
+
+
+/* =============================================================
+   HELPERS
+   ============================================================= */
+function fmt(n) {
+  return n.toLocaleString('en-US');
+}
+
+function statusTagClass(status) {
+  var map = {
+    'Approved': 'cds-tag--green', 'Paid': 'cds-tag--green', 'Closed': 'cds-tag--gray',
+    'Pending': 'cds-tag--yellow', 'Draft': 'cds-tag--gray',
+    'Rejected': 'cds-tag--red', 'Open': 'cds-tag--blue',
+  };
+  return map[status] || 'cds-tag--gray';
+}
+
+function priorityTagClass(p) {
+  return { 'High': 'cds-tag--high', 'Medium': 'cds-tag--medium', 'Low': 'cds-tag--low' }[p] || 'cds-tag--gray';
+}
+
+function categoryTagClass(c) {
+  return { 'IT Support': 'cds-tag--blue', 'Facilities': 'cds-tag--teal', 'HR': 'cds-tag--purple' }[c] || 'cds-tag--gray';
+}
+
+function expenseCatTagClass(c) {
+  return { 'Travel': 'cds-tag--blue', 'Equipment': 'cds-tag--purple', 'Meals': 'cds-tag--teal', 'Transportation': 'cds-tag--yellow', 'Communication': 'cds-tag--gray' }[c] || 'cds-tag--gray';
+}
+
+/* Escape HTML for safe insertion */
+function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+
+/* =============================================================
+   PAGE RENDERERS
+   ============================================================= */
+
+function renderDashboard() {
+  var totalLeaveUsed = LEAVE_TYPES.reduce(function(s, l) { return s + l.used; }, 0);
+  var totalLeave = LEAVE_TYPES.reduce(function(s, l) { return s + l.total; }, 0);
+  var pendingExpenses = EXPENSES.filter(function(e) { return e.status === 'Pending'; }).length;
+  var openTickets = TICKETS.filter(function(t) { return t.status === 'Open' || t.status === 'Pending'; }).length;
+  var closedTickets = TICKETS.filter(function(t) { return t.status === 'Closed'; }).length;
+
+  var activityHTML = ACTIVITY_LOG.map(function(a) {
+    return '<div class="cds-activity-item">' +
+      '<span class="cds-activity-item__time">' + esc(a.time) + '</span>' +
+      '<span class="cds-activity-item__text">' + a.text + '</span>' +
+      '<span class="cds-tag ' + a.tagClass + '">' + esc(a.tag) + '</span>' +
+    '</div>';
+  }).join('');
+
+  var leaveProgressHTML = LEAVE_TYPES.map(function(l) {
+    var pct = Math.round((l.used / l.total) * 100);
+    return '<div class="cds-progress">' +
+      '<div class="cds-progress__label">' +
+        '<span class="cds-progress__name">' + esc(l.type) + '</span>' +
+        '<span class="cds-progress__value">' + l.used + ' / ' + l.total + '</span>' +
+      '</div>' +
+      '<div class="cds-progress__track">' +
+        '<div class="cds-progress__fill" style="width:' + pct + '%;background:' + l.color + ';"></div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  return '' +
+    '<div class="cds-notification-banner" id="notifBanner">' +
+      '<svg viewBox="0 0 20 20"><path d="M10 0C4.5 0 0 4.5 0 10s4.5 10 10 10 10-4.5 10-10S15.5 0 10 0zm1 15H9v-2h2v2zm0-4H9V5h2v6z"/></svg>' +
+      '<span><strong>2 items need your attention</strong> \u2014 1 pending leave request, 1 pending expense claim</span>' +
+      '<button class="cds-notification-banner__close" onclick="document.getElementById(\'notifBanner\').style.display=\'none\'">' +
+        '<svg viewBox="0 0 16 16"><path d="M12.3 3.7L8 8l4.3 4.3-1.4 1.4L6.6 9.4 2.3 13.7.9 12.3 5.2 8 .9 3.7l1.4-1.4L6.6 6.6l4.3-4.3z"/></svg>' +
+      '</button>' +
+    '</div>' +
+    '<div class="cds-page-header">' +
+      '<div class="cds-breadcrumb">' +
+        '<a href="#dashboard">Home</a>' +
+        '<span class="cds-breadcrumb__separator">/</span>' +
+        '<span class="cds-breadcrumb__current">Dashboard</span>' +
+      '</div>' +
+      '<h1 class="cds-page-header__title">Good morning, ' + esc(EMPLOYEE.name) + '</h1>' +
+      '<p class="cds-page-header__subtitle">' + esc(EMPLOYEE.role) + ' &middot; ' + esc(EMPLOYEE.department) + ' &middot; ' + esc(EMPLOYEE.employeeId) + '</p>' +
+    '</div>' +
+    '<div class="cds-page-body">' +
+      '<div class="cds-tile-grid cds-tile-grid--4 mb-24">' +
+        '<div class="cds-tile cds-tile--clickable" onclick="navigateTo(\'salary\')">' +
+          '<div><div class="cds-tile__label">Latest Net Pay</div><div class="cds-tile__value">' + fmt(SALARY_SLIPS[0].net) + '</div></div>' +
+          '<div class="cds-tile__trend cds-tile__trend--positive">CNY &middot; March 2025</div>' +
+        '</div>' +
+        '<div class="cds-tile cds-tile--clickable" onclick="navigateTo(\'leave\')">' +
+          '<div><div class="cds-tile__label">Leave Balance</div><div class="cds-tile__value">' + (totalLeave - totalLeaveUsed) + '</div></div>' +
+          '<div class="cds-tile__trend">' + totalLeaveUsed + ' days used of ' + totalLeave + ' total</div>' +
+        '</div>' +
+        '<div class="cds-tile cds-tile--clickable" onclick="navigateTo(\'expenses\')">' +
+          '<div><div class="cds-tile__label">Pending Expenses</div><div class="cds-tile__value">' + pendingExpenses + '</div></div>' +
+          '<div class="cds-tile__trend cds-tile__trend--negative">Awaiting approval</div>' +
+        '</div>' +
+        '<div class="cds-tile cds-tile--clickable" onclick="navigateTo(\'tickets\')">' +
+          '<div><div class="cds-tile__label">Open Tickets</div><div class="cds-tile__value">' + openTickets + '</div></div>' +
+          '<div class="cds-tile__trend">' + closedTickets + ' resolved</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="cds-2col">' +
+        '<div>' +
+          '<div class="cds-section-label">Activity Log</div>' +
+          '<div style="border:1px solid var(--cds-gray-20);">' + activityHTML + '</div>' +
+        '</div>' +
+        '<div>' +
+          '<div class="cds-section-label">Leave Summary</div>' +
+          '<div style="border:1px solid var(--cds-gray-20);padding:16px;">' + leaveProgressHTML + '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+}
+
+
+function renderLeave() {
+  var balanceTiles = LEAVE_TYPES.map(function(l) {
+    var pct = Math.round((l.used / l.total) * 100);
+    return '<div class="cds-leave-tile">' +
+      '<div class="cds-leave-tile__type">' + esc(l.type) + '</div>' +
+      '<div style="height:6px;background:var(--cds-gray-20);margin-bottom:4px;">' +
+        '<div style="height:100%;width:' + pct + '%;background:' + l.color + ';"></div>' +
+      '</div>' +
+      '<div class="cds-leave-tile__numbers">' +
+        '<div><div class="cds-leave-tile__stat-label">Available</div><div class="cds-leave-tile__stat-value">' + (l.total - l.used) + '</div></div>' +
+        '<div><div class="cds-leave-tile__stat-label">Used</div><div class="cds-leave-tile__stat-value">' + l.used + '</div></div>' +
+        '<div><div class="cds-leave-tile__stat-label">Total</div><div class="cds-leave-tile__stat-value">' + l.total + '</div></div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  var tableRows = LEAVE_REQUESTS.map(function(r, i) {
+    return '<tr data-row="' + i + '" onclick="toggleLeaveRow(' + i + ')">' +
+      '<td class="cds-checkbox-cell"><input type="checkbox" class="cds-checkbox" onclick="event.stopPropagation()"/></td>' +
+      '<td>' + esc(r.id) + '</td>' +
+      '<td>' + esc(r.type) + '</td>' +
+      '<td class="mono">' + esc(r.from) + '</td>' +
+      '<td class="mono">' + esc(r.to) + '</td>' +
+      '<td class="text-center">' + r.days + '</td>' +
+      '<td><span class="cds-tag ' + statusTagClass(r.status) + '">' + esc(r.status) + '</span></td>' +
+      '<td>' + esc(r.approver) + '</td>' +
+    '</tr>' +
+    '<tr class="cds-data-table__expanded-row" id="leaveDetail' + i + '">' +
+      '<td colspan="8">' +
+        '<div style="display:flex;gap:24px;flex-wrap:wrap;">' +
+          '<div class="cds-label-value" style="border:none;padding:0;"><div class="cds-label-value__label">Request ID</div><div class="cds-label-value__value mono">' + esc(r.id) + '</div></div>' +
+          '<div class="cds-label-value" style="border:none;padding:0;"><div class="cds-label-value__label">Leave Type</div><div class="cds-label-value__value">' + esc(r.type) + '</div></div>' +
+          '<div class="cds-label-value" style="border:none;padding:0;"><div class="cds-label-value__label">Duration</div><div class="cds-label-value__value">' + esc(r.from) + ' to ' + esc(r.to) + ' (' + r.days + ' day' + (r.days > 1 ? 's' : '') + ')</div></div>' +
+          '<div class="cds-label-value" style="border:none;padding:0;"><div class="cds-label-value__label">Approver</div><div class="cds-label-value__value">' + esc(r.approver) + '</div></div>' +
+          '<div class="cds-label-value" style="border:none;padding:0;"><div class="cds-label-value__label">Status</div><div class="cds-label-value__value"><span class="cds-tag ' + statusTagClass(r.status) + '">' + esc(r.status) + '</span></div></div>' +
+        '</div>' +
+        renderApprovalTimeline(r.status, r.approver, r.from) +
+      '</td>' +
+    '</tr>';
+  }).join('');
+
+  return '' +
+    '<div class="cds-page-header">' +
+      '<div class="cds-breadcrumb">' +
+        '<a href="#dashboard">Home</a>' +
+        '<span class="cds-breadcrumb__separator">/</span>' +
+        '<span class="cds-breadcrumb__current">Leave Management</span>' +
+      '</div>' +
+      '<h1 class="cds-page-header__title">Leave Management</h1>' +
+      '<p class="cds-page-header__subtitle">View your leave balances and manage requests</p>' +
+    '</div>' +
+    '<div class="cds-page-body">' +
+      '<div class="cds-tile-grid cds-tile-grid--4 mb-24">' + balanceTiles + '</div>' +
+      '<div class="cds-section-label">Leave Requests</div>' +
+      '<div class="cds-data-table-wrap">' +
+        '<div class="cds-data-table-toolbar">' +
+          '<div class="cds-data-table-toolbar__search">' +
+            '<svg viewBox="0 0 16 16"><path d="M12.2 11l3.4 3.4-1.2 1.2-3.4-3.4A6 6 0 1 1 12.2 11zM6.5 11.5a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/></svg>' +
+            '<input type="text" placeholder="Search leave requests..." id="leaveSearch" onkeyup="filterLeaveTable()"/>' +
+          '</div>' +
+          '<div class="cds-select"><select id="leaveTypeFilter" onchange="filterLeaveTable()">' +
+            '<option value="all">All Types</option>' +
+            '<option value="Annual Leave">Annual Leave</option>' +
+            '<option value="Sick Leave">Sick Leave</option>' +
+            '<option value="Personal Leave">Personal Leave</option>' +
+            '<option value="Compensatory">Compensatory</option>' +
+          '</select></div>' +
+          '<div class="cds-select"><select id="leaveStatusFilter" onchange="filterLeaveTable()">' +
+            '<option value="all">All Statuses</option>' +
+            '<option value="Approved">Approved</option>' +
+            '<option value="Pending">Pending</option>' +
+            '<option value="Draft">Draft</option>' +
+            '<option value="Rejected">Rejected</option>' +
+          '</select></div>' +
+          '<div style="flex:1;"></div>' +
+          '<button class="cds-btn cds-btn--primary cds-btn--sm" style="padding:0 16px;" onclick="openLeaveForm()">New Request</button>' +
+        '</div>' +
+        '<table class="cds-data-table" id="leaveTable">' +
+          '<thead><tr>' +
+            '<th class="cds-checkbox-cell"><input type="checkbox" class="cds-checkbox" onclick="toggleAllLeaveCheckboxes(this)"/></th>' +
+            '<th>ID <span class="cds-sort-icon">&uarr;&darr;</span></th>' +
+            '<th>Type <span class="cds-sort-icon">&uarr;&darr;</span></th>' +
+            '<th>From <span class="cds-sort-icon">&uarr;&darr;</span></th>' +
+            '<th>To <span class="cds-sort-icon">&uarr;&darr;</span></th>' +
+            '<th>Days <span class="cds-sort-icon">&uarr;&darr;</span></th>' +
+            '<th>Status <span class="cds-sort-icon">&uarr;&darr;</span></th>' +
+            '<th>Approver</th>' +
+          '</tr></thead>' +
+          '<tbody id="leaveTableBody">' + tableRows + '</tbody>' +
+        '</table>' +
+        '<div class="cds-pagination">' +
+          '<span>Items per page:</span>' +
+          '<select><option>10</option><option>25</option><option>50</option></select>' +
+          '<span>1 &ndash; ' + LEAVE_REQUESTS.length + ' of ' + LEAVE_REQUESTS.length + ' items</span>' +
+          '<div class="cds-pagination__nav">' +
+            '<button class="cds-pagination__btn" disabled><svg viewBox="0 0 16 16"><path d="M10.3 12.3L6 8l4.3-4.3 1.4 1.4L8.8 8l2.9 2.9z"/></svg></button>' +
+            '<button class="cds-pagination__btn" disabled><svg viewBox="0 0 16 16"><path d="M5.7 3.7L10 8l-4.3 4.3-1.4-1.4L7.2 8 4.3 5.1z"/></svg></button>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+}
+
+
+function renderSalary() {
+  var latestSlip = SALARY_SLIPS[0];
+  var totalEarnings = SALARY_DETAIL.earnings.reduce(function(s, e) { return s + e.amount; }, 0);
+  var totalDeductions = SALARY_DETAIL.deductions.reduce(function(s, d) { return s + d.amount; }, 0);
+
+  var earningsRows = SALARY_DETAIL.earnings.map(function(e) {
+    return '<div class="cds-breakdown-row"><span class="cds-breakdown-row__label">' + esc(e.component) + '</span><span class="cds-breakdown-row__amount">' + fmt(e.amount) + '</span></div>';
+  }).join('');
+
+  var deductionsRows = SALARY_DETAIL.deductions.map(function(d) {
+    return '<div class="cds-breakdown-row"><span class="cds-breakdown-row__label">' + esc(d.component) + '</span><span class="cds-breakdown-row__amount">-' + fmt(d.amount) + '</span></div>';
+  }).join('');
+
+  var historyRows = SALARY_SLIPS.map(function(s) {
+    return '<tr style="cursor:pointer;" onclick="openSalaryPanel(\'' + s.id + '\',\'' + s.period + '\')">' +
+      '<td>' + esc(s.id) + '</td>' +
+      '<td>' + esc(s.period) + '</td>' +
+      '<td class="mono">' + esc(s.payDate) + '</td>' +
+      '<td class="mono text-right">' + fmt(s.gross) + '</td>' +
+      '<td class="mono text-right">' + fmt(s.deductions) + '</td>' +
+      '<td class="mono text-right" style="font-weight:600;">' + fmt(s.net) + '</td>' +
+      '<td><span class="cds-tag ' + statusTagClass(s.status) + '">' + esc(s.status) + '</span></td>' +
+    '</tr>';
+  }).join('');
+
+  var ytdGross = SALARY_SLIPS.reduce(function(s, x) { return s + x.gross; }, 0);
+
+  return '' +
+    '<div class="cds-page-header">' +
+      '<div class="cds-breadcrumb">' +
+        '<a href="#dashboard">Home</a>' +
+        '<span class="cds-breadcrumb__separator">/</span>' +
+        '<span class="cds-breadcrumb__current">Salary</span>' +
+      '</div>' +
+      '<h1 class="cds-page-header__title">Salary</h1>' +
+      '<p class="cds-page-header__subtitle">View your compensation details and pay history</p>' +
+    '</div>' +
+    '<div class="cds-page-body">' +
+      '<div class="cds-tabs" id="salaryTabs">' +
+        '<button class="cds-tab cds-tab--active" data-tab="overview" onclick="switchSalaryTab(\'overview\')">Overview</button>' +
+        '<button class="cds-tab" data-tab="history" onclick="switchSalaryTab(\'history\')">History</button>' +
+        '<button class="cds-tab" data-tab="tax" onclick="switchSalaryTab(\'tax\')">Tax Summary</button>' +
+      '</div>' +
+
+      /* Overview tab */
+      '<div id="salaryTabOverview">' +
+        '<div class="cds-salary-display">' +
+          '<div class="cds-salary-display__label">Latest Net Pay</div>' +
+          '<div class="cds-salary-display__amount">' + fmt(latestSlip.net) + '<span class="cds-salary-display__currency">CNY</span></div>' +
+          '<div class="cds-salary-display__period">' + esc(latestSlip.period) + ' &middot; Paid ' + esc(latestSlip.payDate) + '</div>' +
+        '</div>' +
+        '<div class="cds-2col">' +
+          '<div>' +
+            '<div class="cds-breakdown-heading">Earnings</div>' +
+            earningsRows +
+            '<div class="cds-breakdown-row cds-breakdown-row--total"><span class="cds-breakdown-row__label">Total Earnings</span><span class="cds-breakdown-row__amount">' + fmt(totalEarnings) + '</span></div>' +
+          '</div>' +
+          '<div>' +
+            '<div class="cds-breakdown-heading">Deductions</div>' +
+            deductionsRows +
+            '<div class="cds-breakdown-row cds-breakdown-row--total"><span class="cds-breakdown-row__label">Total Deductions</span><span class="cds-breakdown-row__amount">-' + fmt(totalDeductions) + '</span></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      /* History tab */
+      '<div id="salaryTabHistory" class="hidden">' +
+        '<div class="cds-data-table-wrap">' +
+          '<div class="cds-data-table-toolbar">' +
+            '<div class="cds-data-table-toolbar__search">' +
+              '<svg viewBox="0 0 16 16"><path d="M12.2 11l3.4 3.4-1.2 1.2-3.4-3.4A6 6 0 1 1 12.2 11zM6.5 11.5a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/></svg>' +
+              '<input type="text" placeholder="Search salary slips..."/>' +
+            '</div>' +
+            '<div style="flex:1;"></div>' +
+            '<span style="font-size:13px;color:var(--cds-gray-50);">Click a row to view full payslip</span>' +
+          '</div>' +
+          '<table class="cds-data-table">' +
+            '<thead><tr>' +
+              '<th>ID</th><th>Period</th><th>Pay Date</th>' +
+              '<th class="text-right">Gross</th><th class="text-right">Deductions</th>' +
+              '<th class="text-right">Net Pay</th><th>Status</th>' +
+            '</tr></thead>' +
+            '<tbody>' + historyRows + '</tbody>' +
+          '</table>' +
+          '<div class="cds-pagination"><span>1 &ndash; ' + SALARY_SLIPS.length + ' of ' + SALARY_SLIPS.length + ' items</span></div>' +
+        '</div>' +
+      '</div>' +
+
+      /* Tax tab */
+      '<div id="salaryTabTax" class="hidden">' +
+        '<div class="cds-stat-row mb-24">' +
+          '<div class="cds-stat-tile"><div class="cds-stat-tile__label">YTD Gross Income</div><div class="cds-stat-tile__value">' + fmt(ytdGross) + '</div></div>' +
+          '<div class="cds-stat-tile"><div class="cds-stat-tile__label">YTD Tax Paid</div><div class="cds-stat-tile__value">' + fmt(1060 * SALARY_SLIPS.length) + '</div></div>' +
+          '<div class="cds-stat-tile"><div class="cds-stat-tile__label">YTD Social Insurance</div><div class="cds-stat-tile__value">' + fmt(3360 * SALARY_SLIPS.length) + '</div></div>' +
+          '<div class="cds-stat-tile"><div class="cds-stat-tile__label">YTD Housing Fund</div><div class="cds-stat-tile__value">' + fmt(2400 * SALARY_SLIPS.length) + '</div></div>' +
+        '</div>' +
+        '<div style="border:1px solid var(--cds-gray-20);padding:24px;">' +
+          '<p style="color:var(--cds-gray-70);font-size:14px;">Tax computation is based on China\'s individual income tax progressive rates. The figures shown are cumulative for the calendar year 2024\u20132025. For your official tax certificate, please contact HR or download from the tax authority portal.</p>' +
+          '<div class="mt-24">' +
+            '<div class="cds-breakdown-heading">Monthly Tax Breakdown (Latest)</div>' +
+            '<div class="cds-breakdown-row"><span class="cds-breakdown-row__label">Taxable Income</span><span class="cds-breakdown-row__amount">' + fmt(32000 - 5000 - 3360 - 2400) + '</span></div>' +
+            '<div class="cds-breakdown-row"><span class="cds-breakdown-row__label">Standard Deduction</span><span class="cds-breakdown-row__amount">-5,000</span></div>' +
+            '<div class="cds-breakdown-row"><span class="cds-breakdown-row__label">Social Insurance + Housing Fund</span><span class="cds-breakdown-row__amount">-' + fmt(3360 + 2400) + '</span></div>' +
+            '<div class="cds-breakdown-row cds-breakdown-row--total"><span class="cds-breakdown-row__label">Tax Payable</span><span class="cds-breakdown-row__amount">' + fmt(1060) + '</span></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+    '</div>';
+}
+
+
+function renderExpenses() {
+  var pendingTotal = EXPENSES.filter(function(e) { return e.status === 'Pending'; }).reduce(function(s, e) { return s + e.amount; }, 0);
+  var approvedTotal = EXPENSES.filter(function(e) { return e.status === 'Approved'; }).reduce(function(s, e) { return s + e.amount; }, 0);
+  var allTotal = EXPENSES.reduce(function(s, e) { return s + e.amount; }, 0);
+
+  var rows = EXPENSES.map(function(e, i) {
+    return '<tr data-erow="' + i + '" onclick="toggleExpenseRow(' + i + ')">' +
+      '<td>' + esc(e.id) + '</td>' +
+      '<td class="mono">' + esc(e.date) + '</td>' +
+      '<td><span class="cds-tag ' + expenseCatTagClass(e.category) + '">' + esc(e.category) + '</span></td>' +
+      '<td>' + esc(e.description) + '</td>' +
+      '<td class="mono text-right">' + fmt(e.amount) + '</td>' +
+      '<td class="text-center">' + e.items + '</td>' +
+      '<td><span class="cds-tag ' + statusTagClass(e.status) + '">' + esc(e.status) + '</span></td>' +
+    '</tr>' +
+    '<tr class="cds-data-table__expanded-row" id="expenseDetail' + i + '">' +
+      '<td colspan="7">' +
+        '<div style="display:flex;gap:24px;flex-wrap:wrap;">' +
+          '<div class="cds-label-value" style="border:none;padding:0;"><div class="cds-label-value__label">Claim ID</div><div class="cds-label-value__value mono">' + esc(e.id) + '</div></div>' +
+          '<div class="cds-label-value" style="border:none;padding:0;"><div class="cds-label-value__label">Category</div><div class="cds-label-value__value">' + esc(e.category) + '</div></div>' +
+          '<div class="cds-label-value" style="border:none;padding:0;"><div class="cds-label-value__label">Description</div><div class="cds-label-value__value">' + esc(e.description) + '</div></div>' +
+          '<div class="cds-label-value" style="border:none;padding:0;"><div class="cds-label-value__label">Amount</div><div class="cds-label-value__value mono">' + fmt(e.amount) + '</div></div>' +
+          '<div class="cds-label-value" style="border:none;padding:0;"><div class="cds-label-value__label">Status</div><div class="cds-label-value__value"><span class="cds-tag ' + statusTagClass(e.status) + '">' + esc(e.status) + '</span></div></div>' +
+        '</div>' +
+        renderApprovalTimeline(e.status, 'Li Wei', e.date) +
+      '</td>' +
+    '</tr>';
+  }).join('');
+
+  return '' +
+    '<div class="cds-page-header">' +
+      '<div class="cds-breadcrumb">' +
+        '<a href="#dashboard">Home</a>' +
+        '<span class="cds-breadcrumb__separator">/</span>' +
+        '<span class="cds-breadcrumb__current">Expenses</span>' +
+      '</div>' +
+      '<h1 class="cds-page-header__title">Expenses</h1>' +
+      '<p class="cds-page-header__subtitle">Submit and track your expense claims</p>' +
+    '</div>' +
+    '<div class="cds-page-body">' +
+      '<div class="cds-stat-row mb-24">' +
+        '<div class="cds-stat-tile"><div class="cds-stat-tile__label">Pending Amount</div><div class="cds-stat-tile__value">' + fmt(pendingTotal) + '</div></div>' +
+        '<div class="cds-stat-tile"><div class="cds-stat-tile__label">Approved Amount</div><div class="cds-stat-tile__value">' + fmt(approvedTotal) + '</div></div>' +
+        '<div class="cds-stat-tile"><div class="cds-stat-tile__label">Total Claims</div><div class="cds-stat-tile__value">' + EXPENSES.length + '</div></div>' +
+        '<div class="cds-stat-tile"><div class="cds-stat-tile__label">Total Amount</div><div class="cds-stat-tile__value">' + fmt(allTotal) + '</div></div>' +
+      '</div>' +
+      '<div class="cds-data-table-wrap">' +
+        '<div class="cds-data-table-toolbar">' +
+          '<div class="cds-data-table-toolbar__search">' +
+            '<svg viewBox="0 0 16 16"><path d="M12.2 11l3.4 3.4-1.2 1.2-3.4-3.4A6 6 0 1 1 12.2 11zM6.5 11.5a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/></svg>' +
+            '<input type="text" placeholder="Search expenses..." id="expenseSearch" onkeyup="filterExpenseTable()"/>' +
+          '</div>' +
+          '<div class="cds-select"><select id="expenseCatFilter" onchange="filterExpenseTable()">' +
+            '<option value="all">All Categories</option>' +
+            '<option value="Travel">Travel</option>' +
+            '<option value="Equipment">Equipment</option>' +
+            '<option value="Meals">Meals</option>' +
+            '<option value="Transportation">Transportation</option>' +
+            '<option value="Communication">Communication</option>' +
+          '</select></div>' +
+          '<div class="cds-select"><select id="expenseStatusFilter" onchange="filterExpenseTable()">' +
+            '<option value="all">All Statuses</option>' +
+            '<option value="Pending">Pending</option>' +
+            '<option value="Approved">Approved</option>' +
+            '<option value="Rejected">Rejected</option>' +
+          '</select></div>' +
+          '<div style="flex:1;"></div>' +
+          '<button class="cds-btn cds-btn--primary cds-btn--sm" style="padding:0 16px;" onclick="openExpenseForm()">New Claim</button>' +
+        '</div>' +
+        '<table class="cds-data-table" id="expenseTable">' +
+          '<thead><tr>' +
+            '<th>ID</th><th>Date</th><th>Category</th><th>Description</th>' +
+            '<th class="text-right">Amount (CNY)</th><th class="text-center">Items</th><th>Status</th>' +
+          '</tr></thead>' +
+          '<tbody id="expenseTableBody">' + rows + '</tbody>' +
+        '</table>' +
+        '<div class="cds-pagination"><span>1 &ndash; ' + EXPENSES.length + ' of ' + EXPENSES.length + ' items</span></div>' +
+      '</div>' +
+    '</div>';
+}
+
+
+function renderTickets() {
+  var openCount = TICKETS.filter(function(t) { return t.status === 'Open' || t.status === 'Pending'; }).length;
+
+  var items = TICKETS.map(function(t, i) {
+    return '<div class="cds-slist-item" onclick="toggleTicketDetail(' + i + ')" id="ticketItem' + i + '">' +
+      '<div class="cds-slist-item__priority cds-slist-item__priority--' + t.priority.toLowerCase() + '"></div>' +
+      '<div class="cds-slist-item__content">' +
+        '<div class="cds-slist-item__title">' + esc(t.subject) + '</div>' +
+        '<div class="cds-slist-item__meta">' +
+          '<span class="cds-tag ' + categoryTagClass(t.category) + '">' + esc(t.category) + '</span>' +
+          '<span class="cds-tag ' + statusTagClass(t.status) + '">' + esc(t.status) + '</span>' +
+          '<span class="cds-tag ' + priorityTagClass(t.priority) + '">' + esc(t.priority) + '</span>' +
+        '</div>' +
+        '<div class="cds-slist-item__detail" id="ticketDetail' + i + '">' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;">' +
+            '<div class="cds-label-value" style="padding:8px 0;"><div class="cds-label-value__label">Ticket ID</div><div class="cds-label-value__value mono">' + esc(t.id) + '</div></div>' +
+            '<div class="cds-label-value" style="padding:8px 0;"><div class="cds-label-value__label">Category</div><div class="cds-label-value__value">' + esc(t.category) + '</div></div>' +
+            '<div class="cds-label-value" style="padding:8px 0;"><div class="cds-label-value__label">Created</div><div class="cds-label-value__value mono">' + esc(t.created) + '</div></div>' +
+            '<div class="cds-label-value" style="padding:8px 0;"><div class="cds-label-value__label">Last Updated</div><div class="cds-label-value__value mono">' + esc(t.updated) + '</div></div>' +
+            '<div class="cds-label-value" style="padding:8px 0;grid-column:1/-1;"><div class="cds-label-value__label">Priority</div><div class="cds-label-value__value">' + esc(t.priority) + '</div></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<span class="cds-slist-item__date">' + esc(t.created) + '</span>' +
+    '</div>';
+  }).join('');
+
+  return '' +
+    '<div class="cds-page-header">' +
+      '<div class="cds-breadcrumb">' +
+        '<a href="#dashboard">Home</a>' +
+        '<span class="cds-breadcrumb__separator">/</span>' +
+        '<span class="cds-breadcrumb__current">Tickets</span>' +
+      '</div>' +
+      '<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;">' +
+        '<div>' +
+          '<h1 class="cds-page-header__title">Support Tickets</h1>' +
+          '<p class="cds-page-header__subtitle">Track your support requests and their resolution status</p>' +
+        '</div>' +
+        '<button class="cds-btn cds-btn--primary cds-btn--sm" style="padding:0 16px;margin-top:4px;" onclick="openTicketForm()">New Ticket</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="cds-page-body">' +
+      '<div style="border:1px solid var(--cds-gray-20);">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--cds-gray-10);border-bottom:1px solid var(--cds-gray-20);">' +
+          '<span style="font-size:13px;color:var(--cds-gray-70);">' + TICKETS.length + ' tickets &middot; ' + openCount + ' open</span>' +
+          '<div class="cds-select" style="margin:0;"><select style="height:32px;font-size:13px;border-radius:0;">' +
+            '<option>All Statuses</option><option>Open</option><option>Pending</option><option>Closed</option>' +
+          '</select></div>' +
+        '</div>' +
+        items +
+      '</div>' +
+    '</div>';
+}
+
+
+function renderProfile() {
+  return '' +
+    '<div class="cds-page-header">' +
+      '<div class="cds-breadcrumb">' +
+        '<a href="#dashboard">Home</a>' +
+        '<span class="cds-breadcrumb__separator">/</span>' +
+        '<span class="cds-breadcrumb__current">Profile</span>' +
+      '</div>' +
+      '<h1 class="cds-page-header__title">My Profile</h1>' +
+    '</div>' +
+    '<div class="cds-page-body">' +
+      '<div class="cds-profile-hero">' +
+        '<div class="cds-profile-avatar">' + esc(EMPLOYEE.initials) + '</div>' +
+        '<div>' +
+          '<div class="cds-profile-info__name">' + esc(EMPLOYEE.name) + '</div>' +
+          '<div class="cds-profile-info__role">' + esc(EMPLOYEE.role) + ' &middot; ' + esc(EMPLOYEE.department) + '</div>' +
+          '<div class="cds-profile-info__id">' + esc(EMPLOYEE.employeeId) + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="cds-tabs" id="profileTabs">' +
+        '<button class="cds-tab cds-tab--active" data-tab="personal" onclick="switchProfileTab(\'personal\')">Personal</button>' +
+        '<button class="cds-tab" data-tab="company" onclick="switchProfileTab(\'company\')">Company</button>' +
+        '<button class="cds-tab" data-tab="bank" onclick="switchProfileTab(\'bank\')">Bank Details</button>' +
+      '</div>' +
+
+      /* Personal Tab */
+      '<div id="profileTabPersonal">' +
+        '<div class="cds-2col">' +
+          '<div>' +
+            '<div class="cds-label-value"><div class="cds-label-value__label">Full Name</div><div class="cds-label-value__value">' + esc(EMPLOYEE.name) + '</div></div>' +
+            '<div class="cds-label-value"><div class="cds-label-value__label">Email</div><div class="cds-label-value__value">' + esc(EMPLOYEE.email) + '</div></div>' +
+            '<div class="cds-label-value"><div class="cds-label-value__label">Phone</div><div class="cds-label-value__value">' + esc(EMPLOYEE.phone) + '</div></div>' +
+          '</div>' +
+          '<div>' +
+            '<div class="cds-label-value"><div class="cds-label-value__label">Gender</div><div class="cds-label-value__value">' + esc(EMPLOYEE.gender) + '</div></div>' +
+            '<div class="cds-label-value"><div class="cds-label-value__label">Date of Birth</div><div class="cds-label-value__value">' + esc(EMPLOYEE.dob) + '</div></div>' +
+            '<div class="cds-label-value"><div class="cds-label-value__label">Location</div><div class="cds-label-value__value">' + esc(EMPLOYEE.location) + '</div></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      /* Company Tab */
+      '<div id="profileTabCompany" class="hidden">' +
+        '<div class="cds-2col">' +
+          '<div>' +
+            '<div class="cds-label-value"><div class="cds-label-value__label">Employee ID</div><div class="cds-label-value__value mono">' + esc(EMPLOYEE.employeeId) + '</div></div>' +
+            '<div class="cds-label-value"><div class="cds-label-value__label">Department</div><div class="cds-label-value__value">' + esc(EMPLOYEE.department) + '</div></div>' +
+            '<div class="cds-label-value"><div class="cds-label-value__label">Role</div><div class="cds-label-value__value">' + esc(EMPLOYEE.role) + '</div></div>' +
+          '</div>' +
+          '<div>' +
+            '<div class="cds-label-value"><div class="cds-label-value__label">Manager</div><div class="cds-label-value__value">' + esc(EMPLOYEE.manager) + '</div></div>' +
+            '<div class="cds-label-value"><div class="cds-label-value__label">Join Date</div><div class="cds-label-value__value mono">' + esc(EMPLOYEE.joinDate) + '</div></div>' +
+            '<div class="cds-label-value"><div class="cds-label-value__label">Contract Type</div><div class="cds-label-value__value">' + esc(EMPLOYEE.contractType) + '</div></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      /* Bank Tab */
+      '<div id="profileTabBank" class="hidden">' +
+        '<div class="cds-2col">' +
+          '<div>' +
+            '<div class="cds-label-value"><div class="cds-label-value__label">Bank Name</div><div class="cds-label-value__value">' + esc(EMPLOYEE.bankName) + '</div></div>' +
+            '<div class="cds-label-value"><div class="cds-label-value__label">Account Number</div><div class="cds-label-value__value mono">' + esc(EMPLOYEE.bankAccount) + '</div></div>' +
+          '</div>' +
+          '<div>' +
+            '<div class="cds-label-value"><div class="cds-label-value__label">Account Holder</div><div class="cds-label-value__value">' + esc(EMPLOYEE.name) + '</div></div>' +
+            '<div class="cds-label-value"><div class="cds-label-value__label">Currency</div><div class="cds-label-value__value">CNY (Chinese Yuan)</div></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+    '</div>';
+}
+
+
+/* =============================================================
+   ROUTER & NAVIGATION
+   ============================================================= */
+var pages = {
+  dashboard: renderDashboard,
+  leave: renderLeave,
+  salary: renderSalary,
+  expenses: renderExpenses,
+  tickets: renderTickets,
+  profile: renderProfile,
+};
+
+var currentPage = 'dashboard';
+
+function navigateTo(page) {
+  window.location.hash = page;
+}
+
+function renderPage(page) {
+  if (!pages[page]) page = 'dashboard';
+  currentPage = page;
+
+  var container = document.getElementById('pageContainer');
+  container.innerHTML = '<div class="cds-inline-loading"><div class="cds-inline-loading__spinner"></div></div>';
+
+  setTimeout(function() {
+    container.innerHTML = pages[page]();
+    /* Update nav active state */
+    var links = document.querySelectorAll('.cds-sidenav__link');
+    for (var i = 0; i < links.length; i++) {
+      var link = links[i];
+      if (link.dataset.page === page) {
+        link.classList.add('cds-sidenav__link--active');
+      } else {
+        link.classList.remove('cds-sidenav__link--active');
+      }
+    }
+    /* Scroll to top */
+    document.getElementById('mainContent').scrollTop = 0;
+    window.scrollTo(0, 0);
+  }, 120);
+}
+
+function onHashChange() {
+  var hash = window.location.hash.replace('#', '') || 'dashboard';
+  renderPage(hash);
+}
+
+window.addEventListener('hashchange', onHashChange);
+window.addEventListener('DOMContentLoaded', onHashChange);
+
+
+/* =============================================================
+   SIDEBAR TOGGLE
+   ============================================================= */
+var navToggle = document.getElementById('navToggle');
+var sideNav = document.getElementById('sideNav');
+var mainContent = document.getElementById('mainContent');
+var navOpen = window.innerWidth > 672;
+
+function updateNavState() {
+  if (window.innerWidth <= 672) {
+    sideNav.classList.toggle('cds-sidenav--mobile-open', navOpen);
+    sideNav.classList.remove('cds-sidenav--collapsed');
+    mainContent.classList.add('cds-content--expanded');
+  } else {
+    sideNav.classList.remove('cds-sidenav--mobile-open');
+    sideNav.classList.toggle('cds-sidenav--collapsed', !navOpen);
+    mainContent.classList.toggle('cds-content--expanded', !navOpen);
+  }
+}
+
+navToggle.addEventListener('click', function() {
+  navOpen = !navOpen;
+  updateNavState();
+});
+
+window.addEventListener('resize', function() {
+  if (window.innerWidth <= 672) {
+    navOpen = false;
+  } else {
+    navOpen = true;
+  }
+  updateNavState();
+});
+
+updateNavState();
+
+
+/* =============================================================
+   APPROVAL TIMELINE
+   ============================================================= */
+function getApprovalSteps(status, approver, date) {
+  var steps = [
+    { label: 'Submitted', person: 'Zhang Rui', date: date, status: 'done' },
+    { label: 'Manager Review', person: approver, date: '', status: 'pending' },
+    { label: 'HR Approval', person: 'HR Department', date: '', status: 'waiting' },
+    { label: 'Completed', person: '', date: '', status: 'waiting' }
+  ];
+  if (status === 'Approved') {
+    steps[1].status = 'done'; steps[1].date = date;
+    steps[2].status = 'done'; steps[2].date = date;
+    steps[3].status = 'done'; steps[3].date = date;
+  } else if (status === 'Pending') {
+    steps[1].status = 'current';
+  } else if (status === 'Rejected') {
+    steps[1].status = 'rejected'; steps[1].date = date;
+    steps[2].status = 'skipped';
+    steps[3].status = 'skipped';
+  } else if (status === 'Draft') {
+    steps[0].status = 'current';
+    steps[1].status = 'waiting';
+  }
+  return steps;
+}
+
+function renderApprovalTimeline(status, approver, date) {
+  var steps = getApprovalSteps(status, approver || 'Li Wei', date);
+  var html = '<div class="approval-timeline"><div class="approval-title">Approval Workflow</div><div class="approval-steps">';
+  for (var i = 0; i < steps.length; i++) {
+    var s = steps[i];
+    var dotContent = s.status === 'done' ? '&#10003;' : s.status === 'rejected' ? '&#10005;' : s.status === 'current' ? '&#9679;' : '';
+    var lineHTML = i < steps.length - 1 ? '<div class="step-line"></div>' : '';
+    html += '<div class="approval-step step-' + s.status + '">' +
+      '<div class="step-indicator"><div class="step-dot">' + dotContent + '</div>' + lineHTML + '</div>' +
+      '<div class="step-content"><div class="step-label">' + s.label + '</div>' +
+      (s.person ? '<div class="step-person">' + s.person + '</div>' : '') +
+      (s.date ? '<div class="step-date">' + s.date + '</div>' : '') +
+      '</div></div>';
+  }
+  html += '</div></div>';
+  return html;
+}
+
+
+/* =============================================================
+   LEAVE TABLE: Expand/Collapse & Filter
+   ============================================================= */
+function toggleLeaveRow(index) {
+  var detail = document.getElementById('leaveDetail' + index);
+  if (detail) {
+    detail.classList.toggle('is-open');
+  }
+}
+
+function toggleAllLeaveCheckboxes(master) {
+  var checkboxes = document.querySelectorAll('#leaveTableBody .cds-checkbox');
+  for (var i = 0; i < checkboxes.length; i++) {
+    checkboxes[i].checked = master.checked;
+  }
+}
+
+function filterLeaveTable() {
+  var search = (document.getElementById('leaveSearch') ? document.getElementById('leaveSearch').value : '').toLowerCase();
+  var typeFilter = document.getElementById('leaveTypeFilter') ? document.getElementById('leaveTypeFilter').value : 'all';
+  var statusFilter = document.getElementById('leaveStatusFilter') ? document.getElementById('leaveStatusFilter').value : 'all';
+  var tbody = document.getElementById('leaveTableBody');
+  if (!tbody) return;
+
+  var rows = tbody.querySelectorAll('tr[data-row]');
+  for (var j = 0; j < rows.length; j++) {
+    var row = rows[j];
+    var idx = parseInt(row.dataset.row);
+    var r = LEAVE_REQUESTS[idx];
+    var detailRow = document.getElementById('leaveDetail' + idx);
+    var visible = true;
+    if (typeFilter !== 'all' && r.type !== typeFilter) visible = false;
+    if (statusFilter !== 'all' && r.status !== statusFilter) visible = false;
+    if (search && r.id.toLowerCase().indexOf(search) === -1 && r.type.toLowerCase().indexOf(search) === -1) visible = false;
+    row.style.display = visible ? '' : 'none';
+    if (detailRow) detailRow.style.display = visible && detailRow.classList.contains('is-open') ? '' : 'none';
+  }
+}
+
+
+/* =============================================================
+   EXPENSE TABLE: Expand/Collapse & Filter
+   ============================================================= */
+function toggleExpenseRow(index) {
+  var detail = document.getElementById('expenseDetail' + index);
+  if (detail) {
+    detail.classList.toggle('is-open');
+  }
+}
+
+function filterExpenseTable() {
+  var search = (document.getElementById('expenseSearch') ? document.getElementById('expenseSearch').value : '').toLowerCase();
+  var catFilter = document.getElementById('expenseCatFilter') ? document.getElementById('expenseCatFilter').value : 'all';
+  var statusFilter = document.getElementById('expenseStatusFilter') ? document.getElementById('expenseStatusFilter').value : 'all';
+  var tbody = document.getElementById('expenseTableBody');
+  if (!tbody) return;
+
+  var rows = tbody.querySelectorAll('tr[data-erow]');
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+    var idx = parseInt(row.dataset.erow);
+    var e = EXPENSES[idx];
+    var detailRow = document.getElementById('expenseDetail' + idx);
+    var visible = true;
+    if (catFilter !== 'all' && e.category !== catFilter) visible = false;
+    if (statusFilter !== 'all' && e.status !== statusFilter) visible = false;
+    if (search && e.id.toLowerCase().indexOf(search) === -1 && e.description.toLowerCase().indexOf(search) === -1) visible = false;
+    row.style.display = visible ? '' : 'none';
+    if (detailRow) detailRow.style.display = visible && detailRow.classList.contains('is-open') ? '' : 'none';
+  }
+}
+
+
+/* =============================================================
+   SALARY TABS
+   ============================================================= */
+function switchSalaryTab(tab) {
+  var tabs = ['overview', 'history', 'tax'];
+  for (var i = 0; i < tabs.length; i++) {
+    var t = tabs[i];
+    var el = document.getElementById('salaryTab' + t.charAt(0).toUpperCase() + t.slice(1));
+    if (el) {
+      if (t === tab) { el.classList.remove('hidden'); }
+      else { el.classList.add('hidden'); }
+    }
+  }
+  var btns = document.querySelectorAll('#salaryTabs .cds-tab');
+  for (var j = 0; j < btns.length; j++) {
+    if (btns[j].dataset.tab === tab) { btns[j].classList.add('cds-tab--active'); }
+    else { btns[j].classList.remove('cds-tab--active'); }
+  }
+}
+
+
+/* =============================================================
+   PROFILE TABS
+   ============================================================= */
+function switchProfileTab(tab) {
+  var tabs = ['personal', 'company', 'bank'];
+  for (var i = 0; i < tabs.length; i++) {
+    var t = tabs[i];
+    var el = document.getElementById('profileTab' + t.charAt(0).toUpperCase() + t.slice(1));
+    if (el) {
+      if (t === tab) { el.classList.remove('hidden'); }
+      else { el.classList.add('hidden'); }
+    }
+  }
+  var btns = document.querySelectorAll('#profileTabs .cds-tab');
+  for (var j = 0; j < btns.length; j++) {
+    if (btns[j].dataset.tab === tab) { btns[j].classList.add('cds-tab--active'); }
+    else { btns[j].classList.remove('cds-tab--active'); }
+  }
+}
+
+
+/* =============================================================
+   SIDE PANEL (Salary Detail)
+   ============================================================= */
+var sidePanelOverlay = document.getElementById('sidePanelOverlay');
+var sidePanel = document.getElementById('sidePanel');
+var sidePanelClose = document.getElementById('sidePanelClose');
+var sidePanelTitle = document.getElementById('sidePanelTitle');
+var sidePanelBody = document.getElementById('sidePanelBody');
+
+function openSalaryPanel(slipId, period) {
+  var slip = null;
+  for (var i = 0; i < SALARY_SLIPS.length; i++) {
+    if (SALARY_SLIPS[i].id === slipId) { slip = SALARY_SLIPS[i]; break; }
+  }
+  if (!slip) return;
+
+  var totalEarnings = SALARY_DETAIL.earnings.reduce(function(s, e) { return s + e.amount; }, 0);
+  var totalDeductions = SALARY_DETAIL.deductions.reduce(function(s, d) { return s + d.amount; }, 0);
+
+  var earningsHTML = SALARY_DETAIL.earnings.map(function(e) {
+    return '<div class="cds-breakdown-row"><span class="cds-breakdown-row__label">' + esc(e.component) + '</span><span class="cds-breakdown-row__amount">' + fmt(e.amount) + '</span></div>';
+  }).join('');
+
+  var deductionsHTML = SALARY_DETAIL.deductions.map(function(d) {
+    return '<div class="cds-breakdown-row"><span class="cds-breakdown-row__label">' + esc(d.component) + '</span><span class="cds-breakdown-row__amount">-' + fmt(d.amount) + '</span></div>';
+  }).join('');
+
+  sidePanelTitle.textContent = 'Payslip \u2014 ' + period;
+  sidePanelBody.innerHTML = '' +
+    '<div class="cds-label-value"><div class="cds-label-value__label">Slip ID</div><div class="cds-label-value__value mono">' + esc(slip.id) + '</div></div>' +
+    '<div class="cds-label-value"><div class="cds-label-value__label">Pay Period</div><div class="cds-label-value__value">' + esc(slip.period) + '</div></div>' +
+    '<div class="cds-label-value"><div class="cds-label-value__label">Pay Date</div><div class="cds-label-value__value mono">' + esc(slip.payDate) + '</div></div>' +
+    '<div class="cds-label-value"><div class="cds-label-value__label">Status</div><div class="cds-label-value__value"><span class="cds-tag ' + statusTagClass(slip.status) + '">' + esc(slip.status) + '</span></div></div>' +
+    '<div class="cds-breakdown-heading mt-24">Earnings</div>' +
+    earningsHTML +
+    '<div class="cds-breakdown-row cds-breakdown-row--total"><span class="cds-breakdown-row__label">Total Earnings</span><span class="cds-breakdown-row__amount">' + fmt(totalEarnings) + '</span></div>' +
+    '<div class="cds-breakdown-heading mt-24">Deductions</div>' +
+    deductionsHTML +
+    '<div class="cds-breakdown-row cds-breakdown-row--total"><span class="cds-breakdown-row__label">Total Deductions</span><span class="cds-breakdown-row__amount">-' + fmt(totalDeductions) + '</span></div>' +
+    '<div style="margin-top:24px;padding-top:16px;border-top:2px solid var(--cds-gray-100);">' +
+      '<div class="cds-breakdown-row" style="border:none;padding-bottom:0;">' +
+        '<span class="cds-breakdown-row__label" style="font-size:16px;font-weight:600;">Net Pay</span>' +
+        '<span class="cds-breakdown-row__amount" style="font-size:24px;font-weight:300;">' + fmt(slip.net) + ' <span style="font-size:14px;color:var(--cds-gray-50);">CNY</span></span>' +
+      '</div>' +
+    '</div>';
+
+  sidePanelOverlay.classList.add('is-open');
+  sidePanel.classList.add('is-open');
+}
+
+function closeSidePanel() {
+  sidePanelOverlay.classList.remove('is-open');
+  sidePanel.classList.remove('is-open');
+}
+
+sidePanelClose.addEventListener('click', closeSidePanel);
+sidePanelOverlay.addEventListener('click', closeSidePanel);
+
+
+/* =============================================================
+   TICKETS: Expand/Collapse
+   ============================================================= */
+function toggleTicketDetail(index) {
+  var detail = document.getElementById('ticketDetail' + index);
+  var item = document.getElementById('ticketItem' + index);
+  if (detail && item) {
+    var isOpen = detail.classList.toggle('is-open');
+    item.classList.toggle('cds-slist-item--expanded', isOpen);
+  }
+}
+
+
+/* =============================================================
+   CREATE FORMS — File Upload, Leave, Expense (multi-line), Ticket
+   ============================================================= */
+
+function openFormPanel(title, bodyHTML) {
+  sidePanelTitle.textContent = title;
+  sidePanelBody.innerHTML = bodyHTML;
+  sidePanelOverlay.classList.add('is-open');
+  sidePanel.classList.add('is-open');
+}
+
+function handleFiles(input, listId) {
+  var list = document.getElementById(listId);
+  if (!list) return;
+  var files = input.files;
+  for (var i = 0; i < files.length; i++) {
+    var file = files[i];
+    var item = document.createElement('div');
+    item.className = 'cds-file-list-item';
+    item.innerHTML = '<span>' + esc(file.name) + ' <span style="color:var(--cds-gray-50);font-size:12px;">(' + (file.size / 1024).toFixed(1) + ' KB)</span></span><button onclick="this.parentElement.remove()">&times;</button>';
+    list.appendChild(item);
+  }
+  input.value = '';
+}
+
+function uploadZoneHTML(formType) {
+  return '' +
+    '<div class="cds-form-group">' +
+      '<label>Attachments</label>' +
+      '<div class="cds-upload-zone" onclick="this.querySelector(\'input\').click()">' +
+        '<input type="file" multiple style="display:none" onchange="handleFiles(this, \'fileList-' + formType + '\')">' +
+        '<div class="cds-upload-icon">\uD83D\uDCCE</div>' +
+        '<div class="cds-upload-text">Click or drag files here</div>' +
+        '<div class="cds-upload-hint">PDF, JPG, PNG up to 10MB each</div>' +
+      '</div>' +
+      '<div class="cds-file-list" id="fileList-' + formType + '"></div>' +
+    '</div>';
+}
+
+// --- Leave Form ---
+function openLeaveForm() {
+  var typeOptions = LEAVE_TYPES.map(function(l) {
+    return '<option>' + esc(l.type) + '</option>';
+  }).join('');
+
+  openFormPanel('New Leave Request', '' +
+    '<div class="cds-form-group">' +
+      '<label>Leave Type</label>' +
+      '<select><option value="">Select leave type...</option>' + typeOptions + '</select>' +
+    '</div>' +
+    '<div class="cds-form-row">' +
+      '<div class="cds-form-group"><label>From Date</label><input type="date"></div>' +
+      '<div class="cds-form-group"><label>To Date</label><input type="date"></div>' +
+    '</div>' +
+    '<div class="cds-form-group">' +
+      '<label>Reason</label>' +
+      '<textarea placeholder="Brief reason for leave (optional)"></textarea>' +
+    '</div>' +
+    uploadZoneHTML('leave') +
+    '<div class="cds-form-actions">' +
+      '<button class="cds-form-cancel" onclick="closeSidePanel()">Cancel</button>' +
+      '<button class="cds-form-submit" onclick="closeSidePanel()">Submit Request</button>' +
+    '</div>'
+  );
+}
+
+// --- Expense Form (multi-line items) ---
+var expenseLineCount = 0;
+
+function expenseLineItemHTML(num) {
+  return '' +
+    '<div class="cds-line-item" data-line="' + num + '">' +
+      '<div class="cds-line-item-header">' +
+        '<span class="cds-line-item-num">#' + num + '</span>' +
+        '<button class="cds-line-item-remove" onclick="removeLineItem(this)"' + (num === 1 ? ' disabled' : '') + '>&times;</button>' +
+      '</div>' +
+      '<div class="cds-line-item-grid">' +
+        '<div class="cds-form-group"><label>Description</label><input type="text" placeholder="What was this expense for?"></div>' +
+        '<div class="cds-form-group"><label>Category</label>' +
+          '<select><option value="">Select...</option><option>Travel</option><option>Equipment</option><option>Meals</option><option>Transport</option><option>Communication</option><option>Other</option></select>' +
+        '</div>' +
+        '<div class="cds-form-group"><label>Amount (CNY)</label><input type="number" step="0.01" min="0" placeholder="0.00" oninput="updateExpenseTotal()"></div>' +
+        '<div class="cds-form-group"><label>Receipt</label>' +
+          '<div class="cds-upload-zone" style="padding:10px;" onclick="this.querySelector(\'input\').click()">' +
+            '<input type="file" style="display:none" onchange="handleFiles(this, \'fileList-lineReceipt-' + num + '\')">' +
+            '<div style="font-size:12px;color:var(--cds-gray-50);">\uD83D\uDCCE Attach receipt</div>' +
+          '</div>' +
+          '<div class="cds-file-list" id="fileList-lineReceipt-' + num + '"></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+}
+
+function addLineItem() {
+  expenseLineCount++;
+  var container = document.getElementById('expenseLineItems');
+  container.insertAdjacentHTML('beforeend', expenseLineItemHTML(expenseLineCount));
+  renumberLineItems();
+  updateRemoveButtons();
+}
+
+function removeLineItem(btn) {
+  var item = btn.closest('.cds-line-item');
+  item.remove();
+  renumberLineItems();
+  updateRemoveButtons();
+  updateExpenseTotal();
+}
+
+function renumberLineItems() {
+  var items = document.querySelectorAll('#expenseLineItems .cds-line-item');
+  for (var i = 0; i < items.length; i++) {
+    items[i].querySelector('.cds-line-item-num').textContent = '#' + (i + 1);
+  }
+}
+
+function updateRemoveButtons() {
+  var items = document.querySelectorAll('#expenseLineItems .cds-line-item');
+  for (var i = 0; i < items.length; i++) {
+    var btn = items[i].querySelector('.cds-line-item-remove');
+    btn.disabled = items.length <= 1;
+  }
+}
+
+function updateExpenseTotal() {
+  var inputs = document.querySelectorAll('#expenseLineItems input[type="number"]');
+  var total = 0;
+  for (var i = 0; i < inputs.length; i++) {
+    total += parseFloat(inputs[i].value) || 0;
+  }
+  var el = document.getElementById('expenseTotalValue');
+  if (el) el.textContent = '\u00a5' + total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function openExpenseForm() {
+  expenseLineCount = 1;
+  openFormPanel('New Expense Claim', '' +
+    '<div class="cds-form-group">' +
+      '<label>Expense Claim Title</label>' +
+      '<input type="text" placeholder="e.g. March Business Trip">' +
+    '</div>' +
+    '<div class="cds-form-group">' +
+      '<label>Date</label>' +
+      '<input type="date">' +
+    '</div>' +
+    '<div class="cds-form-group">' +
+      '<label>Line Items</label>' +
+      '<div class="cds-line-items-container">' +
+        '<div id="expenseLineItems">' +
+          expenseLineItemHTML(1) +
+        '</div>' +
+        '<button class="cds-add-line-item-btn" onclick="addLineItem()">' +
+          '<svg width="16" height="16" viewBox="0 0 16 16" fill="var(--cds-blue-60)"><path d="M8 2v12M2 8h12" stroke="var(--cds-blue-60)" stroke-width="2" fill="none"/></svg>' +
+          'Add Line Item' +
+        '</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="cds-form-group">' +
+      '<label>Notes</label>' +
+      '<textarea placeholder="Additional notes or context (optional)"></textarea>' +
+    '</div>' +
+    uploadZoneHTML('expense') +
+    '<div class="cds-expense-total">' +
+      '<span class="cds-expense-total-label">Total:</span>' +
+      '<span class="cds-expense-total-value" id="expenseTotalValue">\u00a50.00</span>' +
+    '</div>' +
+    '<div class="cds-form-actions">' +
+      '<button class="cds-form-cancel" onclick="closeSidePanel()">Cancel</button>' +
+      '<button class="cds-form-submit" onclick="closeSidePanel()">Submit Claim</button>' +
+    '</div>'
+  );
+}
+
+// --- Ticket Form ---
+function openTicketForm() {
+  openFormPanel('New Ticket', '' +
+    '<div class="cds-form-group">' +
+      '<label>Subject</label>' +
+      '<input type="text" placeholder="Brief description of the issue">' +
+    '</div>' +
+    '<div class="cds-form-row">' +
+      '<div class="cds-form-group"><label>Category</label>' +
+        '<select><option value="">Select...</option><option>IT Support</option><option>HR</option><option>Payroll</option><option>Benefits</option><option>Other</option></select>' +
+      '</div>' +
+      '<div class="cds-form-group"><label>Priority</label>' +
+        '<select><option value="">Select...</option><option>Low</option><option>Medium</option><option>High</option></select>' +
+      '</div>' +
+    '</div>' +
+    '<div class="cds-form-group">' +
+      '<label>Description</label>' +
+      '<textarea placeholder="Describe the issue in detail..."></textarea>' +
+    '</div>' +
+    uploadZoneHTML('ticket') +
+    '<div class="cds-form-actions">' +
+      '<button class="cds-form-cancel" onclick="closeSidePanel()">Cancel</button>' +
+      '<button class="cds-form-submit" onclick="closeSidePanel()">Submit Ticket</button>' +
+    '</div>'
+  );
+}
+
+</script>
+</body>
+</html>

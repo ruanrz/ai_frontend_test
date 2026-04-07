@@ -1,0 +1,3253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RampingUp Brand — Employee Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ========================================================================
+   RESET & BASE
+   ======================================================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --purple: #47FA22;
+  --purple-light: #3bd416;
+  --purple-bg: rgba(71,250,34,0.1);
+  --navy: #0a2540;
+  --body: #425466;
+  --muted: #8898aa;
+  --bg: #f6f9fc;
+  --card: #ffffff;
+  --border: #e3e8ee;
+  --success: #15be53;
+  --success-bg: #e8faf0;
+  --error: #cd3d64;
+  --error-bg: #fce8ef;
+  --warning: #e6a117;
+  --warning-bg: #fef6e0;
+  --info: #0073e6;
+  --info-bg: #e5f1fd;
+  --shadow-card: 0 2px 5px rgba(50,50,93,0.1), 0 1px 1.5px rgba(0,0,0,0.07);
+  --shadow-elevated: 0 6px 12px rgba(50,50,93,0.12), 0 3px 7px rgba(0,0,0,0.08);
+  --shadow-hover: 0 13px 27px rgba(50,50,93,0.25), 0 8px 16px rgba(0,0,0,0.06);
+  --shadow-modal: 0 30px 60px rgba(50,50,93,0.3), 0 18px 36px rgba(0,0,0,0.08);
+  --radius: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --font: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: 'Source Code Pro', monospace;
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html { font-size: 14px; }
+body {
+  font-family: var(--font);
+  color: var(--body);
+  background: var(--bg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+.tnum {
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+a { color: var(--purple); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+button {
+  font-family: var(--font);
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: inherit;
+}
+
+/* ========================================================================
+   TOP NAVIGATION BAR
+   ======================================================================== */
+.topnav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(50,50,93,0.08);
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 0;
+}
+
+.topnav__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 32px;
+  flex-shrink: 0;
+}
+
+.topnav__logo {
+  width: 28px;
+  height: 28px;
+  background: var(--purple);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: -0.5px;
+}
+
+.topnav__brand-name {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--navy);
+  letter-spacing: -0.3px;
+}
+
+.topnav__links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+}
+
+.topnav__link {
+  position: relative;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  transition: color var(--transition), background var(--transition);
+  text-decoration: none !important;
+  white-space: nowrap;
+}
+
+.topnav__link:hover {
+  color: var(--navy);
+  background: var(--bg);
+  text-decoration: none !important;
+}
+
+.topnav__link.active {
+  color: var(--navy);
+}
+
+.topnav__link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -17px;
+  left: 14px;
+  right: 14px;
+  height: 2px;
+  background: var(--purple);
+  border-radius: 2px 2px 0 0;
+  animation: navIndicator 0.25s ease-out;
+}
+
+@keyframes navIndicator {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.topnav__right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.topnav__icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  transition: all var(--transition);
+  position: relative;
+}
+
+.topnav__icon-btn:hover {
+  background: var(--bg);
+  color: var(--navy);
+}
+
+.topnav__icon-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.topnav__kbd {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin-left: 6px;
+  font-family: var(--font);
+  line-height: 1.4;
+}
+
+.notif-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  background: var(--error);
+  border-radius: 50%;
+  border: 2px solid var(--card);
+}
+
+.topnav__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--purple);
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 12px;
+  margin-left: 4px;
+  cursor: pointer;
+  transition: box-shadow var(--transition);
+}
+
+.topnav__avatar:hover {
+  box-shadow: 0 0 0 3px var(--purple-bg);
+}
+
+/* Mobile hamburger */
+.topnav__hamburger {
+  display: none;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  color: var(--navy);
+  margin-right: 8px;
+}
+
+.topnav__hamburger svg { width: 20px; height: 20px; }
+
+/* ========================================================================
+   COMMAND PALETTE (CMD+K)
+   ======================================================================== */
+.cmd-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(10, 37, 64, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.cmd-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.cmd-palette {
+  width: 560px;
+  max-width: 90vw;
+  background: var(--card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-modal);
+  overflow: hidden;
+  transform: scale(0.96) translateY(-8px);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cmd-overlay.open .cmd-palette {
+  transform: scale(1) translateY(0);
+}
+
+.cmd-input-wrap {
+  display: flex;
+  align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  gap: 10px;
+}
+
+.cmd-input-wrap svg {
+  width: 18px;
+  height: 18px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.cmd-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  font-family: var(--font);
+  color: var(--navy);
+  background: transparent;
+}
+
+.cmd-input::placeholder { color: var(--muted); }
+
+.cmd-results {
+  max-height: 360px;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.cmd-group-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 8px 10px 4px;
+}
+
+.cmd-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.cmd-item:hover, .cmd-item.highlighted {
+  background: var(--bg);
+}
+
+.cmd-item__icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius);
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cmd-item__icon svg { width: 16px; height: 16px; color: var(--body); }
+
+.cmd-item__text { flex: 1; }
+.cmd-item__title { font-size: 13px; font-weight: 500; color: var(--navy); }
+.cmd-item__sub { font-size: 11px; color: var(--muted); }
+
+.cmd-item__shortcut {
+  font-size: 11px;
+  color: var(--muted);
+  font-family: var(--font);
+}
+
+.cmd-footer {
+  padding: 10px 18px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.cmd-footer kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 10px;
+  font-family: var(--font);
+  color: var(--body);
+}
+
+/* ========================================================================
+   MAIN CONTENT AREA
+   ======================================================================== */
+.main-content {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 28px 24px 60px;
+}
+
+/* Page transition wrapper */
+.page {
+  display: none;
+  animation: pageFadeIn 0.35s ease-out;
+}
+
+.page.active {
+  display: block;
+}
+
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================================================================
+   CARDS
+   ======================================================================== */
+.card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-elevated);
+}
+
+.card--clickable {
+  cursor: pointer;
+}
+
+.card--clickable:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* ========================================================================
+   STATUS BADGES
+   ======================================================================== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.badge--approved, .badge--paid, .badge--closed {
+  background: var(--success-bg);
+  color: #0d7d36;
+}
+
+.badge--pending, .badge--open {
+  background: var(--warning-bg);
+  color: #a07208;
+}
+
+.badge--rejected {
+  background: var(--error-bg);
+  color: #a12d4e;
+}
+
+.badge--draft {
+  background: var(--bg);
+  color: var(--muted);
+}
+
+.badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.badge--approved .badge__dot, .badge--paid .badge__dot, .badge--closed .badge__dot { background: var(--success); }
+.badge--pending .badge__dot, .badge--open .badge__dot { background: var(--warning); }
+.badge--rejected .badge__dot { background: var(--error); }
+.badge--draft .badge__dot { background: var(--muted); }
+
+/* ========================================================================
+   BUTTONS
+   ======================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all var(--transition);
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--navy);
+}
+
+.btn:hover {
+  background: var(--bg);
+  box-shadow: var(--shadow-card);
+}
+
+.btn svg { width: 14px; height: 14px; }
+
+.btn--primary {
+  background: var(--purple);
+  color: #000;
+  border-color: var(--purple);
+}
+
+.btn--primary:hover {
+  background: var(--purple-light);
+  border-color: var(--purple-light);
+  box-shadow: 0 4px 6px rgba(71, 250, 34, 0.25);
+}
+
+.btn--pill {
+  border-radius: 20px;
+  padding: 8px 18px;
+}
+
+/* ========================================================================
+   FILTER CHIPS
+   ======================================================================== */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.filter-chip {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--body);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.filter-chip:hover {
+  border-color: var(--purple);
+  color: var(--purple);
+}
+
+.filter-chip.active {
+  background: var(--purple);
+  color: #000;
+  border-color: var(--purple);
+}
+
+/* ========================================================================
+   PAGE HEADERS
+   ======================================================================== */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.page-header h1 {
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--navy);
+  letter-spacing: -0.3px;
+}
+
+.page-header__sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ========================================================================
+   DASHBOARD PAGE
+   ======================================================================== */
+.dash-hero {
+  background: linear-gradient(135deg, #47FA22 0%, #0a2540 100%);
+  border-radius: var(--radius-xl);
+  padding: 32px 36px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.dash-hero::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+}
+
+.dash-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -50%;
+  left: 20%;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+}
+
+.dash-hero__label {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.7;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dash-hero__amount {
+  font-size: 48px;
+  font-weight: 300;
+  letter-spacing: -2px;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  position: relative;
+  z-index: 1;
+}
+
+.dash-hero__amount .currency {
+  font-size: 24px;
+  font-weight: 400;
+  vertical-align: super;
+  margin-right: 4px;
+  opacity: 0.7;
+}
+
+.dash-hero__detail {
+  margin-top: 12px;
+  font-size: 13px;
+  opacity: 0.6;
+  position: relative;
+  z-index: 1;
+}
+
+.dash-hero__sparkline {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 280px;
+  height: 80px;
+  z-index: 1;
+  opacity: 0.4;
+}
+
+/* Dashboard grid */
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.dash-metric-card {
+  padding: 22px 24px;
+}
+
+.dash-metric-card__label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 8px;
+}
+
+.dash-metric-card__value {
+  font-size: 28px;
+  font-weight: 300;
+  color: var(--navy);
+  letter-spacing: -1px;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+.dash-metric-card__change {
+  font-size: 12px;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dash-metric-card__change.up { color: var(--success); }
+.dash-metric-card__change.down { color: var(--error); }
+
+/* Dashboard bottom row */
+.dash-bottom {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+.dash-leave-section {
+  padding: 24px;
+}
+
+.dash-leave-section h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 18px;
+}
+
+.leave-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.leave-bar-row:last-child { margin-bottom: 0; }
+
+.leave-bar__label {
+  width: 120px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--body);
+  flex-shrink: 0;
+}
+
+.leave-bar__track {
+  flex: 1;
+  height: 8px;
+  background: var(--bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.leave-bar__fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 0;
+}
+
+.leave-bar__count {
+  width: 55px;
+  text-align: right;
+  font-size: 12px;
+  color: var(--muted);
+  font-feature-settings: "tnum";
+  flex-shrink: 0;
+}
+
+.dash-activity {
+  padding: 24px;
+}
+
+.dash-activity h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 18px;
+}
+
+.activity-item {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.activity-item:last-child { border-bottom: none; }
+
+.activity-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.activity-item__text {
+  font-size: 13px;
+  color: var(--body);
+  line-height: 1.5;
+}
+
+.activity-item__time {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* Quick actions */
+.quick-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+/* ========================================================================
+   LEAVE PAGE
+   ======================================================================== */
+.leave-balances {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.leave-balance-card {
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.leave-balance-card__stripe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+
+.leave-balance-card__type {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.leave-balance-card__remaining {
+  font-size: 32px;
+  font-weight: 300;
+  color: var(--navy);
+  letter-spacing: -1.5px;
+  font-feature-settings: "tnum";
+}
+
+.leave-balance-card__remaining span {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: 0;
+}
+
+.leave-balance-card__bar {
+  margin-top: 14px;
+  height: 4px;
+  background: var(--bg);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.leave-balance-card__bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 0;
+}
+
+/* Leave request cards grid */
+.leave-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+
+.leave-card {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.leave-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.leave-card__id {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.leave-card__type {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--navy);
+}
+
+.leave-card__dates {
+  font-size: 13px;
+  color: var(--body);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.leave-card__dates svg { width: 14px; height: 14px; color: var(--muted); }
+
+.leave-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.leave-card__days {
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--navy);
+  font-feature-settings: "tnum";
+}
+
+.leave-card__days span {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* Slide-over panel */
+.slideover-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 37, 64, 0.4);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.slideover-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.slideover {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 440px;
+  max-width: 90vw;
+  background: var(--card);
+  z-index: 201;
+  box-shadow: var(--shadow-modal);
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.slideover.open {
+  transform: translateX(0);
+}
+
+.slideover__header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.slideover__header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.slideover__close {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  transition: all var(--transition);
+}
+
+.slideover__close:hover {
+  background: var(--bg);
+  color: var(--navy);
+}
+
+.slideover__close svg { width: 18px; height: 18px; }
+
+.slideover__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.slideover__row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.slideover__row:last-child { border-bottom: none; }
+
+.slideover__label { color: var(--muted); }
+.slideover__value { color: var(--navy); font-weight: 500; }
+
+/* ========================================================================
+   SALARY PAGE
+   ======================================================================== */
+.salary-featured {
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.salary-featured__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.salary-featured__period {
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--navy);
+  letter-spacing: -0.3px;
+}
+
+.salary-featured__net {
+  text-align: right;
+}
+
+.salary-featured__net-label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.salary-featured__net-value {
+  font-size: 32px;
+  font-weight: 300;
+  color: var(--navy);
+  letter-spacing: -1.5px;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+.salary-visual {
+  display: flex;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.salary-visual__col {
+  flex: 1;
+}
+
+.salary-visual__col h4 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 12px;
+}
+
+.salary-bar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.salary-bar-item__label {
+  width: 140px;
+  font-size: 12px;
+  color: var(--body);
+  flex-shrink: 0;
+}
+
+.salary-bar-item__track {
+  flex: 1;
+  height: 6px;
+  background: var(--bg);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.salary-bar-item__fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.salary-bar-item__fill.earning { background: var(--purple); }
+.salary-bar-item__fill.deduction { background: var(--error); }
+
+.salary-bar-item__amount {
+  width: 65px;
+  text-align: right;
+  font-size: 12px;
+  color: var(--navy);
+  font-weight: 500;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+/* Salary timeline */
+.salary-timeline-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 14px;
+}
+
+.salary-timeline {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.salary-timeline::-webkit-scrollbar {
+  height: 4px;
+}
+
+.salary-timeline::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-radius: 2px;
+}
+
+.salary-timeline::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+
+.salary-slip-card {
+  min-width: 180px;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  padding: 18px;
+  cursor: pointer;
+  position: relative;
+}
+
+.salary-slip-card.selected {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 1px var(--purple), var(--shadow-elevated);
+}
+
+.salary-slip-card__period {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
+.salary-slip-card__date {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.salary-slip-card__net {
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--navy);
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+.salary-detail-expand {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.salary-detail-expand.open {
+  max-height: 800px;
+}
+
+.salary-detail-content {
+  padding: 24px;
+  margin-top: 14px;
+}
+
+.salary-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.salary-detail-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.salary-detail-table td {
+  padding: 8px 0;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+}
+
+.salary-detail-table td:last-child {
+  text-align: right;
+  font-family: var(--mono);
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  color: var(--navy);
+}
+
+.salary-detail-table .total-row td {
+  font-weight: 600;
+  border-bottom: none;
+  padding-top: 12px;
+  color: var(--navy);
+}
+
+/* ========================================================================
+   EXPENSES PAGE
+   ======================================================================== */
+.expense-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.expense-stat-card {
+  padding: 20px 22px;
+}
+
+.expense-stat-card__label {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 8px;
+}
+
+.expense-stat-card__value {
+  font-size: 26px;
+  font-weight: 300;
+  color: var(--navy);
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+.expense-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.expense-card {
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.expense-card__icon {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-lg);
+  background: var(--purple-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.expense-card__icon svg { width: 20px; height: 20px; color: var(--purple); }
+
+.expense-card__icon.travel { background: #e8f0fe; }
+.expense-card__icon.travel svg { color: var(--info); }
+.expense-card__icon.equipment { background: var(--purple-bg); }
+.expense-card__icon.equipment svg { color: var(--purple); }
+.expense-card__icon.meals { background: #fef6e0; }
+.expense-card__icon.meals svg { color: var(--warning); }
+.expense-card__icon.transportation { background: var(--success-bg); }
+.expense-card__icon.transportation svg { color: var(--success); }
+.expense-card__icon.communication { background: var(--error-bg); }
+.expense-card__icon.communication svg { color: var(--error); }
+
+.expense-card__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.expense-card__desc {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--navy);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.expense-card__meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.expense-card__amount {
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--navy);
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+
+.expense-card__amount .cny {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* ========================================================================
+   TICKETS PAGE — KANBAN
+   ======================================================================== */
+.kanban {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.kanban__col {
+  background: var(--bg);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  min-height: 200px;
+}
+
+.kanban__col-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.kanban__col-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.kanban__col-dot.open { background: var(--warning); }
+.kanban__col-dot.pending { background: var(--info); }
+.kanban__col-dot.closed { background: var(--success); }
+
+.kanban__col-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.kanban__col-count {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--card);
+  border-radius: 10px;
+  padding: 1px 8px;
+  font-weight: 500;
+}
+
+.kanban__card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-card);
+  border-left: 3px solid transparent;
+  transition: box-shadow var(--transition), transform var(--transition);
+  cursor: pointer;
+}
+
+.kanban__card:hover {
+  box-shadow: var(--shadow-elevated);
+  transform: translateY(-1px);
+}
+
+.kanban__card:last-child { margin-bottom: 0; }
+
+.kanban__card.priority-high { border-left-color: var(--error); }
+.kanban__card.priority-medium { border-left-color: var(--warning); }
+.kanban__card.priority-low { border-left-color: var(--success); }
+
+.kanban__card-id {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.kanban__card-subject {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--navy);
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+.kanban__card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kanban__card-category {
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--bg);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.kanban__card-date {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ========================================================================
+   PROFILE PAGE
+   ======================================================================== */
+.profile-header-card {
+  padding: 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.profile-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple), #0a2540);
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.profile-info h2 {
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--navy);
+  letter-spacing: -0.3px;
+}
+
+.profile-info__role {
+  font-size: 14px;
+  color: var(--body);
+  margin-top: 2px;
+}
+
+.profile-info__meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+  display: flex;
+  gap: 16px;
+}
+
+.profile-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.profile-tab {
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  position: relative;
+  transition: color var(--transition);
+}
+
+.profile-tab:hover { color: var(--navy); }
+
+.profile-tab.active {
+  color: var(--navy);
+}
+
+.profile-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 18px;
+  right: 18px;
+  height: 2px;
+  background: var(--purple);
+  border-radius: 2px 2px 0 0;
+}
+
+.profile-section {
+  padding: 24px 28px;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 40px;
+}
+
+.profile-field__label {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 4px;
+}
+
+.profile-field__value {
+  font-size: 14px;
+  color: var(--navy);
+  font-weight: 500;
+}
+
+/* ========================================================================
+   RESPONSIVE
+   ======================================================================== */
+@media (max-width: 1024px) {
+  .dash-grid { grid-template-columns: 1fr 1fr; }
+  .dash-bottom { grid-template-columns: 1fr; }
+  .leave-balances { grid-template-columns: 1fr 1fr; }
+  .kanban { grid-template-columns: 1fr; }
+  .salary-visual { flex-direction: column; }
+}
+
+@media (max-width: 768px) {
+  .topnav__links { display: none; }
+  .topnav__links.mobile-open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 56px;
+    left: 0;
+    right: 0;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-elevated);
+    padding: 12px;
+    gap: 4px;
+    z-index: 99;
+  }
+  .topnav__link.active::after { display: none; }
+  .topnav__hamburger { display: flex; }
+  .topnav__kbd { display: none; }
+  .dash-grid { grid-template-columns: 1fr; }
+  .dash-hero__amount { font-size: 36px; }
+  .leave-balances { grid-template-columns: 1fr; }
+  .leave-cards { grid-template-columns: 1fr; }
+  .expense-stats { grid-template-columns: 1fr; }
+  .salary-featured { padding: 20px; }
+  .profile-grid { grid-template-columns: 1fr; }
+  .profile-header-card { flex-direction: column; text-align: center; }
+  .profile-info__meta { justify-content: center; }
+  .slideover { width: 100vw; }
+  .cmd-palette { width: 95vw; }
+}
+
+@media (max-width: 480px) {
+  .main-content { padding: 16px 12px 40px; }
+  .topnav { padding: 0 12px; }
+}
+
+/* ========================================================================
+   CREATE FORMS — Upload Zone, Line Items, Form Inputs
+   ======================================================================== */
+.form-group {
+  margin-bottom: 16px;
+}
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--navy);
+  background: var(--card);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px var(--purple-bg);
+}
+.form-group textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Upload zone */
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+.upload-zone:hover {
+  border-color: var(--purple);
+  background: var(--purple-bg);
+}
+.upload-icon { font-size: 24px; margin-bottom: 6px; }
+.upload-text { font-size: 13px; font-weight: 500; color: var(--navy); }
+.upload-hint { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.file-list { margin-top: 8px; }
+.file-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--navy);
+  margin-top: 4px;
+}
+.file-list-item button {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 4px;
+  transition: color var(--transition);
+}
+.file-list-item button:hover { color: var(--error); }
+
+/* Expense line items */
+.line-items-container {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.line-item {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.line-item:last-of-type { border-bottom: none; }
+.line-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.line-item-num {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.line-item-remove {
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: var(--radius);
+  transition: all var(--transition);
+}
+.line-item-remove:hover { color: var(--error); background: var(--error-bg); }
+.line-item-remove:disabled { opacity: 0.3; pointer-events: none; }
+.line-item-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.line-item-grid .form-group { margin-bottom: 0; }
+
+.add-line-item-btn {
+  width: 100%;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-top: 1px solid var(--border);
+  transition: background var(--transition);
+}
+.add-line-item-btn:hover { background: var(--purple-bg); }
+
+.expense-total {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.expense-total-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--body);
+}
+.expense-total-value {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--purple);
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.form-actions .btn {
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: var(--radius);
+  transition: all var(--transition);
+}
+.form-actions .btn--cancel {
+  color: var(--body);
+  border: 1px solid var(--border);
+  background: var(--card);
+}
+.form-actions .btn--cancel:hover { background: var(--bg); }
+.form-actions .btn--submit {
+  color: #000;
+  background: var(--purple);
+}
+.form-actions .btn--submit:hover { background: var(--purple-light); }
+
+/* Approval Timeline */
+.approval-timeline { margin-top: 20px; padding-top: 16px; border-top: 1px solid #e3e8ee; }
+.approval-title { font-size: 13px; font-weight: 600; color: #0a2540; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; }
+.approval-steps { display: flex; flex-direction: column; gap: 0; }
+.approval-step { display: flex; gap: 12px; }
+.step-indicator { display: flex; flex-direction: column; align-items: center; width: 24px; flex-shrink: 0; }
+.step-dot { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border: 2px solid #e3e8ee; color: #8898aa; background: #fff; }
+.step-line { width: 2px; flex: 1; min-height: 24px; background: #e3e8ee; }
+.step-content { padding-bottom: 20px; }
+.step-label { font-size: 14px; font-weight: 500; color: #0a2540; }
+.step-person { font-size: 12px; color: #8898aa; margin-top: 2px; }
+.step-date { font-size: 11px; color: #8898aa; font-family: 'Source Code Pro', monospace; margin-top: 2px; }
+.step-done .step-dot { background: #15be53; border-color: #15be53; color: #fff; }
+.step-done .step-line { background: #15be53; }
+.step-current .step-dot { background: #fff; border-color: #47FA22; color: #47FA22; animation: pulse-dot 2s ease infinite; }
+@keyframes pulse-dot { 0%,100% { box-shadow: 0 0 0 0 rgba(71,250,34,0.3); } 50% { box-shadow: 0 0 0 6px rgba(71,250,34,0); } }
+.step-rejected .step-dot { background: #cd3d64; border-color: #cd3d64; color: #fff; }
+.step-rejected .step-line { background: #cd3d64; }
+.step-waiting .step-dot { background: #f6f9fc; border-color: #e3e8ee; }
+.step-skipped .step-dot { background: #f6f9fc; border-color: #e3e8ee; opacity: 0.5; }
+.step-skipped .step-content { opacity: 0.4; text-decoration: line-through; }
+</style>
+</head>
+<body>
+
+<!-- ====================================================================
+     TOP NAVIGATION BAR
+     ==================================================================== -->
+<nav class="topnav" id="topnav">
+  <button class="topnav__hamburger" id="hamburgerBtn" aria-label="Menu">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+  </button>
+  <div class="topnav__brand">
+    <div class="topnav__logo">R</div>
+    <span class="topnav__brand-name">RampingUp</span>
+  </div>
+  <div class="topnav__links" id="navLinks">
+    <a href="#/" class="topnav__link active" data-page="dashboard">Dashboard</a>
+    <a href="#/leave" class="topnav__link" data-page="leave">Leave</a>
+    <a href="#/salary" class="topnav__link" data-page="salary">Pay</a>
+    <a href="#/expenses" class="topnav__link" data-page="expenses">Expenses</a>
+    <a href="#/tickets" class="topnav__link" data-page="tickets">Tickets</a>
+    <a href="#/profile" class="topnav__link" data-page="profile">Profile</a>
+  </div>
+  <div class="topnav__right">
+    <button class="topnav__icon-btn" id="searchBtn" title="Search (⌘K)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <span class="topnav__kbd">⌘K</span>
+    </button>
+    <button class="topnav__icon-btn" title="Notifications">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <span class="notif-badge"></span>
+    </button>
+    <div class="topnav__avatar" id="avatarBtn">ZR</div>
+  </div>
+</nav>
+
+<!-- ====================================================================
+     COMMAND PALETTE
+     ==================================================================== -->
+<div class="cmd-overlay" id="cmdOverlay">
+  <div class="cmd-palette">
+    <div class="cmd-input-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input class="cmd-input" id="cmdInput" type="text" placeholder="Search pages, leave requests, salary slips..." autocomplete="off">
+    </div>
+    <div class="cmd-results" id="cmdResults"></div>
+    <div class="cmd-footer">
+      <span><kbd>↑</kbd> <kbd>↓</kbd> Navigate</span>
+      <span><kbd>↵</kbd> Select</span>
+      <span><kbd>Esc</kbd> Close</span>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     SLIDE-OVER PANEL
+     ==================================================================== -->
+<div class="slideover-overlay" id="slideoverOverlay"></div>
+<div class="slideover" id="slideover">
+  <div class="slideover__header">
+    <h2 id="slideoverTitle">Details</h2>
+    <button class="slideover__close" id="slideoverClose">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="slideover__body" id="slideoverBody"></div>
+</div>
+
+<!-- ====================================================================
+     MAIN CONTENT
+     ==================================================================== -->
+<div class="main-content">
+
+  <!-- ======================== DASHBOARD ======================== -->
+  <div class="page active" id="page-dashboard">
+    <div class="dash-hero">
+      <div class="dash-hero__label">Net Pay — March 2025</div>
+      <div class="dash-hero__amount">
+        <span class="currency">¥</span><span id="heroNetPay">0</span>
+      </div>
+      <div class="dash-hero__detail">Paid on March 25, 2025 &middot; China Merchants Bank **** 6789</div>
+      <svg class="dash-hero__sparkline" viewBox="0 0 280 80" fill="none">
+        <polyline points="0,60 40,58 80,55 120,55 160,55 200,40 240,38 280,38"
+                  stroke="rgba(255,255,255,0.6)" stroke-width="2" fill="none"/>
+        <polyline points="0,60 40,58 80,55 120,55 160,55 200,40 240,38 280,38"
+                  stroke="none" fill="url(#sparkGrad)"/>
+        <defs>
+          <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="80" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.15)"/>
+            <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="dash-grid" id="dashMetrics">
+      <!-- Filled by JS -->
+    </div>
+
+    <div class="dash-bottom">
+      <div class="card dash-leave-section">
+        <h3>Leave Balances</h3>
+        <div id="dashLeaveBalances"></div>
+      </div>
+      <div class="card dash-activity">
+        <h3>Recent Activity</h3>
+        <div class="activity-item">
+          <div class="activity-dot" style="background:var(--success)"></div>
+          <div>
+            <div class="activity-item__text">Leave request <strong>LV-2402</strong> approved</div>
+            <div class="activity-item__time">2 days ago</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot" style="background:var(--purple)"></div>
+          <div>
+            <div class="activity-item__text">Salary slip for <strong>March 2025</strong> available</div>
+            <div class="activity-item__time">5 days ago</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot" style="background:var(--warning)"></div>
+          <div>
+            <div class="activity-item__text">Expense claim <strong>EC-2401</strong> submitted</div>
+            <div class="activity-item__time">1 week ago</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot" style="background:var(--error)"></div>
+          <div>
+            <div class="activity-item__text">Ticket <strong>TK-0089</strong> opened — VPN issue</div>
+            <div class="activity-item__time">1 week ago</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot" style="background:var(--success)"></div>
+          <div>
+            <div class="activity-item__text">Ticket <strong>TK-0085</strong> resolved</div>
+            <div class="activity-item__time">2 weeks ago</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <button class="btn btn--pill" onclick="navigateTo('leave')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Request Leave
+      </button>
+      <button class="btn btn--pill" onclick="navigateTo('expenses')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Submit Expense
+      </button>
+      <button class="btn btn--pill" onclick="navigateTo('tickets')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Create Ticket
+      </button>
+    </div>
+  </div>
+
+  <!-- ======================== LEAVE ======================== -->
+  <div class="page" id="page-leave">
+    <div class="page-header">
+      <div>
+        <h1>Leave Management</h1>
+        <div class="page-header__sub">Track your leave balances and requests</div>
+      </div>
+      <button class="btn btn--primary" onclick="openLeaveForm()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        New Request
+      </button>
+    </div>
+
+    <div class="leave-balances" id="leaveBalances"></div>
+
+    <div class="filter-bar" id="leaveFilters">
+      <button class="filter-chip active" data-filter="all">All</button>
+      <button class="filter-chip" data-filter="Approved">Approved</button>
+      <button class="filter-chip" data-filter="Pending">Pending</button>
+      <button class="filter-chip" data-filter="Draft">Draft</button>
+      <button class="filter-chip" data-filter="Rejected">Rejected</button>
+    </div>
+
+    <div class="leave-cards" id="leaveCards"></div>
+  </div>
+
+  <!-- ======================== SALARY ======================== -->
+  <div class="page" id="page-salary">
+    <div class="page-header">
+      <div>
+        <h1>Salary & Payslips</h1>
+        <div class="page-header__sub">View your compensation details and payslip history</div>
+      </div>
+    </div>
+
+    <div class="card salary-featured" id="salaryFeatured"></div>
+
+    <div class="salary-timeline-label">Payslip History</div>
+    <div class="salary-timeline" id="salaryTimeline"></div>
+
+    <div class="salary-detail-expand" id="salaryDetailExpand">
+      <div class="card salary-detail-content" id="salaryDetailContent"></div>
+    </div>
+  </div>
+
+  <!-- ======================== EXPENSES ======================== -->
+  <div class="page" id="page-expenses">
+    <div class="page-header">
+      <div>
+        <h1>Expense Claims</h1>
+        <div class="page-header__sub">Submit and track your expense reimbursements</div>
+      </div>
+      <button class="btn btn--primary" onclick="openExpenseForm()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        New Claim
+      </button>
+    </div>
+
+    <div class="expense-stats" id="expenseStats"></div>
+
+    <div class="filter-bar" id="expenseFilters">
+      <button class="filter-chip active" data-filter="all">All</button>
+      <button class="filter-chip" data-filter="Pending">Pending</button>
+      <button class="filter-chip" data-filter="Approved">Approved</button>
+      <button class="filter-chip" data-filter="Rejected">Rejected</button>
+    </div>
+
+    <div class="expense-list" id="expenseList"></div>
+  </div>
+
+  <!-- ======================== TICKETS ======================== -->
+  <div class="page" id="page-tickets">
+    <div class="page-header">
+      <div>
+        <h1>Support Tickets</h1>
+        <div class="page-header__sub">Track issues and requests across your organization</div>
+      </div>
+      <button class="btn btn--primary" onclick="openTicketForm()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        New Ticket
+      </button>
+    </div>
+
+    <div class="kanban" id="kanbanBoard"></div>
+  </div>
+
+  <!-- ======================== PROFILE ======================== -->
+  <div class="page" id="page-profile">
+    <div class="page-header">
+      <div>
+        <h1>My Profile</h1>
+        <div class="page-header__sub">Personal information and account settings</div>
+      </div>
+    </div>
+
+    <div class="card profile-header-card">
+      <div class="profile-avatar" id="profileAvatar"></div>
+      <div class="profile-info">
+        <h2 id="profileName"></h2>
+        <div class="profile-info__role" id="profileRole"></div>
+        <div class="profile-info__meta">
+          <span id="profileDept"></span>
+          <span id="profileLoc"></span>
+          <span id="profileId"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-tabs" id="profileTabs">
+      <button class="profile-tab active" data-tab="personal">Personal</button>
+      <button class="profile-tab" data-tab="company">Company</button>
+      <button class="profile-tab" data-tab="bank">Bank & Payroll</button>
+    </div>
+
+    <div class="card" id="profileContent"></div>
+  </div>
+
+</div>
+
+<!-- ====================================================================
+     JAVASCRIPT
+     ==================================================================== -->
+<script>
+// ========================================================================
+// MOCK DATA
+// ========================================================================
+const EMPLOYEE = {
+  name: 'Zhang Rui', initials: 'ZR', role: 'Software Engineer',
+  department: 'Engineering', employeeId: 'EMP-2024-0032',
+  email: 'zhang.rui@rampingup.com', phone: '+86 138 8888 0032',
+  joinDate: '2024-03-15', manager: 'Li Wei', location: 'Shanghai, China',
+  contractType: 'Full-time', gender: 'Male', dob: '1995-06-20',
+  bankName: 'China Merchants Bank', bankAccount: '**** **** **** 6789',
+};
+const LEAVE_TYPES = [
+  { type: 'Annual Leave', total: 15, used: 7, color: '#47FA22' },
+  { type: 'Sick Leave', total: 10, used: 2, color: '#0073e6' },
+  { type: 'Personal Leave', total: 5, used: 1, color: '#ea2261' },
+  { type: 'Compensatory', total: 3, used: 0, color: '#15be53' },
+];
+const LEAVE_REQUESTS = [
+  { id: 'LV-2401', type: 'Annual Leave', from: '2025-03-10', to: '2025-03-14', days: 5, status: 'Approved', approver: 'Li Wei' },
+  { id: 'LV-2402', type: 'Sick Leave', from: '2025-02-20', to: '2025-02-21', days: 2, status: 'Approved', approver: 'Li Wei' },
+  { id: 'LV-2403', type: 'Annual Leave', from: '2025-04-05', to: '2025-04-06', days: 2, status: 'Pending', approver: 'Li Wei' },
+  { id: 'LV-2404', type: 'Personal Leave', from: '2025-01-15', to: '2025-01-15', days: 1, status: 'Approved', approver: 'Li Wei' },
+  { id: 'LV-2405', type: 'Annual Leave', from: '2025-05-01', to: '2025-05-02', days: 2, status: 'Draft', approver: '-' },
+  { id: 'LV-2406', type: 'Sick Leave', from: '2024-12-10', to: '2024-12-10', days: 1, status: 'Rejected', approver: 'Li Wei' },
+];
+const SALARY_SLIPS = [
+  { id: 'SS-202503', period: 'March 2025', payDate: '2025-03-25', gross: 32000, deductions: 6820, net: 25180, status: 'Paid' },
+  { id: 'SS-202502', period: 'February 2025', payDate: '2025-02-25', gross: 32000, deductions: 6820, net: 25180, status: 'Paid' },
+  { id: 'SS-202501', period: 'January 2025', payDate: '2025-01-25', gross: 32000, deductions: 6820, net: 25180, status: 'Paid' },
+  { id: 'SS-202412', period: 'December 2024', payDate: '2024-12-25', gross: 30000, deductions: 6380, net: 23620, status: 'Paid' },
+  { id: 'SS-202411', period: 'November 2024', payDate: '2024-11-25', gross: 30000, deductions: 6380, net: 23620, status: 'Paid' },
+  { id: 'SS-202410', period: 'October 2024', payDate: '2024-10-25', gross: 30000, deductions: 6380, net: 23620, status: 'Paid' },
+];
+const SALARY_DETAIL = {
+  earnings: [
+    { component: 'Basic Salary', amount: 20000 },
+    { component: 'Housing Allowance', amount: 5000 },
+    { component: 'Transport Allowance', amount: 2000 },
+    { component: 'Meal Allowance', amount: 1500 },
+    { component: 'Performance Bonus', amount: 3500 },
+  ],
+  deductions: [
+    { component: 'Pension Insurance (8%)', amount: 2560 },
+    { component: 'Medical Insurance (2%)', amount: 640 },
+    { component: 'Unemployment Insurance (0.5%)', amount: 160 },
+    { component: 'Housing Fund (12%)', amount: 2400 },
+    { component: 'Individual Income Tax', amount: 1060 },
+  ],
+};
+const EXPENSES = [
+  { id: 'EC-2401', date: '2025-03-18', category: 'Travel', description: 'Business trip to Beijing', amount: 4580, currency: 'CNY', status: 'Pending', items: 3 },
+  { id: 'EC-2402', date: '2025-03-05', category: 'Equipment', description: 'External monitor purchase', amount: 2899, currency: 'CNY', status: 'Approved', items: 1 },
+  { id: 'EC-2403', date: '2025-02-20', category: 'Meals', description: 'Client dinner - Project Alpha', amount: 860, currency: 'CNY', status: 'Approved', items: 1 },
+  { id: 'EC-2404', date: '2025-02-10', category: 'Transportation', description: 'Monthly taxi reimbursement', amount: 1200, currency: 'CNY', status: 'Rejected', items: 5 },
+  { id: 'EC-2405', date: '2025-01-28', category: 'Communication', description: 'Annual phone plan', amount: 1680, currency: 'CNY', status: 'Approved', items: 1 },
+];
+const TICKETS = [
+  { id: 'TK-0089', subject: 'VPN access not working from home', category: 'IT Support', priority: 'High', status: 'Open', created: '2025-03-20', updated: '2025-03-21' },
+  { id: 'TK-0088', subject: 'Request for additional software license', category: 'IT Support', priority: 'Medium', status: 'Pending', created: '2025-03-18', updated: '2025-03-19' },
+  { id: 'TK-0085', subject: 'Office desk lamp replacement', category: 'Facilities', priority: 'Low', status: 'Closed', created: '2025-03-10', updated: '2025-03-15' },
+  { id: 'TK-0082', subject: 'Payslip discrepancy for February', category: 'HR', priority: 'High', status: 'Closed', created: '2025-03-02', updated: '2025-03-05' },
+  { id: 'TK-0079', subject: 'Meeting room booking system error', category: 'IT Support', priority: 'Medium', status: 'Open', created: '2025-02-28', updated: '2025-03-01' },
+];
+
+// ========================================================================
+// UTILITY FUNCTIONS
+// ========================================================================
+function fmt(n) {
+  return n.toLocaleString('en-US');
+}
+
+function fmtCNY(n) {
+  return '¥' + n.toLocaleString('en-US');
+}
+
+function fmtDate(d) {
+  const dt = new Date(d);
+  return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function statusClass(status) {
+  const map = {
+    'Approved': 'approved', 'Paid': 'paid', 'Closed': 'closed',
+    'Pending': 'pending', 'Open': 'open',
+    'Rejected': 'rejected', 'Draft': 'draft'
+  };
+  return map[status] || 'draft';
+}
+
+function badge(status) {
+  return `<span class="badge badge--${statusClass(status)}"><span class="badge__dot"></span>${status}</span>`;
+}
+
+function getCategoryIcon(cat) {
+  const icons = {
+    'Travel': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.4-.1.9.3 1.1l5.6 3.2-3 3-2.3-.8c-.4-.1-.8 0-1 .3l-.2.3c-.2.3-.1.7.1 1l2.4 2.4 2.4 2.4c.3.3.7.3 1 .1l.3-.2c.3-.2.4-.6.3-1l-.8-2.3 3-3 3.2 5.6c.2.4.7.5 1.1.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>',
+    'Equipment': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>',
+    'Meals': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><path d="M6 1v3M10 1v3M14 1v3"/></svg>',
+    'Transportation': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17H4a2 2 0 01-2-2V5a2 2 0 012-2h16a2 2 0 012 2v10a2 2 0 01-2 2h-1"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="17.5" r="2.5"/><path d="M10 17h4"/></svg>',
+    'Communication': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>',
+  };
+  return icons[cat] || icons['Equipment'];
+}
+
+// ========================================================================
+// ANIMATED COUNTER
+// ========================================================================
+function animateCount(el, target, duration = 1000, prefix = '') {
+  const start = 0;
+  const startTime = performance.now();
+  function step(timestamp) {
+    const progress = Math.min((timestamp - startTime) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = Math.round(start + (target - start) * eased);
+    el.textContent = prefix + fmt(current);
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// ========================================================================
+// RENDER FUNCTIONS
+// ========================================================================
+
+// --- Dashboard ---
+function renderDashboard() {
+  // Hero net pay animation
+  const heroEl = document.getElementById('heroNetPay');
+  setTimeout(() => animateCount(heroEl, 25180, 1200), 200);
+
+  // Metric cards
+  const totalLeave = LEAVE_TYPES.reduce((s, l) => s + l.total, 0);
+  const usedLeave = LEAVE_TYPES.reduce((s, l) => s + l.used, 0);
+  const remainingLeave = totalLeave - usedLeave;
+  const pendingExpenses = EXPENSES.filter(e => e.status === 'Pending').reduce((s, e) => s + e.amount, 0);
+  const openTickets = TICKETS.filter(t => t.status === 'Open' || t.status === 'Pending').length;
+
+  const metrics = [
+    { label: 'Leave Remaining', value: remainingLeave, suffix: ' days', change: null },
+    { label: 'Pending Expenses', value: pendingExpenses, prefix: '¥', change: null },
+    { label: 'Open Tickets', value: openTickets, suffix: '', change: null },
+  ];
+
+  document.getElementById('dashMetrics').innerHTML = metrics.map(m => `
+    <div class="card dash-metric-card">
+      <div class="dash-metric-card__label">${m.label}</div>
+      <div class="dash-metric-card__value tnum" data-count="${m.value}" data-prefix="${m.prefix || ''}" data-suffix="${m.suffix || ''}">
+        ${m.prefix || ''}0${m.suffix || ''}
+      </div>
+    </div>
+  `).join('');
+
+  // Animate metric counts
+  setTimeout(() => {
+    document.querySelectorAll('.dash-metric-card__value[data-count]').forEach(el => {
+      const target = parseInt(el.dataset.count);
+      const prefix = el.dataset.prefix || '';
+      const suffix = el.dataset.suffix || '';
+      const start = performance.now();
+      const dur = 800;
+      function step(ts) {
+        const p = Math.min((ts - start) / dur, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        const current = Math.round(target * eased);
+        el.textContent = prefix + fmt(current) + suffix;
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  }, 300);
+
+  // Leave balance bars
+  document.getElementById('dashLeaveBalances').innerHTML = LEAVE_TYPES.map(l => {
+    const remaining = l.total - l.used;
+    const pct = (l.used / l.total) * 100;
+    return `
+      <div class="leave-bar-row">
+        <div class="leave-bar__label">${l.type}</div>
+        <div class="leave-bar__track">
+          <div class="leave-bar__fill" style="background:${l.color}" data-width="${pct}%"></div>
+        </div>
+        <div class="leave-bar__count tnum">${l.used}/${l.total} used</div>
+      </div>
+    `;
+  }).join('');
+
+  // Animate bars
+  setTimeout(() => {
+    document.querySelectorAll('.leave-bar__fill[data-width]').forEach(el => {
+      el.style.width = el.dataset.width;
+    });
+  }, 400);
+}
+
+// --- Leave Page ---
+function renderLeaveBalances() {
+  document.getElementById('leaveBalances').innerHTML = LEAVE_TYPES.map(l => {
+    const remaining = l.total - l.used;
+    const pct = (l.used / l.total) * 100;
+    return `
+      <div class="card leave-balance-card">
+        <div class="leave-balance-card__stripe" style="background:${l.color}"></div>
+        <div class="leave-balance-card__type">${l.type}</div>
+        <div class="leave-balance-card__remaining">${remaining} <span>/ ${l.total} days</span></div>
+        <div class="leave-balance-card__bar">
+          <div class="leave-balance-card__bar-fill" style="background:${l.color}" data-width="${pct}%"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  setTimeout(() => {
+    document.querySelectorAll('.leave-balance-card__bar-fill[data-width]').forEach(el => {
+      el.style.width = el.dataset.width;
+    });
+  }, 300);
+}
+
+let currentLeaveFilter = 'all';
+
+function renderLeaveCards(filter) {
+  currentLeaveFilter = filter || 'all';
+  const filtered = currentLeaveFilter === 'all'
+    ? LEAVE_REQUESTS
+    : LEAVE_REQUESTS.filter(r => r.status === currentLeaveFilter);
+
+  document.getElementById('leaveCards').innerHTML = filtered.map(r => `
+    <div class="card card--clickable leave-card" data-id="${r.id}">
+      <div class="leave-card__header">
+        <span class="leave-card__id">${r.id}</span>
+        ${badge(r.status)}
+      </div>
+      <div class="leave-card__type">${r.type}</div>
+      <div class="leave-card__dates">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        ${fmtDate(r.from)}${r.from !== r.to ? ' — ' + fmtDate(r.to) : ''}
+      </div>
+      <div class="leave-card__footer">
+        <div class="leave-card__days tnum">${r.days} <span>day${r.days > 1 ? 's' : ''}</span></div>
+        <span style="font-size:12px;color:var(--muted)">Approver: ${r.approver}</span>
+      </div>
+    </div>
+  `).join('');
+
+  // Click handler for slide-over
+  document.querySelectorAll('.leave-card[data-id]').forEach(card => {
+    card.addEventListener('click', () => {
+      const req = LEAVE_REQUESTS.find(r => r.id === card.dataset.id);
+      if (req) openSlideover('Leave Request ' + req.id, `
+        <div class="slideover__row"><span class="slideover__label">ID</span><span class="slideover__value" style="font-family:var(--mono)">${req.id}</span></div>
+        <div class="slideover__row"><span class="slideover__label">Type</span><span class="slideover__value">${req.type}</span></div>
+        <div class="slideover__row"><span class="slideover__label">From</span><span class="slideover__value">${fmtDate(req.from)}</span></div>
+        <div class="slideover__row"><span class="slideover__label">To</span><span class="slideover__value">${fmtDate(req.to)}</span></div>
+        <div class="slideover__row"><span class="slideover__label">Days</span><span class="slideover__value tnum">${req.days}</span></div>
+        <div class="slideover__row"><span class="slideover__label">Status</span><span class="slideover__value">${badge(req.status)}</span></div>
+        <div class="slideover__row"><span class="slideover__label">Approver</span><span class="slideover__value">${req.approver}</span></div>
+        ${renderApprovalTimeline(req.status, req.approver, req.from)}
+      `);
+    });
+  });
+}
+
+// --- Salary Page ---
+let selectedSlipIndex = 0;
+
+function renderSalaryFeatured() {
+  const slip = SALARY_SLIPS[selectedSlipIndex];
+  const maxEarning = Math.max(...SALARY_DETAIL.earnings.map(e => e.amount));
+  const maxDeduction = Math.max(...SALARY_DETAIL.deductions.map(d => d.amount));
+
+  document.getElementById('salaryFeatured').innerHTML = `
+    <div class="salary-featured__header">
+      <div class="salary-featured__period">${slip.period} Payslip</div>
+      <div class="salary-featured__net">
+        <div class="salary-featured__net-label">Net Pay</div>
+        <div class="salary-featured__net-value tnum">${fmtCNY(slip.net)}</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:32px;margin-top:4px;font-size:13px;">
+      <span style="color:var(--muted)">Gross: <strong class="tnum" style="color:var(--navy)">${fmtCNY(slip.gross)}</strong></span>
+      <span style="color:var(--muted)">Deductions: <strong class="tnum" style="color:var(--error)">${fmtCNY(slip.deductions)}</strong></span>
+      <span style="color:var(--muted)">Pay Date: <strong style="color:var(--navy)">${fmtDate(slip.payDate)}</strong></span>
+    </div>
+    <div class="salary-visual">
+      <div class="salary-visual__col">
+        <h4>Earnings</h4>
+        ${SALARY_DETAIL.earnings.map(e => `
+          <div class="salary-bar-item">
+            <div class="salary-bar-item__label">${e.component}</div>
+            <div class="salary-bar-item__track">
+              <div class="salary-bar-item__fill earning" data-width="${(e.amount / maxEarning) * 100}%"></div>
+            </div>
+            <div class="salary-bar-item__amount">${fmtCNY(e.amount)}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="salary-visual__col">
+        <h4>Deductions</h4>
+        ${SALARY_DETAIL.deductions.map(d => `
+          <div class="salary-bar-item">
+            <div class="salary-bar-item__label">${d.component}</div>
+            <div class="salary-bar-item__track">
+              <div class="salary-bar-item__fill deduction" data-width="${(d.amount / maxDeduction) * 100}%"></div>
+            </div>
+            <div class="salary-bar-item__amount">${fmtCNY(d.amount)}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  // Animate salary bars
+  setTimeout(() => {
+    document.querySelectorAll('.salary-bar-item__fill[data-width]').forEach(el => {
+      el.style.width = el.dataset.width;
+    });
+  }, 200);
+}
+
+function renderSalaryTimeline() {
+  document.getElementById('salaryTimeline').innerHTML = SALARY_SLIPS.map((s, i) => `
+    <div class="card card--clickable salary-slip-card ${i === selectedSlipIndex ? 'selected' : ''}" data-index="${i}">
+      <div class="salary-slip-card__period">${s.period}</div>
+      <div class="salary-slip-card__date">Paid ${fmtDate(s.payDate)}</div>
+      <div class="salary-slip-card__net tnum">${fmtCNY(s.net)}</div>
+    </div>
+  `).join('');
+
+  document.querySelectorAll('.salary-slip-card[data-index]').forEach(card => {
+    card.addEventListener('click', () => {
+      const idx = parseInt(card.dataset.index);
+      selectedSlipIndex = idx;
+      renderSalaryFeatured();
+      renderSalaryTimeline();
+      toggleSalaryDetail(idx);
+    });
+  });
+}
+
+function toggleSalaryDetail(idx) {
+  const expand = document.getElementById('salaryDetailExpand');
+  const content = document.getElementById('salaryDetailContent');
+  const slip = SALARY_SLIPS[idx];
+
+  const totalEarnings = SALARY_DETAIL.earnings.reduce((s, e) => s + e.amount, 0);
+  const totalDeductions = SALARY_DETAIL.deductions.reduce((s, d) => s + d.amount, 0);
+
+  content.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;">
+      <div>
+        <table class="salary-detail-table">
+          <thead><tr><th>Earnings</th><th style="text-align:right">Amount</th></tr></thead>
+          <tbody>
+            ${SALARY_DETAIL.earnings.map(e => `
+              <tr><td>${e.component}</td><td>${fmtCNY(e.amount)}</td></tr>
+            `).join('')}
+            <tr class="total-row"><td>Total Earnings</td><td>${fmtCNY(totalEarnings)}</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <table class="salary-detail-table">
+          <thead><tr><th>Deductions</th><th style="text-align:right">Amount</th></tr></thead>
+          <tbody>
+            ${SALARY_DETAIL.deductions.map(d => `
+              <tr><td>${d.component}</td><td>${fmtCNY(d.amount)}</td></tr>
+            `).join('')}
+            <tr class="total-row"><td>Total Deductions</td><td>${fmtCNY(totalDeductions)}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div style="margin-top:20px;padding-top:16px;border-top:2px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:16px;font-weight:600;color:var(--navy)">Net Pay</span>
+      <span class="tnum" style="font-size:24px;font-weight:300;color:var(--navy);letter-spacing:-1px">${fmtCNY(slip.net)}</span>
+    </div>
+  `;
+
+  expand.classList.add('open');
+}
+
+// --- Expenses Page ---
+let currentExpenseFilter = 'all';
+
+function renderExpenseStats() {
+  const total = EXPENSES.reduce((s, e) => s + e.amount, 0);
+  const approved = EXPENSES.filter(e => e.status === 'Approved').reduce((s, e) => s + e.amount, 0);
+  const pending = EXPENSES.filter(e => e.status === 'Pending').reduce((s, e) => s + e.amount, 0);
+
+  document.getElementById('expenseStats').innerHTML = [
+    { label: 'Total Claims', value: fmtCNY(total) },
+    { label: 'Approved', value: fmtCNY(approved) },
+    { label: 'Pending', value: fmtCNY(pending) },
+  ].map(s => `
+    <div class="card expense-stat-card">
+      <div class="expense-stat-card__label">${s.label}</div>
+      <div class="expense-stat-card__value tnum">${s.value}</div>
+    </div>
+  `).join('');
+}
+
+function renderExpenseList(filter) {
+  currentExpenseFilter = filter || 'all';
+  const filtered = currentExpenseFilter === 'all'
+    ? EXPENSES
+    : EXPENSES.filter(e => e.status === currentExpenseFilter);
+
+  document.getElementById('expenseList').innerHTML = filtered.map(e => `
+    <div class="card card--clickable expense-card" data-id="${e.id}">
+      <div class="expense-card__icon ${e.category.toLowerCase()}">${getCategoryIcon(e.category)}</div>
+      <div class="expense-card__body">
+        <div class="expense-card__desc">${e.description}</div>
+        <div class="expense-card__meta">
+          <span style="font-family:var(--mono);font-size:11px">${e.id}</span>
+          <span>&middot;</span>
+          <span>${fmtDate(e.date)}</span>
+          <span>&middot;</span>
+          <span>${e.category}</span>
+          <span>&middot;</span>
+          <span>${e.items} item${e.items > 1 ? 's' : ''}</span>
+        </div>
+      </div>
+      <div class="expense-card__amount tnum"><span class="cny">¥</span>${fmt(e.amount)}</div>
+      ${badge(e.status)}
+    </div>
+  `).join('');
+
+  document.querySelectorAll('.expense-card[data-id]').forEach(card => {
+    card.addEventListener('click', () => {
+      const exp = EXPENSES.find(e => e.id === card.dataset.id);
+      if (exp) openSlideover('Expense ' + exp.id, `
+        <div class="slideover__row"><span class="slideover__label">ID</span><span class="slideover__value" style="font-family:var(--mono)">${exp.id}</span></div>
+        <div class="slideover__row"><span class="slideover__label">Description</span><span class="slideover__value">${exp.description}</span></div>
+        <div class="slideover__row"><span class="slideover__label">Category</span><span class="slideover__value">${exp.category}</span></div>
+        <div class="slideover__row"><span class="slideover__label">Date</span><span class="slideover__value">${fmtDate(exp.date)}</span></div>
+        <div class="slideover__row"><span class="slideover__label">Amount</span><span class="slideover__value tnum">${fmtCNY(exp.amount)}</span></div>
+        <div class="slideover__row"><span class="slideover__label">Items</span><span class="slideover__value">${exp.items}</span></div>
+        <div class="slideover__row"><span class="slideover__label">Status</span><span class="slideover__value">${badge(exp.status)}</span></div>
+        ${renderApprovalTimeline(exp.status, 'Li Wei', exp.date)}
+      `);
+    });
+  });
+}
+
+// --- Tickets Page (Kanban) ---
+function renderKanban() {
+  const groups = {
+    'Open': TICKETS.filter(t => t.status === 'Open'),
+    'Pending': TICKETS.filter(t => t.status === 'Pending'),
+    'Closed': TICKETS.filter(t => t.status === 'Closed'),
+  };
+
+  document.getElementById('kanbanBoard').innerHTML = Object.entries(groups).map(([status, tickets]) => `
+    <div class="kanban__col">
+      <div class="kanban__col-header">
+        <div class="kanban__col-dot ${status.toLowerCase()}"></div>
+        <div class="kanban__col-title">${status}</div>
+        <div class="kanban__col-count">${tickets.length}</div>
+      </div>
+      ${tickets.map(t => `
+        <div class="kanban__card priority-${t.priority.toLowerCase()}" data-id="${t.id}">
+          <div class="kanban__card-id">${t.id}</div>
+          <div class="kanban__card-subject">${t.subject}</div>
+          <div class="kanban__card-footer">
+            <div class="kanban__card-category">${t.category}</div>
+            <div class="kanban__card-date">${fmtDate(t.updated)}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+
+  document.querySelectorAll('.kanban__card[data-id]').forEach(card => {
+    card.addEventListener('click', () => {
+      const ticket = TICKETS.find(t => t.id === card.dataset.id);
+      if (ticket) openSlideover('Ticket ' + ticket.id, `
+        <div class="slideover__row"><span class="slideover__label">ID</span><span class="slideover__value" style="font-family:var(--mono)">${ticket.id}</span></div>
+        <div class="slideover__row"><span class="slideover__label">Subject</span><span class="slideover__value">${ticket.subject}</span></div>
+        <div class="slideover__row"><span class="slideover__label">Category</span><span class="slideover__value">${ticket.category}</span></div>
+        <div class="slideover__row"><span class="slideover__label">Priority</span><span class="slideover__value">${ticket.priority}</span></div>
+        <div class="slideover__row"><span class="slideover__label">Status</span><span class="slideover__value">${badge(ticket.status)}</span></div>
+        <div class="slideover__row"><span class="slideover__label">Created</span><span class="slideover__value">${fmtDate(ticket.created)}</span></div>
+        <div class="slideover__row"><span class="slideover__label">Updated</span><span class="slideover__value">${fmtDate(ticket.updated)}</span></div>
+      `);
+    });
+  });
+}
+
+// --- Profile Page ---
+let currentProfileTab = 'personal';
+
+function renderProfileHeader() {
+  document.getElementById('profileAvatar').textContent = EMPLOYEE.initials;
+  document.getElementById('profileName').textContent = EMPLOYEE.name;
+  document.getElementById('profileRole').textContent = EMPLOYEE.role;
+  document.getElementById('profileDept').textContent = EMPLOYEE.department;
+  document.getElementById('profileLoc').textContent = EMPLOYEE.location;
+  document.getElementById('profileId').textContent = EMPLOYEE.employeeId;
+}
+
+function renderProfileContent(tab) {
+  currentProfileTab = tab || 'personal';
+  const content = document.getElementById('profileContent');
+
+  const tabs = {
+    personal: [
+      { label: 'Full Name', value: EMPLOYEE.name },
+      { label: 'Gender', value: EMPLOYEE.gender },
+      { label: 'Date of Birth', value: fmtDate(EMPLOYEE.dob) },
+      { label: 'Email', value: EMPLOYEE.email },
+      { label: 'Phone', value: EMPLOYEE.phone },
+      { label: 'Location', value: EMPLOYEE.location },
+    ],
+    company: [
+      { label: 'Employee ID', value: EMPLOYEE.employeeId },
+      { label: 'Department', value: EMPLOYEE.department },
+      { label: 'Role', value: EMPLOYEE.role },
+      { label: 'Contract Type', value: EMPLOYEE.contractType },
+      { label: 'Join Date', value: fmtDate(EMPLOYEE.joinDate) },
+      { label: 'Manager', value: EMPLOYEE.manager },
+    ],
+    bank: [
+      { label: 'Bank Name', value: EMPLOYEE.bankName },
+      { label: 'Account Number', value: EMPLOYEE.bankAccount },
+      { label: 'Payment Method', value: 'Direct Deposit' },
+      { label: 'Currency', value: 'CNY' },
+    ],
+  };
+
+  const data = tabs[currentProfileTab] || [];
+  content.innerHTML = `
+    <div class="profile-section">
+      <div class="profile-grid">
+        ${data.map(f => `
+          <div class="profile-field">
+            <div class="profile-field__label">${f.label}</div>
+            <div class="profile-field__value">${f.value}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// ========================================================================
+// APPROVAL TIMELINE
+// ========================================================================
+function getApprovalSteps(status, approver, date) {
+  const steps = [
+    { label: 'Submitted', person: 'Zhang Rui', date: date, status: 'done' },
+    { label: 'Manager Review', person: approver, date: '', status: 'pending' },
+    { label: 'HR Approval', person: 'HR Department', date: '', status: 'waiting' },
+    { label: 'Completed', person: '', date: '', status: 'waiting' }
+  ];
+  if (status === 'Approved') {
+    steps[1].status = 'done'; steps[1].date = date;
+    steps[2].status = 'done'; steps[2].date = date;
+    steps[3].status = 'done'; steps[3].date = date;
+  } else if (status === 'Pending') {
+    steps[1].status = 'current';
+  } else if (status === 'Rejected') {
+    steps[1].status = 'rejected'; steps[1].date = date;
+    steps[2].status = 'skipped';
+    steps[3].status = 'skipped';
+  } else if (status === 'Draft') {
+    steps[0].status = 'current';
+    steps[1].status = 'waiting';
+  }
+  return steps;
+}
+
+function renderApprovalTimeline(status, approver, date) {
+  const steps = getApprovalSteps(status, approver || 'Li Wei', date);
+  return `
+    <div class="approval-timeline">
+      <div class="approval-title">Approval Workflow</div>
+      <div class="approval-steps">
+        ${steps.map((s, i) => `
+          <div class="approval-step step-${s.status}">
+            <div class="step-indicator">
+              <div class="step-dot">${s.status === 'done' ? '✓' : s.status === 'rejected' ? '✕' : s.status === 'current' ? '●' : ''}</div>
+              ${i < steps.length - 1 ? '<div class="step-line"></div>' : ''}
+            </div>
+            <div class="step-content">
+              <div class="step-label">${s.label}</div>
+              ${s.person ? `<div class="step-person">${s.person}</div>` : ''}
+              ${s.date ? `<div class="step-date">${s.date}</div>` : ''}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+}
+
+// ========================================================================
+// SLIDE-OVER
+// ========================================================================
+function openSlideover(title, bodyHTML) {
+  document.getElementById('slideoverTitle').textContent = title;
+  document.getElementById('slideoverBody').innerHTML = bodyHTML;
+  document.getElementById('slideoverOverlay').classList.add('open');
+  document.getElementById('slideover').classList.add('open');
+}
+
+function closeSlideover() {
+  document.getElementById('slideoverOverlay').classList.remove('open');
+  document.getElementById('slideover').classList.remove('open');
+}
+
+document.getElementById('slideoverOverlay').addEventListener('click', closeSlideover);
+document.getElementById('slideoverClose').addEventListener('click', closeSlideover);
+
+// ========================================================================
+// COMMAND PALETTE
+// ========================================================================
+const cmdOverlay = document.getElementById('cmdOverlay');
+const cmdInput = document.getElementById('cmdInput');
+const cmdResults = document.getElementById('cmdResults');
+let cmdHighlightIndex = 0;
+let cmdItems = [];
+
+const CMD_ITEMS = [
+  { title: 'Dashboard', sub: 'Overview & metrics', action: () => navigateTo('dashboard'), section: 'Pages', icon: 'dashboard' },
+  { title: 'Leave Management', sub: 'Balances & requests', action: () => navigateTo('leave'), section: 'Pages', icon: 'calendar' },
+  { title: 'Salary & Payslips', sub: 'Compensation details', action: () => navigateTo('salary'), section: 'Pages', icon: 'money' },
+  { title: 'Expense Claims', sub: 'Submit & track expenses', action: () => navigateTo('expenses'), section: 'Pages', icon: 'receipt' },
+  { title: 'Support Tickets', sub: 'Issues & requests', action: () => navigateTo('tickets'), section: 'Pages', icon: 'ticket' },
+  { title: 'My Profile', sub: 'Personal information', action: () => navigateTo('profile'), section: 'Pages', icon: 'profile' },
+  ...LEAVE_REQUESTS.map(r => ({
+    title: `${r.id} — ${r.type}`,
+    sub: `${fmtDate(r.from)} · ${r.status}`,
+    action: () => { navigateTo('leave'); setTimeout(() => { const card = document.querySelector(`.leave-card[data-id="${r.id}"]`); if(card) card.click(); }, 100); },
+    section: 'Leave Requests',
+    icon: 'calendar'
+  })),
+  ...SALARY_SLIPS.map((s, i) => ({
+    title: `Payslip — ${s.period}`,
+    sub: `Net ${fmtCNY(s.net)} · Paid ${fmtDate(s.payDate)}`,
+    action: () => { navigateTo('salary'); setTimeout(() => { selectedSlipIndex = i; renderSalaryFeatured(); renderSalaryTimeline(); toggleSalaryDetail(i); }, 100); },
+    section: 'Salary',
+    icon: 'money'
+  })),
+  ...EXPENSES.map(e => ({
+    title: `${e.id} — ${e.description}`,
+    sub: `${fmtCNY(e.amount)} · ${e.status}`,
+    action: () => { navigateTo('expenses'); setTimeout(() => { const card = document.querySelector(`.expense-card[data-id="${e.id}"]`); if(card) card.click(); }, 100); },
+    section: 'Expenses',
+    icon: 'receipt'
+  })),
+  ...TICKETS.map(t => ({
+    title: `${t.id} — ${t.subject}`,
+    sub: `${t.category} · ${t.status}`,
+    action: () => { navigateTo('tickets'); setTimeout(() => { const card = document.querySelector(`.kanban__card[data-id="${t.id}"]`); if(card) card.click(); }, 100); },
+    section: 'Tickets',
+    icon: 'ticket'
+  })),
+];
+
+function getCmdIcon(type) {
+  const icons = {
+    dashboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
+    calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+    money: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>',
+    receipt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 2v20l3-2 3 2 3-2 3 2 3-2V2l-3 2-3-2-3 2-3-2-3 2z"/><path d="M8 10h8M8 14h4"/></svg>',
+    ticket: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 5H9l-1 8h8l-1-8z"/><path d="M8 13v4a3 3 0 003 3h2a3 3 0 003-3v-4"/></svg>',
+    profile: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  };
+  return icons[type] || icons.dashboard;
+}
+
+function renderCmdResults(query) {
+  const q = (query || '').toLowerCase().trim();
+  let filtered = q ? CMD_ITEMS.filter(item =>
+    item.title.toLowerCase().includes(q) ||
+    item.sub.toLowerCase().includes(q) ||
+    item.section.toLowerCase().includes(q)
+  ) : CMD_ITEMS.slice(0, 12);
+
+  // Group by section
+  const groups = {};
+  filtered.forEach(item => {
+    if (!groups[item.section]) groups[item.section] = [];
+    groups[item.section].push(item);
+  });
+
+  cmdItems = filtered;
+  cmdHighlightIndex = 0;
+
+  let html = '';
+  let idx = 0;
+  for (const [section, items] of Object.entries(groups)) {
+    html += `<div class="cmd-group-label">${section}</div>`;
+    items.forEach(item => {
+      html += `
+        <div class="cmd-item ${idx === 0 ? 'highlighted' : ''}" data-cmd-index="${idx}">
+          <div class="cmd-item__icon">${getCmdIcon(item.icon)}</div>
+          <div class="cmd-item__text">
+            <div class="cmd-item__title">${item.title}</div>
+            <div class="cmd-item__sub">${item.sub}</div>
+          </div>
+        </div>
+      `;
+      idx++;
+    });
+  }
+
+  if (filtered.length === 0) {
+    html = '<div style="padding:24px;text-align:center;color:var(--muted);font-size:13px;">No results found</div>';
+  }
+
+  cmdResults.innerHTML = html;
+
+  // Click handlers
+  cmdResults.querySelectorAll('.cmd-item[data-cmd-index]').forEach(el => {
+    el.addEventListener('click', () => {
+      const i = parseInt(el.dataset.cmdIndex);
+      if (cmdItems[i]) {
+        closeCmdPalette();
+        cmdItems[i].action();
+      }
+    });
+    el.addEventListener('mouseenter', () => {
+      cmdHighlightIndex = parseInt(el.dataset.cmdIndex);
+      updateCmdHighlight();
+    });
+  });
+}
+
+function updateCmdHighlight() {
+  cmdResults.querySelectorAll('.cmd-item').forEach((el, i) => {
+    el.classList.toggle('highlighted', i === cmdHighlightIndex);
+  });
+  // Scroll into view
+  const highlighted = cmdResults.querySelector('.cmd-item.highlighted');
+  if (highlighted) highlighted.scrollIntoView({ block: 'nearest' });
+}
+
+function openCmdPalette() {
+  cmdOverlay.classList.add('open');
+  cmdInput.value = '';
+  renderCmdResults('');
+  setTimeout(() => cmdInput.focus(), 50);
+}
+
+function closeCmdPalette() {
+  cmdOverlay.classList.remove('open');
+  cmdInput.value = '';
+}
+
+document.getElementById('searchBtn').addEventListener('click', openCmdPalette);
+cmdOverlay.addEventListener('click', (e) => {
+  if (e.target === cmdOverlay) closeCmdPalette();
+});
+
+cmdInput.addEventListener('input', () => {
+  renderCmdResults(cmdInput.value);
+});
+
+cmdInput.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    cmdHighlightIndex = Math.min(cmdHighlightIndex + 1, cmdItems.length - 1);
+    updateCmdHighlight();
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    cmdHighlightIndex = Math.max(cmdHighlightIndex - 1, 0);
+    updateCmdHighlight();
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (cmdItems[cmdHighlightIndex]) {
+      closeCmdPalette();
+      cmdItems[cmdHighlightIndex].action();
+    }
+  } else if (e.key === 'Escape') {
+    closeCmdPalette();
+  }
+});
+
+// Global keyboard shortcut
+document.addEventListener('keydown', (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    if (cmdOverlay.classList.contains('open')) {
+      closeCmdPalette();
+    } else {
+      openCmdPalette();
+    }
+  }
+  if (e.key === 'Escape') {
+    closeSlideover();
+    closeCmdPalette();
+  }
+});
+
+// ========================================================================
+// NAVIGATION / ROUTING
+// ========================================================================
+const pages = ['dashboard', 'leave', 'salary', 'expenses', 'tickets', 'profile'];
+
+function navigateTo(page) {
+  window.location.hash = page === 'dashboard' ? '/' : '/' + page;
+}
+
+function activatePage(page) {
+  if (!pages.includes(page)) page = 'dashboard';
+
+  // Update nav links
+  document.querySelectorAll('.topnav__link').forEach(link => {
+    link.classList.toggle('active', link.dataset.page === page);
+  });
+
+  // Show/hide pages
+  document.querySelectorAll('.page').forEach(p => {
+    p.classList.remove('active');
+  });
+  const pageEl = document.getElementById('page-' + page);
+  if (pageEl) {
+    pageEl.classList.add('active');
+    // Force re-animation
+    pageEl.style.animation = 'none';
+    pageEl.offsetHeight; // trigger reflow
+    pageEl.style.animation = '';
+  }
+
+  // Close mobile menu
+  document.getElementById('navLinks').classList.remove('mobile-open');
+
+  // Render page-specific content
+  switch (page) {
+    case 'dashboard':
+      renderDashboard();
+      break;
+    case 'leave':
+      renderLeaveBalances();
+      renderLeaveCards(currentLeaveFilter);
+      break;
+    case 'salary':
+      renderSalaryFeatured();
+      renderSalaryTimeline();
+      toggleSalaryDetail(selectedSlipIndex);
+      break;
+    case 'expenses':
+      renderExpenseStats();
+      renderExpenseList(currentExpenseFilter);
+      break;
+    case 'tickets':
+      renderKanban();
+      break;
+    case 'profile':
+      renderProfileHeader();
+      renderProfileContent(currentProfileTab);
+      break;
+  }
+}
+
+// Hash routing
+function handleRoute() {
+  const hash = window.location.hash.replace('#/', '').replace('#', '');
+  activatePage(hash || 'dashboard');
+}
+
+window.addEventListener('hashchange', handleRoute);
+
+// Nav link clicks
+document.querySelectorAll('.topnav__link').forEach(link => {
+  link.addEventListener('click', (e) => {
+    // Let hash change handle it
+    document.getElementById('navLinks').classList.remove('mobile-open');
+  });
+});
+
+// Filter chip clicks (Leave)
+document.getElementById('leaveFilters').addEventListener('click', (e) => {
+  const chip = e.target.closest('.filter-chip');
+  if (!chip) return;
+  document.querySelectorAll('#leaveFilters .filter-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  renderLeaveCards(chip.dataset.filter);
+});
+
+// Filter chip clicks (Expenses)
+document.getElementById('expenseFilters').addEventListener('click', (e) => {
+  const chip = e.target.closest('.filter-chip');
+  if (!chip) return;
+  document.querySelectorAll('#expenseFilters .filter-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  renderExpenseList(chip.dataset.filter);
+});
+
+// Profile tabs
+document.getElementById('profileTabs').addEventListener('click', (e) => {
+  const tab = e.target.closest('.profile-tab');
+  if (!tab) return;
+  document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  renderProfileContent(tab.dataset.tab);
+});
+
+// Hamburger menu
+document.getElementById('hamburgerBtn').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('mobile-open');
+});
+
+// Avatar click goes to profile
+document.getElementById('avatarBtn').addEventListener('click', () => {
+  navigateTo('profile');
+});
+
+// ========================================================================
+// CREATE FORMS — File Upload, Leave, Expense (multi-line), Ticket
+// ========================================================================
+
+function handleFiles(input, listId) {
+  const list = document.getElementById(listId);
+  if (!list) return;
+  Array.from(input.files).forEach(file => {
+    const item = document.createElement('div');
+    item.className = 'file-list-item';
+    item.innerHTML = `<span>${file.name} <span style="color:var(--muted);font-size:12px">(${(file.size / 1024).toFixed(1)} KB)</span></span><button onclick="this.parentElement.remove()">&times;</button>`;
+    list.appendChild(item);
+  });
+  input.value = '';
+}
+
+function uploadZoneHTML(formType) {
+  return `
+    <div class="form-group">
+      <label>Attachments</label>
+      <div class="upload-zone" onclick="this.querySelector('input').click()">
+        <input type="file" multiple style="display:none" onchange="handleFiles(this, 'fileList-${formType}')">
+        <div class="upload-icon">📎</div>
+        <div class="upload-text">Click or drag files here</div>
+        <div class="upload-hint">PDF, JPG, PNG up to 10MB each</div>
+      </div>
+      <div class="file-list" id="fileList-${formType}"></div>
+    </div>`;
+}
+
+// --- Leave Form ---
+function openLeaveForm() {
+  openSlideover('New Leave Request', `
+    <div class="form-group">
+      <label>Leave Type</label>
+      <select>
+        <option value="">Select leave type...</option>
+        ${LEAVE_TYPES.map(l => `<option>${l.type}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>From Date</label>
+        <input type="date">
+      </div>
+      <div class="form-group">
+        <label>To Date</label>
+        <input type="date">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Reason</label>
+      <textarea placeholder="Brief reason for leave (optional)"></textarea>
+    </div>
+    ${uploadZoneHTML('leave')}
+    <div class="form-actions">
+      <button class="btn btn--cancel" onclick="closeSlideover()">Cancel</button>
+      <button class="btn btn--submit" onclick="closeSlideover()">Submit Request</button>
+    </div>
+  `);
+}
+
+// --- Expense Form (multi-line items) ---
+let expenseLineCount = 0;
+
+function expenseLineItemHTML(num) {
+  return `
+    <div class="line-item" data-line="${num}">
+      <div class="line-item-header">
+        <span class="line-item-num">#${num}</span>
+        <button class="line-item-remove" onclick="removeLineItem(this)" ${num === 1 ? 'disabled' : ''}>&times;</button>
+      </div>
+      <div class="line-item-grid">
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" placeholder="What was this expense for?">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select>
+            <option value="">Select...</option>
+            <option>Travel</option>
+            <option>Equipment</option>
+            <option>Meals</option>
+            <option>Transport</option>
+            <option>Communication</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Amount (CNY)</label>
+          <input type="number" step="0.01" min="0" placeholder="0.00" oninput="updateExpenseTotal()">
+        </div>
+        <div class="form-group">
+          <label>Receipt</label>
+          <div class="upload-zone" style="padding:10px;" onclick="this.querySelector('input').click()">
+            <input type="file" style="display:none" onchange="handleFiles(this, 'fileList-lineReceipt-${num}')">
+            <div style="font-size:12px;color:var(--muted);">📎 Attach receipt</div>
+          </div>
+          <div class="file-list" id="fileList-lineReceipt-${num}"></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function addLineItem() {
+  expenseLineCount++;
+  const container = document.getElementById('expenseLineItems');
+  container.insertAdjacentHTML('beforeend', expenseLineItemHTML(expenseLineCount));
+  renumberLineItems();
+  updateRemoveButtons();
+}
+
+function removeLineItem(btn) {
+  const item = btn.closest('.line-item');
+  item.remove();
+  renumberLineItems();
+  updateRemoveButtons();
+  updateExpenseTotal();
+}
+
+function renumberLineItems() {
+  const items = document.querySelectorAll('#expenseLineItems .line-item');
+  items.forEach((item, i) => {
+    item.querySelector('.line-item-num').textContent = '#' + (i + 1);
+  });
+}
+
+function updateRemoveButtons() {
+  const items = document.querySelectorAll('#expenseLineItems .line-item');
+  items.forEach(item => {
+    const btn = item.querySelector('.line-item-remove');
+    btn.disabled = items.length <= 1;
+  });
+}
+
+function updateExpenseTotal() {
+  const inputs = document.querySelectorAll('#expenseLineItems input[type="number"]');
+  let total = 0;
+  inputs.forEach(input => { total += parseFloat(input.value) || 0; });
+  const el = document.getElementById('expenseTotalValue');
+  if (el) el.textContent = '¥' + total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function openExpenseForm() {
+  expenseLineCount = 1;
+  openSlideover('New Expense Claim', `
+    <div class="form-group">
+      <label>Expense Claim Title</label>
+      <input type="text" placeholder="e.g. March Business Trip">
+    </div>
+    <div class="form-group">
+      <label>Date</label>
+      <input type="date">
+    </div>
+    <div class="form-group">
+      <label>Line Items</label>
+      <div class="line-items-container">
+        <div id="expenseLineItems">
+          ${expenseLineItemHTML(1)}
+        </div>
+        <button class="add-line-item-btn" onclick="addLineItem()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          Add Line Item
+        </button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea placeholder="Additional notes or context (optional)"></textarea>
+    </div>
+    ${uploadZoneHTML('expense')}
+    <div class="expense-total">
+      <span class="expense-total-label">Total:</span>
+      <span class="expense-total-value" id="expenseTotalValue">¥0.00</span>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn--cancel" onclick="closeSlideover()">Cancel</button>
+      <button class="btn btn--submit" onclick="closeSlideover()">Submit Claim</button>
+    </div>
+  `);
+}
+
+// --- Ticket Form ---
+function openTicketForm() {
+  openSlideover('New Ticket', `
+    <div class="form-group">
+      <label>Subject</label>
+      <input type="text" placeholder="Brief description of the issue">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Category</label>
+        <select>
+          <option value="">Select...</option>
+          <option>IT Support</option>
+          <option>HR</option>
+          <option>Payroll</option>
+          <option>Benefits</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Priority</label>
+        <select>
+          <option value="">Select...</option>
+          <option>Low</option>
+          <option>Medium</option>
+          <option>High</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea placeholder="Describe the issue in detail..."></textarea>
+    </div>
+    ${uploadZoneHTML('ticket')}
+    <div class="form-actions">
+      <button class="btn btn--cancel" onclick="closeSlideover()">Cancel</button>
+      <button class="btn btn--submit" onclick="closeSlideover()">Submit Ticket</button>
+    </div>
+  `);
+}
+
+// ========================================================================
+// INIT
+// ========================================================================
+handleRoute();
+</script>
+</body>
+</html>
