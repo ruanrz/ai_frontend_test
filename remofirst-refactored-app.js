@@ -764,27 +764,34 @@ function renderSalary() {
     </div>
 
     <!-- Summary Cards -->
-    <div class="stats-row" style="grid-template-columns:repeat(3,1fr);">
-      <div class="stat-card animate-in">
-        <div class="stat-card__header">
-          <div class="stat-card__icon stat-card__icon--green">${icon('dollar')}</div>
+    <div class="balance-grid">
+      <div class="metric-card animate-in">
+        <div class="metric-card__icon metric-card__icon--green">${icon('dollar')}</div>
+        <div class="metric-card__info">
+          <div class="metric-card__value">${formatCurrency(24660)}</div>
+          <div class="metric-card__label">Avg Net Pay</div>
         </div>
-        <div class="stat-card__value">${formatCurrency(24660)}</div>
-        <div class="stat-card__label">Avg Net Pay</div>
       </div>
-      <div class="stat-card animate-in">
-        <div class="stat-card__header">
-          <div class="stat-card__icon stat-card__icon--blue">${icon('arrowUp')}</div>
+      <div class="metric-card animate-in">
+        <div class="metric-card__icon metric-card__icon--blue">${icon('arrowUp')}</div>
+        <div class="metric-card__info">
+          <div class="metric-card__value">${formatCurrency(96000)}</div>
+          <div class="metric-card__label">YTD Gross</div>
         </div>
-        <div class="stat-card__value">${formatCurrency(96000)}</div>
-        <div class="stat-card__label">YTD Gross</div>
       </div>
-      <div class="stat-card animate-in">
-        <div class="stat-card__header">
-          <div class="stat-card__icon stat-card__icon--amber">${icon('arrowDown')}</div>
+      <div class="metric-card animate-in">
+        <div class="metric-card__icon metric-card__icon--amber">${icon('arrowDown')}</div>
+        <div class="metric-card__info">
+          <div class="metric-card__value">${formatCurrency(20460)}</div>
+          <div class="metric-card__label">YTD Deductions</div>
         </div>
-        <div class="stat-card__value">${formatCurrency(20460)}</div>
-        <div class="stat-card__label">YTD Deductions</div>
+      </div>
+      <div class="metric-card animate-in">
+        <div class="metric-card__icon metric-card__icon--purple">${icon('wallet')}</div>
+        <div class="metric-card__info">
+          <div class="metric-card__value">${formatCurrency(SALARY_SLIPS[0].net)}</div>
+          <div class="metric-card__label">Latest Net Pay</div>
+        </div>
       </div>
     </div>
 
@@ -838,27 +845,34 @@ function renderExpenses() {
     </div>
 
     <!-- Summary -->
-    <div class="stats-row" style="grid-template-columns:repeat(3,1fr);">
-      <div class="stat-card animate-in">
-        <div class="stat-card__header">
-          <div class="stat-card__icon stat-card__icon--amber">${icon('clock')}</div>
+    <div class="balance-grid">
+      <div class="metric-card animate-in">
+        <div class="metric-card__icon metric-card__icon--amber">${icon('clock')}</div>
+        <div class="metric-card__info">
+          <div class="metric-card__value">${formatCurrency(totalPending)}</div>
+          <div class="metric-card__label">Pending Claims</div>
         </div>
-        <div class="stat-card__value">${formatCurrency(totalPending)}</div>
-        <div class="stat-card__label">Pending Claims</div>
       </div>
-      <div class="stat-card animate-in">
-        <div class="stat-card__header">
-          <div class="stat-card__icon stat-card__icon--green">${icon('dollar')}</div>
+      <div class="metric-card animate-in">
+        <div class="metric-card__icon metric-card__icon--green">${icon('dollar')}</div>
+        <div class="metric-card__info">
+          <div class="metric-card__value">${formatCurrency(totalApproved)}</div>
+          <div class="metric-card__label">Approved YTD</div>
         </div>
-        <div class="stat-card__value">${formatCurrency(totalApproved)}</div>
-        <div class="stat-card__label">Approved YTD</div>
       </div>
-      <div class="stat-card animate-in">
-        <div class="stat-card__header">
-          <div class="stat-card__icon stat-card__icon--blue">${icon('receipt')}</div>
+      <div class="metric-card animate-in">
+        <div class="metric-card__icon metric-card__icon--blue">${icon('receipt')}</div>
+        <div class="metric-card__info">
+          <div class="metric-card__value">${EXPENSES.length}</div>
+          <div class="metric-card__label">Total Claims</div>
         </div>
-        <div class="stat-card__value">${EXPENSES.length}</div>
-        <div class="stat-card__label">Total Claims</div>
+      </div>
+      <div class="metric-card animate-in">
+        <div class="metric-card__icon metric-card__icon--purple">${icon('wallet')}</div>
+        <div class="metric-card__info">
+          <div class="metric-card__value">${formatCurrency(5000 - totalApproved)}</div>
+          <div class="metric-card__label">Monthly Budget Left</div>
+        </div>
       </div>
     </div>
 
