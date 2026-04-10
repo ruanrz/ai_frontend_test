@@ -135,6 +135,79 @@ const TRANSACTIONS = [
   { type: 'in', title: 'Year-End Bonus', date: '2025-01-20', amount: 48000 },
 ];
 
+// Leave Types (matching /api/hrms/emr/leave-type)
+const LEAVE_TYPE_LIST = [
+  { id: 'LT-001', name: 'Annual Leave', maxDays: 15, isCarryForward: true, maxCarryForward: 5, isWithoutPay: false, allowNegative: false, includeHolidays: false, isCompensatory: false },
+  { id: 'LT-002', name: 'Sick Leave', maxDays: 10, isCarryForward: false, maxCarryForward: 0, isWithoutPay: false, allowNegative: false, includeHolidays: false, isCompensatory: false },
+  { id: 'LT-003', name: 'Personal Leave', maxDays: 5, isCarryForward: false, maxCarryForward: 0, isWithoutPay: false, allowNegative: false, includeHolidays: false, isCompensatory: false },
+  { id: 'LT-004', name: 'Compensatory Leave', maxDays: 3, isCarryForward: false, maxCarryForward: 0, isWithoutPay: false, allowNegative: false, includeHolidays: false, isCompensatory: true },
+  { id: 'LT-005', name: 'Maternity Leave', maxDays: 98, isCarryForward: false, maxCarryForward: 0, isWithoutPay: false, allowNegative: false, includeHolidays: true, isCompensatory: false },
+  { id: 'LT-006', name: 'Unpaid Leave', maxDays: 30, isCarryForward: false, maxCarryForward: 0, isWithoutPay: true, allowNegative: true, includeHolidays: false, isCompensatory: false },
+];
+
+// Leave Policies
+const LEAVE_POLICIES = [
+  { id: 'LP-001', name: 'Standard Employee Policy', description: 'Default policy for full-time employees', leaveTypes: [{type:'Annual Leave',days:15},{type:'Sick Leave',days:10},{type:'Personal Leave',days:5}], status: 'Active' },
+  { id: 'LP-002', name: 'Contractor Policy', description: 'Limited leave for contractors', leaveTypes: [{type:'Annual Leave',days:10},{type:'Sick Leave',days:5}], status: 'Active' },
+  { id: 'LP-003', name: 'Senior Employee Policy', description: 'Enhanced leave for senior staff', leaveTypes: [{type:'Annual Leave',days:20},{type:'Sick Leave',days:15},{type:'Personal Leave',days:7}], status: 'Active' },
+];
+
+// Leave Periods
+const LEAVE_PERIODS = [
+  { id: 'PD-001', name: '2025 Leave Year', from: '2025-01-01', to: '2025-12-31', isActive: true, company: 'RampingUp Technology Ltd.' },
+  { id: 'PD-002', name: '2024 Leave Year', from: '2024-01-01', to: '2024-12-31', isActive: false, company: 'RampingUp Technology Ltd.' },
+];
+
+// Leave Allocations
+const LEAVE_ALLOCATIONS = [
+  { id: 'LA-001', employee: 'Zhang Rui', leaveType: 'Annual Leave', period: '2025', totalDays: 15, usedDays: 7, newAllocation: 15, carryForward: 0, status: 'Active' },
+  { id: 'LA-002', employee: 'Zhang Rui', leaveType: 'Sick Leave', period: '2025', totalDays: 10, usedDays: 2, newAllocation: 10, carryForward: 0, status: 'Active' },
+  { id: 'LA-003', employee: 'Li Wei', leaveType: 'Annual Leave', period: '2025', totalDays: 20, usedDays: 3, newAllocation: 20, carryForward: 0, status: 'Active' },
+  { id: 'LA-004', employee: 'Wang Chen', leaveType: 'Annual Leave', period: '2025', totalDays: 15, usedDays: 5, newAllocation: 12, carryForward: 3, status: 'Active' },
+  { id: 'LA-005', employee: 'Sarah Johnson', leaveType: 'Annual Leave', period: '2025', totalDays: 15, usedDays: 0, newAllocation: 15, carryForward: 0, status: 'Active' },
+];
+
+// Leave Policy Assignments
+const LEAVE_POLICY_ASSIGNMENTS = [
+  { id: 'PA-001', employee: 'Zhang Rui', policy: 'Standard Employee Policy', period: '2025 Leave Year', assignedDate: '2025-01-01', status: 'Active' },
+  { id: 'PA-002', employee: 'Li Wei', policy: 'Senior Employee Policy', period: '2025 Leave Year', assignedDate: '2025-01-01', status: 'Active' },
+  { id: 'PA-003', employee: 'Wang Chen', policy: 'Standard Employee Policy', period: '2025 Leave Year', assignedDate: '2025-01-01', status: 'Active' },
+  { id: 'PA-004', employee: 'Sarah Johnson', policy: 'Standard Employee Policy', period: '2025 Leave Year', assignedDate: '2025-01-01', status: 'Active' },
+  { id: 'PA-005', employee: 'Alex Kim', policy: 'Contractor Policy', period: '2025 Leave Year', assignedDate: '2025-01-01', status: 'Active' },
+];
+
+// Approval Flow Definitions (matching /api/hrms/emr/approval-flow-definition)
+const LEAVE_APPROVAL_FLOWS = [
+  { id: 'AF-001', name: 'Standard Leave Approval', leaveType: 'Annual Leave', steps: [{level:1,role:'Direct Manager',approver:'Li Wei'},{level:2,role:'HR Manager',approver:'HR Team'}], status: 'Active' },
+  { id: 'AF-002', name: 'Sick Leave Approval', leaveType: 'Sick Leave', steps: [{level:1,role:'Direct Manager',approver:'Li Wei'}], status: 'Active' },
+  { id: 'AF-003', name: 'Extended Leave Approval', leaveType: 'Annual Leave', steps: [{level:1,role:'Direct Manager',approver:'Li Wei'},{level:2,role:'Department Head',approver:'Wang Chen'},{level:3,role:'HR Director',approver:'HR Team'}], status: 'Active', condition: '> 5 days' },
+];
+
+const EXPENSE_APPROVAL_FLOWS = [
+  { id: 'EAF-001', name: 'Standard Expense Approval', condition: '< ¥5,000', steps: [{level:1,role:'Direct Manager',approver:'Li Wei'}], status: 'Active' },
+  { id: 'EAF-002', name: 'Large Expense Approval', condition: '≥ ¥5,000', steps: [{level:1,role:'Direct Manager',approver:'Li Wei'},{level:2,role:'Finance Manager',approver:'Tanaka Yuki'},{level:3,role:'CFO',approver:'CFO Office'}], status: 'Active' },
+];
+
+// Organization units
+const ORG_UNITS = [
+  { id: 'OU-001', name: 'RampingUp Technology Ltd.', type: 'Company', head: 'CEO', members: 8, children: [
+    { id: 'OU-002', name: 'Engineering', type: 'Department', head: 'Li Wei', members: 4 },
+    { id: 'OU-003', name: 'Product', type: 'Department', head: 'Wang Chen', members: 1 },
+    { id: 'OU-004', name: 'Design', type: 'Department', head: 'Sarah Johnson', members: 1 },
+    { id: 'OU-005', name: 'Marketing', type: 'Department', head: 'Maria Santos', members: 1 },
+    { id: 'OU-006', name: 'Finance', type: 'Department', head: 'Tanaka Yuki', members: 1 },
+  ]},
+];
+
+// Messages
+const MESSAGES = [
+  { id: 'MSG-001', subject: 'Leave Request LV-2403 Approved', from: 'System', date: '2025-03-21', read: false, type: 'notification', body: 'Your annual leave request from Apr 5 to Apr 6 has been approved by Li Wei.' },
+  { id: 'MSG-002', subject: 'March Salary Slip Available', from: 'Payroll', date: '2025-03-25', read: false, type: 'notification', body: 'Your salary slip for March 2025 is now available. Net pay: ¥25,180.' },
+  { id: 'MSG-003', subject: 'Expense EC-2402 Reimbursed', from: 'Finance', date: '2025-03-10', read: true, type: 'notification', body: 'Your expense claim EC-2402 (¥2,899) has been reimbursed to your bank account.' },
+  { id: 'MSG-004', subject: 'Welcome to RampingUp', from: 'HR', date: '2025-03-15', read: true, type: 'announcement', body: 'Welcome aboard! Please complete your onboarding checklist.' },
+  { id: 'MSG-005', subject: 'Company Holiday Notice — Qingming', from: 'HR', date: '2025-03-28', read: false, type: 'announcement', body: 'Please note that April 4 (Qingming Festival) is a company holiday.' },
+];
+
 // ── Helpers ──────────────────────────────────────────────────
 function fmt(n) { return '¥' + n.toLocaleString('zh-CN'); }
 
@@ -609,6 +682,708 @@ function renderProfileBank() {
     <div class="detail-item"><div class="detail-item__label">Account Number</div><div class="detail-item__value detail-item__value--accent">${EMPLOYEE.bankAccount}</div></div>
   </div></div>`;
 }
+
+// ── New Page Renderers ──────────────────────────────────────
+
+function renderTimeOff() {
+  const approved = LEAVE_REQUESTS.filter(l => l.status === 'Approved');
+  const upcoming = approved.filter(l => new Date(l.from) >= new Date());
+  const now = new Date();
+  const thisMonth = approved.filter(l => {
+    const d = new Date(l.from);
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+  const totalDaysThisMonth = thisMonth.reduce((s, l) => s + l.days, 0);
+
+  return `<div class="page-enter">
+    <div class="page-header"><h1 class="page-title">Time Off</h1></div>
+
+    <div class="stats-grid animate-in">
+      <div class="stat-card stat-card--blue"><div class="stat-card__label">Days Off This Month</div><div class="stat-card__value">${totalDaysThisMonth}</div></div>
+      <div class="stat-card stat-card--green"><div class="stat-card__label">Upcoming Time Off</div><div class="stat-card__value">${upcoming.length}</div></div>
+      <div class="stat-card stat-card--purple"><div class="stat-card__label">Total Approved</div><div class="stat-card__value">${approved.length}</div></div>
+    </div>
+
+    <div class="card animate-in">
+      <div class="card__header"><div class="card__title">Approved Leave Calendar</div></div>
+      <div style="padding:16px;display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:0.75rem">
+        ${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => `<div style="font-weight:600;color:var(--text-muted);padding:6px 0">${d}</div>`).join('')}
+        ${(() => {
+          const y = now.getFullYear(), m = now.getMonth();
+          const firstDay = new Date(y, m, 1).getDay();
+          const daysInMonth = new Date(y, m + 1, 0).getDate();
+          const offset = firstDay === 0 ? 6 : firstDay - 1;
+          let cells = '';
+          for (let i = 0; i < offset; i++) cells += '<div style="padding:6px 0;color:var(--text-muted)"></div>';
+          for (let d = 1; d <= daysInMonth; d++) {
+            const dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const isOff = approved.some(l => dateStr >= l.from && dateStr <= l.to);
+            const isToday = d === now.getDate();
+            const bg = isOff ? 'background:var(--accent-bg);color:var(--accent);font-weight:600;border-radius:var(--radius)' : isToday ? 'background:var(--bg-muted);font-weight:600;border-radius:var(--radius)' : '';
+            cells += `<div style="padding:6px 0;${bg}">${d}</div>`;
+          }
+          return cells;
+        })()}
+      </div>
+    </div>
+
+    <div class="card animate-in">
+      <div class="card__header"><div class="card__title">Upcoming Approved Leave</div></div>
+      <div class="data-table-wrap"><table class="data-table"><thead><tr>
+        <th>ID</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th>
+      </tr></thead><tbody>
+      ${approved.map(lr => `<tr>
+        <td class="text-mono text-accent">${lr.id}</td><td>${lr.type}</td>
+        <td class="text-mono">${lr.from}</td><td class="text-mono">${lr.to}</td>
+        <td class="text-mono">${lr.days}</td>
+        <td><span class="badge badge--${statusClass(lr.status)}">${lr.status}</span></td>
+      </tr>`).join('')}
+      </tbody></table></div>
+    </div>
+  </div>`;
+}
+
+function renderLeaveType() {
+  return `<div class="page-enter">
+    <div class="page-header"><h1 class="page-title">Leave Types</h1>
+      <button class="btn btn--primary" onclick="openLeaveTypeForm()">${icon('plus')} New Leave Type</button>
+    </div>
+
+    <div class="card animate-in">
+      <div class="data-table-wrap"><table class="data-table" id="leaveTypeTable"><thead><tr>
+        <th>ID</th><th>Name</th><th>Max Days</th><th>Carry Forward</th><th>Without Pay</th><th>Compensatory</th><th>Status</th><th></th>
+      </tr></thead><tbody>
+      ${LEAVE_TYPE_LIST.map(lt => `<tr>
+        <td class="text-mono text-accent">${lt.id}</td>
+        <td style="font-weight:500;color:var(--text-primary)">${lt.name}</td>
+        <td class="text-mono">${lt.maxDays}</td>
+        <td>${lt.isCarryForward ? 'Yes' : 'No'}</td>
+        <td>${lt.isWithoutPay ? 'Yes' : 'No'}</td>
+        <td>${lt.isCompensatory ? 'Yes' : 'No'}</td>
+        <td><span class="badge badge--active">Active</span></td>
+        <td><button class="btn btn--ghost btn--sm" onclick="viewLeaveTypeDetail('${lt.id}')">${icon('eye')} View</button></td>
+      </tr>`).join('')}
+      </tbody></table></div>
+    </div>
+  </div>`;
+}
+
+window.openLeaveTypeForm = function() {
+  openModal(`<div class="modal">
+    <div class="modal__header"><div class="modal__title">New Leave Type</div>
+      <button class="modal__close" onclick="closeModal()">${icon('close')}</button></div>
+    <div class="modal__body">
+      <div class="detail-grid">
+        <div class="form-group"><label class="form-label">Name *</label><input class="form-input" placeholder="e.g. Annual Leave"></div>
+        <div class="form-group"><label class="form-label">Max Days *</label><input class="form-input" type="number" placeholder="0"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+        <label class="form-check"><input type="checkbox"> Allow Carry Forward</label>
+        <label class="form-check"><input type="checkbox"> Is Without Pay</label>
+        <label class="form-check"><input type="checkbox"> Allow Negative Balance</label>
+        <label class="form-check"><input type="checkbox"> Include Holidays Within Leave</label>
+        <label class="form-check"><input type="checkbox"> Is Compensatory</label>
+      </div>
+      <div class="form-group" style="margin-top:12px"><label class="form-label">Max Carry Forward Days</label><input class="form-input" type="number" placeholder="0"></div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn--primary" onclick="closeModal()">Save</button>
+    </div>
+  </div>`);
+};
+
+window.viewLeaveTypeDetail = function(id) {
+  const lt = LEAVE_TYPE_LIST.find(x => x.id === id);
+  if (!lt) return;
+  openModal(`<div class="modal">
+    <div class="modal__header"><div class="modal__title">Leave Type — ${lt.name}</div>
+      <button class="modal__close" onclick="closeModal()">${icon('close')}</button></div>
+    <div class="modal__body">
+      <div class="detail-modal__section">
+        <div class="detail-modal__row"><span class="detail-modal__row-label">ID</span><span class="detail-modal__row-value">${lt.id}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Name</span><span class="detail-modal__row-value">${lt.name}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Max Days</span><span class="detail-modal__row-value">${lt.maxDays}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Carry Forward</span><span class="detail-modal__row-value">${lt.isCarryForward ? 'Yes (max ' + lt.maxCarryForward + ' days)' : 'No'}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Without Pay</span><span class="detail-modal__row-value">${lt.isWithoutPay ? 'Yes' : 'No'}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Allow Negative</span><span class="detail-modal__row-value">${lt.allowNegative ? 'Yes' : 'No'}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Include Holidays</span><span class="detail-modal__row-value">${lt.includeHolidays ? 'Yes' : 'No'}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Compensatory</span><span class="detail-modal__row-value">${lt.isCompensatory ? 'Yes' : 'No'}</span></div>
+      </div>
+    </div>
+    <div class="modal__footer"><button class="btn btn--secondary" onclick="closeModal()">Close</button></div>
+  </div>`);
+};
+
+function renderLeavePolicy() {
+  return `<div class="page-enter">
+    <div class="page-header"><h1 class="page-title">Leave Policies</h1>
+      <button class="btn btn--primary" onclick="openLeavePolicyForm()">${icon('plus')} New Policy</button>
+    </div>
+
+    <div class="card animate-in">
+      <div class="data-table-wrap"><table class="data-table"><thead><tr>
+        <th>ID</th><th>Name</th><th>Description</th><th>Leave Types</th><th>Status</th><th></th>
+      </tr></thead><tbody>
+      ${LEAVE_POLICIES.map(p => `<tr>
+        <td class="text-mono text-accent">${p.id}</td>
+        <td style="font-weight:500;color:var(--text-primary)">${p.name}</td>
+        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${p.description}</td>
+        <td class="text-mono">${p.leaveTypes.length} types</td>
+        <td><span class="badge badge--${statusClass(p.status)}">${p.status}</span></td>
+        <td><button class="btn btn--ghost btn--sm" onclick="viewLeavePolicyDetail('${p.id}')">${icon('eye')} View</button></td>
+      </tr>`).join('')}
+      </tbody></table></div>
+    </div>
+  </div>`;
+}
+
+window.openLeavePolicyForm = function() {
+  openModal(`<div class="modal modal--lg">
+    <div class="modal__header"><div class="modal__title">New Leave Policy</div>
+      <button class="modal__close" onclick="closeModal()">${icon('close')}</button></div>
+    <div class="modal__body">
+      <div class="form-group"><label class="form-label">Policy Name *</label><input class="form-input" placeholder="e.g. Standard Employee Policy"></div>
+      <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" placeholder="Describe this policy..."></textarea></div>
+      <div class="section-title" style="margin-top:14px">Leave Type Allocations</div>
+      <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Leave Type</th><th>Days Per Year</th></tr></thead><tbody>
+        ${LEAVE_TYPE_LIST.map(lt => `<tr><td>${lt.name}</td><td><input class="form-input" type="number" placeholder="0" style="width:80px"></td></tr>`).join('')}
+      </tbody></table></div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn--primary" onclick="closeModal()">Save</button>
+    </div>
+  </div>`);
+};
+
+window.viewLeavePolicyDetail = function(id) {
+  const p = LEAVE_POLICIES.find(x => x.id === id);
+  if (!p) return;
+  openModal(`<div class="modal">
+    <div class="modal__header"><div class="modal__title">Leave Policy — ${p.name}</div>
+      <button class="modal__close" onclick="closeModal()">${icon('close')}</button></div>
+    <div class="modal__body">
+      <div class="detail-modal__section">
+        <div class="detail-modal__row"><span class="detail-modal__row-label">ID</span><span class="detail-modal__row-value">${p.id}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Name</span><span class="detail-modal__row-value">${p.name}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Description</span><span class="detail-modal__row-value">${p.description}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Status</span><span class="detail-modal__row-value"><span class="badge badge--${statusClass(p.status)}">${p.status}</span></span></div>
+      </div>
+      <div class="section-title" style="margin-top:16px">Leave Type Allocations</div>
+      <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Leave Type</th><th>Days Per Year</th></tr></thead><tbody>
+        ${p.leaveTypes.map(lt => `<tr><td>${lt.type}</td><td class="text-mono">${lt.days}</td></tr>`).join('')}
+      </tbody></table></div>
+    </div>
+    <div class="modal__footer"><button class="btn btn--secondary" onclick="closeModal()">Close</button></div>
+  </div>`);
+};
+
+function renderLeavePeriod() {
+  return `<div class="page-enter">
+    <div class="page-header"><h1 class="page-title">Leave Periods</h1>
+      <button class="btn btn--primary" onclick="openLeavePeriodForm()">${icon('plus')} New Period</button>
+    </div>
+
+    <div class="card animate-in">
+      <div class="data-table-wrap"><table class="data-table"><thead><tr>
+        <th>ID</th><th>Name</th><th>From Date</th><th>To Date</th><th>Active</th><th>Company</th><th></th>
+      </tr></thead><tbody>
+      ${LEAVE_PERIODS.map(p => `<tr>
+        <td class="text-mono text-accent">${p.id}</td>
+        <td style="font-weight:500;color:var(--text-primary)">${p.name}</td>
+        <td class="text-mono">${p.from}</td>
+        <td class="text-mono">${p.to}</td>
+        <td>${p.isActive ? 'Yes' : 'No'}</td>
+        <td>${p.company}</td>
+        <td><button class="btn btn--ghost btn--sm" onclick="viewLeavePeriodDetail('${p.id}')">${icon('eye')} View</button></td>
+      </tr>`).join('')}
+      </tbody></table></div>
+    </div>
+  </div>`;
+}
+
+window.openLeavePeriodForm = function() {
+  openModal(`<div class="modal">
+    <div class="modal__header"><div class="modal__title">New Leave Period</div>
+      <button class="modal__close" onclick="closeModal()">${icon('close')}</button></div>
+    <div class="modal__body">
+      <div class="detail-grid">
+        <div class="form-group"><label class="form-label">Period Name *</label><input class="form-input" placeholder="e.g. 2025 Leave Year"></div>
+        <div class="form-group"><label class="form-label">Company *</label><input class="form-input" value="RampingUp Technology Ltd." readonly></div>
+        <div class="form-group"><label class="form-label">From Date *</label><input class="form-input" type="date"></div>
+        <div class="form-group"><label class="form-label">To Date *</label><input class="form-input" type="date"></div>
+      </div>
+      <label class="form-check" style="margin-top:12px"><input type="checkbox"> Mark as Active</label>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn--primary" onclick="closeModal()">Save</button>
+    </div>
+  </div>`);
+};
+
+window.viewLeavePeriodDetail = function(id) {
+  const p = LEAVE_PERIODS.find(x => x.id === id);
+  if (!p) return;
+  openModal(`<div class="modal">
+    <div class="modal__header"><div class="modal__title">Leave Period — ${p.name}</div>
+      <button class="modal__close" onclick="closeModal()">${icon('close')}</button></div>
+    <div class="modal__body">
+      <div class="detail-modal__section">
+        <div class="detail-modal__row"><span class="detail-modal__row-label">ID</span><span class="detail-modal__row-value">${p.id}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Name</span><span class="detail-modal__row-value">${p.name}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">From</span><span class="detail-modal__row-value">${p.from}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">To</span><span class="detail-modal__row-value">${p.to}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Active</span><span class="detail-modal__row-value">${p.isActive ? 'Yes' : 'No'}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Company</span><span class="detail-modal__row-value">${p.company}</span></div>
+      </div>
+    </div>
+    <div class="modal__footer"><button class="btn btn--secondary" onclick="closeModal()">Close</button></div>
+  </div>`);
+};
+
+function renderLeaveAllocation() {
+  return `<div class="page-enter">
+    <div class="page-header"><h1 class="page-title">Leave Allocation</h1>
+      <button class="btn btn--primary" onclick="openLeaveAllocationForm()">${icon('plus')} New Allocation</button>
+    </div>
+
+    <div class="filters animate-in">
+      <span class="filter-chip active" onclick="filterAllocationTable(this,'all','employee')">All Employees</span>
+      ${[...new Set(LEAVE_ALLOCATIONS.map(a => a.employee))].map(emp =>
+        `<span class="filter-chip" onclick="filterAllocationTable(this,'${emp}','employee')">${emp}</span>`
+      ).join('')}
+    </div>
+
+    <div class="card animate-in">
+      <div class="data-table-wrap"><table class="data-table" id="allocationTable"><thead><tr>
+        <th>ID</th><th>Employee</th><th>Leave Type</th><th>Period</th><th>New Allocation</th><th>Carry Forward</th><th>Total Days</th><th>Used</th><th>Balance</th><th>Status</th><th></th>
+      </tr></thead><tbody>
+      ${LEAVE_ALLOCATIONS.map(a => `<tr data-employee="${a.employee}" data-type="${a.leaveType}">
+        <td class="text-mono text-accent">${a.id}</td>
+        <td style="font-weight:500;color:var(--text-primary)">${a.employee}</td>
+        <td>${a.leaveType}</td>
+        <td class="text-mono">${a.period}</td>
+        <td class="text-mono">${a.newAllocation}</td>
+        <td class="text-mono">${a.carryForward}</td>
+        <td class="text-mono">${a.totalDays}</td>
+        <td class="text-mono">${a.usedDays}</td>
+        <td class="text-mono" style="font-weight:600;color:var(--accent)">${a.totalDays - a.usedDays}</td>
+        <td><span class="badge badge--${statusClass(a.status)}">${a.status}</span></td>
+        <td><button class="btn btn--ghost btn--sm" onclick="viewLeaveAllocationDetail('${a.id}')">${icon('eye')} View</button></td>
+      </tr>`).join('')}
+      </tbody></table></div>
+    </div>
+  </div>`;
+}
+
+window.filterAllocationTable = function(el, value, field) {
+  el.parentElement.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('#allocationTable tbody tr').forEach(tr => {
+    tr.style.display = (value === 'all' || tr.dataset[field] === value) ? '' : 'none';
+  });
+};
+
+window.openLeaveAllocationForm = function() {
+  openModal(`<div class="modal">
+    <div class="modal__header"><div class="modal__title">New Leave Allocation</div>
+      <button class="modal__close" onclick="closeModal()">${icon('close')}</button></div>
+    <div class="modal__body">
+      <div class="detail-grid">
+        <div class="form-group"><label class="form-label">Employee *</label>
+          <select class="form-select">${TEAM_MEMBERS.filter(m=>m.status==='Active').map(m=>`<option>${m.name}</option>`).join('')}</select></div>
+        <div class="form-group"><label class="form-label">Leave Type *</label>
+          <select class="form-select">${LEAVE_TYPE_LIST.map(lt=>`<option>${lt.name}</option>`).join('')}</select></div>
+        <div class="form-group"><label class="form-label">Period *</label>
+          <select class="form-select">${LEAVE_PERIODS.map(p=>`<option>${p.name}</option>`).join('')}</select></div>
+        <div class="form-group"><label class="form-label">New Allocation *</label><input class="form-input" type="number" placeholder="0"></div>
+        <div class="form-group"><label class="form-label">Carry Forward</label><input class="form-input" type="number" placeholder="0" value="0"></div>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn--primary" onclick="closeModal()">Save</button>
+    </div>
+  </div>`);
+};
+
+window.viewLeaveAllocationDetail = function(id) {
+  const a = LEAVE_ALLOCATIONS.find(x => x.id === id);
+  if (!a) return;
+  openModal(`<div class="modal">
+    <div class="modal__header"><div class="modal__title">Leave Allocation — ${a.id}</div>
+      <button class="modal__close" onclick="closeModal()">${icon('close')}</button></div>
+    <div class="modal__body">
+      <div class="detail-modal__section">
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Employee</span><span class="detail-modal__row-value">${a.employee}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Leave Type</span><span class="detail-modal__row-value">${a.leaveType}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Period</span><span class="detail-modal__row-value">${a.period}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">New Allocation</span><span class="detail-modal__row-value">${a.newAllocation}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Carry Forward</span><span class="detail-modal__row-value">${a.carryForward}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Total Days</span><span class="detail-modal__row-value">${a.totalDays}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Used Days</span><span class="detail-modal__row-value">${a.usedDays}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Balance</span><span class="detail-modal__row-value" style="font-weight:600;color:var(--accent)">${a.totalDays - a.usedDays}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Status</span><span class="detail-modal__row-value"><span class="badge badge--${statusClass(a.status)}">${a.status}</span></span></div>
+      </div>
+    </div>
+    <div class="modal__footer"><button class="btn btn--secondary" onclick="closeModal()">Close</button></div>
+  </div>`);
+};
+
+function renderLeavePolicyAssignment() {
+  return `<div class="page-enter">
+    <div class="page-header"><h1 class="page-title">Leave Policy Assignment</h1>
+      <button class="btn btn--primary" onclick="openPolicyAssignmentForm()">${icon('plus')} New Assignment</button>
+    </div>
+
+    <div class="card animate-in">
+      <div class="data-table-wrap"><table class="data-table"><thead><tr>
+        <th>ID</th><th>Employee</th><th>Policy</th><th>Period</th><th>Assigned Date</th><th>Status</th><th></th>
+      </tr></thead><tbody>
+      ${LEAVE_POLICY_ASSIGNMENTS.map(a => `<tr>
+        <td class="text-mono text-accent">${a.id}</td>
+        <td style="font-weight:500;color:var(--text-primary)">${a.employee}</td>
+        <td>${a.policy}</td>
+        <td>${a.period}</td>
+        <td class="text-mono">${a.assignedDate}</td>
+        <td><span class="badge badge--${statusClass(a.status)}">${a.status}</span></td>
+        <td><button class="btn btn--ghost btn--sm" onclick="viewPolicyAssignmentDetail('${a.id}')">${icon('eye')} View</button></td>
+      </tr>`).join('')}
+      </tbody></table></div>
+    </div>
+  </div>`;
+}
+
+window.openPolicyAssignmentForm = function() {
+  openModal(`<div class="modal">
+    <div class="modal__header"><div class="modal__title">New Policy Assignment</div>
+      <button class="modal__close" onclick="closeModal()">${icon('close')}</button></div>
+    <div class="modal__body">
+      <div class="detail-grid">
+        <div class="form-group"><label class="form-label">Employee *</label>
+          <select class="form-select">${TEAM_MEMBERS.filter(m=>m.status==='Active').map(m=>`<option>${m.name}</option>`).join('')}</select></div>
+        <div class="form-group"><label class="form-label">Leave Policy *</label>
+          <select class="form-select">${LEAVE_POLICIES.map(p=>`<option>${p.name}</option>`).join('')}</select></div>
+        <div class="form-group"><label class="form-label">Leave Period *</label>
+          <select class="form-select">${LEAVE_PERIODS.map(p=>`<option>${p.name}</option>`).join('')}</select></div>
+        <div class="form-group"><label class="form-label">Assigned Date *</label><input class="form-input" type="date"></div>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn--primary" onclick="closeModal()">Save</button>
+    </div>
+  </div>`);
+};
+
+window.viewPolicyAssignmentDetail = function(id) {
+  const a = LEAVE_POLICY_ASSIGNMENTS.find(x => x.id === id);
+  if (!a) return;
+  openModal(`<div class="modal">
+    <div class="modal__header"><div class="modal__title">Policy Assignment — ${a.id}</div>
+      <button class="modal__close" onclick="closeModal()">${icon('close')}</button></div>
+    <div class="modal__body">
+      <div class="detail-modal__section">
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Employee</span><span class="detail-modal__row-value">${a.employee}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Policy</span><span class="detail-modal__row-value">${a.policy}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Period</span><span class="detail-modal__row-value">${a.period}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Assigned Date</span><span class="detail-modal__row-value">${a.assignedDate}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Status</span><span class="detail-modal__row-value"><span class="badge badge--${statusClass(a.status)}">${a.status}</span></span></div>
+      </div>
+    </div>
+    <div class="modal__footer"><button class="btn btn--secondary" onclick="closeModal()">Close</button></div>
+  </div>`);
+};
+
+function renderLeaveApprovalFlow() {
+  return `<div class="page-enter">
+    <div class="page-header"><h1 class="page-title">Leave Approval Flow</h1>
+      <button class="btn btn--primary" onclick="openLeaveApprovalFlowForm()">${icon('plus')} New Flow</button>
+    </div>
+
+    <div class="card animate-in">
+      <div class="data-table-wrap"><table class="data-table"><thead><tr>
+        <th>ID</th><th>Name</th><th>Leave Type</th><th>Condition</th><th>Steps</th><th>Status</th><th></th>
+      </tr></thead><tbody>
+      ${LEAVE_APPROVAL_FLOWS.map(f => `<tr>
+        <td class="text-mono text-accent">${f.id}</td>
+        <td style="font-weight:500;color:var(--text-primary)">${f.name}</td>
+        <td>${f.leaveType}</td>
+        <td>${f.condition || '-'}</td>
+        <td class="text-mono">${f.steps.length} steps</td>
+        <td><span class="badge badge--${statusClass(f.status)}">${f.status}</span></td>
+        <td><button class="btn btn--ghost btn--sm" onclick="viewLeaveApprovalFlowDetail('${f.id}')">${icon('eye')} View</button></td>
+      </tr>`).join('')}
+      </tbody></table></div>
+    </div>
+  </div>`;
+}
+
+window.openLeaveApprovalFlowForm = function() {
+  openModal(`<div class="modal modal--lg">
+    <div class="modal__header"><div class="modal__title">New Leave Approval Flow</div>
+      <button class="modal__close" onclick="closeModal()">${icon('close')}</button></div>
+    <div class="modal__body">
+      <div class="detail-grid">
+        <div class="form-group"><label class="form-label">Flow Name *</label><input class="form-input" placeholder="e.g. Standard Leave Approval"></div>
+        <div class="form-group"><label class="form-label">Leave Type *</label>
+          <select class="form-select">${LEAVE_TYPE_LIST.map(lt=>`<option>${lt.name}</option>`).join('')}</select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Condition</label><input class="form-input" placeholder="e.g. > 5 days"></div>
+      <div class="section-title" style="margin-top:14px">Approval Steps</div>
+      <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Level</th><th>Role</th><th>Approver</th></tr></thead><tbody>
+        <tr><td>1</td><td><input class="form-input" placeholder="e.g. Direct Manager" style="width:160px"></td><td><select class="form-select" style="width:160px">${TEAM_MEMBERS.map(m=>`<option>${m.name}</option>`).join('')}</select></td></tr>
+        <tr><td>2</td><td><input class="form-input" placeholder="e.g. HR Manager" style="width:160px"></td><td><select class="form-select" style="width:160px"><option>-</option>${TEAM_MEMBERS.map(m=>`<option>${m.name}</option>`).join('')}</select></td></tr>
+        <tr><td>3</td><td><input class="form-input" placeholder="e.g. HR Director" style="width:160px"></td><td><select class="form-select" style="width:160px"><option>-</option>${TEAM_MEMBERS.map(m=>`<option>${m.name}</option>`).join('')}</select></td></tr>
+      </tbody></table></div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn--primary" onclick="closeModal()">Save</button>
+    </div>
+  </div>`);
+};
+
+window.viewLeaveApprovalFlowDetail = function(id) {
+  const f = LEAVE_APPROVAL_FLOWS.find(x => x.id === id);
+  if (!f) return;
+  openModal(`<div class="modal modal--lg">
+    <div class="modal__header"><div class="modal__title">Approval Flow — ${f.name}</div>
+      <button class="modal__close" onclick="closeModal()">${icon('close')}</button></div>
+    <div class="modal__body">
+      <div class="detail-modal__section">
+        <div class="detail-modal__row"><span class="detail-modal__row-label">ID</span><span class="detail-modal__row-value">${f.id}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Name</span><span class="detail-modal__row-value">${f.name}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Leave Type</span><span class="detail-modal__row-value">${f.leaveType}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Condition</span><span class="detail-modal__row-value">${f.condition || 'None'}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Status</span><span class="detail-modal__row-value"><span class="badge badge--${statusClass(f.status)}">${f.status}</span></span></div>
+      </div>
+      <div class="section-title" style="margin-top:16px">Approval Steps</div>
+      <div class="approval-flow"><div class="approval-flow__steps">
+        ${f.steps.map(s => `<div class="approval-step done">
+          <div class="approval-step__dot">${s.level}</div>
+          <div class="approval-step__content">
+            <div class="approval-step__label">${s.role}</div>
+            <div class="approval-step__person">${s.approver}</div>
+          </div>
+        </div>`).join('')}
+      </div></div>
+    </div>
+    <div class="modal__footer"><button class="btn btn--secondary" onclick="closeModal()">Close</button></div>
+  </div>`);
+};
+
+function renderExpenseApprovalFlow() {
+  return `<div class="page-enter">
+    <div class="page-header"><h1 class="page-title">Expense Approval Flow</h1>
+      <button class="btn btn--primary" onclick="openExpenseApprovalFlowForm()">${icon('plus')} New Flow</button>
+    </div>
+
+    <div class="card animate-in">
+      <div class="data-table-wrap"><table class="data-table"><thead><tr>
+        <th>ID</th><th>Name</th><th>Condition</th><th>Steps</th><th>Status</th><th></th>
+      </tr></thead><tbody>
+      ${EXPENSE_APPROVAL_FLOWS.map(f => `<tr>
+        <td class="text-mono text-accent">${f.id}</td>
+        <td style="font-weight:500;color:var(--text-primary)">${f.name}</td>
+        <td>${f.condition}</td>
+        <td class="text-mono">${f.steps.length} steps</td>
+        <td><span class="badge badge--${statusClass(f.status)}">${f.status}</span></td>
+        <td><button class="btn btn--ghost btn--sm" onclick="viewExpenseApprovalFlowDetail('${f.id}')">${icon('eye')} View</button></td>
+      </tr>`).join('')}
+      </tbody></table></div>
+    </div>
+  </div>`;
+}
+
+window.openExpenseApprovalFlowForm = function() {
+  openModal(`<div class="modal modal--lg">
+    <div class="modal__header"><div class="modal__title">New Expense Approval Flow</div>
+      <button class="modal__close" onclick="closeModal()">${icon('close')}</button></div>
+    <div class="modal__body">
+      <div class="form-group"><label class="form-label">Flow Name *</label><input class="form-input" placeholder="e.g. Standard Expense Approval"></div>
+      <div class="form-group"><label class="form-label">Condition *</label><input class="form-input" placeholder="e.g. < ¥5,000"></div>
+      <div class="section-title" style="margin-top:14px">Approval Steps</div>
+      <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Level</th><th>Role</th><th>Approver</th></tr></thead><tbody>
+        <tr><td>1</td><td><input class="form-input" placeholder="e.g. Direct Manager" style="width:160px"></td><td><select class="form-select" style="width:160px">${TEAM_MEMBERS.map(m=>`<option>${m.name}</option>`).join('')}</select></td></tr>
+        <tr><td>2</td><td><input class="form-input" placeholder="e.g. Finance Manager" style="width:160px"></td><td><select class="form-select" style="width:160px"><option>-</option>${TEAM_MEMBERS.map(m=>`<option>${m.name}</option>`).join('')}</select></td></tr>
+        <tr><td>3</td><td><input class="form-input" placeholder="e.g. CFO" style="width:160px"></td><td><select class="form-select" style="width:160px"><option>-</option>${TEAM_MEMBERS.map(m=>`<option>${m.name}</option>`).join('')}</select></td></tr>
+      </tbody></table></div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn--primary" onclick="closeModal()">Save</button>
+    </div>
+  </div>`);
+};
+
+window.viewExpenseApprovalFlowDetail = function(id) {
+  const f = EXPENSE_APPROVAL_FLOWS.find(x => x.id === id);
+  if (!f) return;
+  openModal(`<div class="modal modal--lg">
+    <div class="modal__header"><div class="modal__title">Expense Approval Flow — ${f.name}</div>
+      <button class="modal__close" onclick="closeModal()">${icon('close')}</button></div>
+    <div class="modal__body">
+      <div class="detail-modal__section">
+        <div class="detail-modal__row"><span class="detail-modal__row-label">ID</span><span class="detail-modal__row-value">${f.id}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Name</span><span class="detail-modal__row-value">${f.name}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Condition</span><span class="detail-modal__row-value">${f.condition}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Status</span><span class="detail-modal__row-value"><span class="badge badge--${statusClass(f.status)}">${f.status}</span></span></div>
+      </div>
+      <div class="section-title" style="margin-top:16px">Approval Steps</div>
+      <div class="approval-flow"><div class="approval-flow__steps">
+        ${f.steps.map(s => `<div class="approval-step done">
+          <div class="approval-step__dot">${s.level}</div>
+          <div class="approval-step__content">
+            <div class="approval-step__label">${s.role}</div>
+            <div class="approval-step__person">${s.approver}</div>
+          </div>
+        </div>`).join('')}
+      </div></div>
+    </div>
+    <div class="modal__footer"><button class="btn btn--secondary" onclick="closeModal()">Close</button></div>
+  </div>`);
+};
+
+function renderOrganization() {
+  const org = ORG_UNITS[0];
+  return `<div class="page-enter">
+    <div class="page-header"><h1 class="page-title">Organization</h1></div>
+
+    <div class="card animate-in" style="padding:24px">
+      <div style="text-align:center;margin-bottom:24px">
+        <div style="display:inline-block;padding:16px 32px;border:2px solid var(--border);border-radius:var(--radius-lg);background:var(--bg-muted)">
+          <div style="font-weight:700;font-size:1.05rem;color:var(--text-primary)">${org.name}</div>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px">${org.type}</div>
+          <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:4px">Head: ${org.head} · ${org.members} members</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:center;margin-bottom:16px">
+        <div style="width:2px;height:24px;background:var(--border)"></div>
+      </div>
+      <div style="display:flex;justify-content:center;margin-bottom:16px">
+        <div style="width:60%;height:2px;background:var(--border)"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px">
+        ${org.children.map(dept => `
+          <div style="padding:16px;border:1px solid var(--border);border-radius:var(--radius-lg);text-align:center;cursor:pointer;transition:0.2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'" onclick="viewOrgUnit('${dept.id}')">
+            <div style="font-weight:600;font-size:0.9rem;color:var(--text-primary)">${dept.name}</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px">${dept.type}</div>
+            <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:6px">Head: ${dept.head}</div>
+            <div style="font-size:0.78rem;color:var(--text-muted)">${dept.members} member${dept.members > 1 ? 's' : ''}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="card animate-in" style="margin-top:16px">
+      <div class="card__header"><div class="card__title">Department Summary</div></div>
+      <div class="data-table-wrap"><table class="data-table"><thead><tr>
+        <th>Department</th><th>Head</th><th>Members</th><th></th>
+      </tr></thead><tbody>
+      ${org.children.map(d => `<tr>
+        <td style="font-weight:500;color:var(--text-primary)">${d.name}</td>
+        <td>${d.head}</td>
+        <td class="text-mono">${d.members}</td>
+        <td><button class="btn btn--ghost btn--sm" onclick="viewOrgUnit('${d.id}')">${icon('eye')} View</button></td>
+      </tr>`).join('')}
+      </tbody></table></div>
+    </div>
+  </div>`;
+}
+
+window.viewOrgUnit = function(id) {
+  const org = ORG_UNITS[0];
+  const dept = org.children.find(d => d.id === id);
+  if (!dept) return;
+  const deptMembers = TEAM_MEMBERS.filter(m => m.department === dept.name);
+  openModal(`<div class="modal modal--lg">
+    <div class="modal__header"><div class="modal__title">${dept.name} Department</div>
+      <button class="modal__close" onclick="closeModal()">${icon('close')}</button></div>
+    <div class="modal__body">
+      <div class="detail-modal__section">
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Department</span><span class="detail-modal__row-value">${dept.name}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Head</span><span class="detail-modal__row-value">${dept.head}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Members</span><span class="detail-modal__row-value">${dept.members}</span></div>
+      </div>
+      ${deptMembers.length > 0 ? `
+        <div class="section-title" style="margin-top:16px">Team Members</div>
+        <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Name</th><th>Designation</th><th>Status</th></tr></thead><tbody>
+          ${deptMembers.map(m => `<tr>
+            <td style="font-weight:500;color:var(--text-primary)">${m.name}</td>
+            <td>${m.designation}</td>
+            <td><span class="badge badge--${statusClass(m.status)}">${m.status}</span></td>
+          </tr>`).join('')}
+        </tbody></table></div>` : ''}
+    </div>
+    <div class="modal__footer"><button class="btn btn--secondary" onclick="closeModal()">Close</button></div>
+  </div>`);
+};
+
+function renderMessages() {
+  const unreadCount = MESSAGES.filter(m => !m.read).length;
+  return `<div class="page-enter">
+    <div class="page-header"><h1 class="page-title">Messages</h1>
+      <span class="text-sm text-muted">${unreadCount} unread</span>
+    </div>
+
+    <div class="filters animate-in">
+      <span class="filter-chip active" onclick="filterMessages(this,'all')">All</span>
+      <span class="filter-chip" onclick="filterMessages(this,'unread')">Unread</span>
+      <span class="filter-chip" onclick="filterMessages(this,'notification')">Notifications</span>
+      <span class="filter-chip" onclick="filterMessages(this,'announcement')">Announcements</span>
+    </div>
+
+    <div class="card animate-in">
+      <div id="messageList">
+        ${MESSAGES.map(m => `
+          <div class="wallet-tx" style="cursor:pointer;${!m.read ? 'background:var(--accent-bg);' : ''}" data-msg-read="${m.read}" data-msg-type="${m.type}" onclick="viewMessage('${m.id}')">
+            <div class="wallet-tx__icon" style="width:36px;height:36px;border-radius:50%;background:${!m.read ? 'var(--accent)' : 'var(--bg-muted)'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <span style="font-size:0.7rem;color:${!m.read ? '#fff' : 'var(--text-muted)'}">${m.type === 'notification' ? '!' : 'A'}</span>
+            </div>
+            <div class="wallet-tx__info" style="flex:1;min-width:0">
+              <div class="wallet-tx__title" style="${!m.read ? 'font-weight:600' : ''}">${m.subject}</div>
+              <div class="wallet-tx__date">${m.from} · ${m.date}</div>
+            </div>
+            ${!m.read ? '<div style="width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0"></div>' : ''}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+window.filterMessages = function(el, filter) {
+  el.parentElement.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('#messageList .wallet-tx').forEach(msg => {
+    const isRead = msg.dataset.msgRead === 'true';
+    const type = msg.dataset.msgType;
+    if (filter === 'all') msg.style.display = '';
+    else if (filter === 'unread') msg.style.display = isRead ? 'none' : '';
+    else msg.style.display = type === filter ? '' : 'none';
+  });
+};
+
+window.viewMessage = function(id) {
+  const m = MESSAGES.find(x => x.id === id);
+  if (!m) return;
+  openModal(`<div class="modal">
+    <div class="modal__header"><div class="modal__title">${m.subject}</div>
+      <button class="modal__close" onclick="closeModal()">${icon('close')}</button></div>
+    <div class="modal__body">
+      <div class="detail-modal__section">
+        <div class="detail-modal__row"><span class="detail-modal__row-label">From</span><span class="detail-modal__row-value">${m.from}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Date</span><span class="detail-modal__row-value">${m.date}</span></div>
+        <div class="detail-modal__row"><span class="detail-modal__row-label">Type</span><span class="detail-modal__row-value"><span class="badge badge--draft">${m.type}</span></span></div>
+      </div>
+      <div style="margin-top:16px;padding:16px;background:var(--bg-muted);border-radius:var(--radius);line-height:1.6;color:var(--text-primary)">${m.body}</div>
+    </div>
+    <div class="modal__footer"><button class="btn btn--secondary" onclick="closeModal()">Close</button></div>
+  </div>`);
+};
 
 // ── Interactive Functions ─────────────────────────────────────
 
@@ -1198,13 +1973,23 @@ const PAGES = {
   dashboard: { title: 'Dashboard', render: renderDashboard },
   team: { title: 'Employees', render: renderTeam },
   services: { title: 'Service Progress', render: renderServices },
+  timeoff: { title: 'Time Off', render: renderTimeOff },
   leave: { title: 'Leave Applications', render: renderLeave },
   holidays: { title: 'Holiday List', render: renderHolidays },
+  'leave-type': { title: 'Leave Types', render: renderLeaveType },
+  'leave-policy': { title: 'Leave Policies', render: renderLeavePolicy },
+  'leave-period': { title: 'Leave Periods', render: renderLeavePeriod },
+  'leave-allocation': { title: 'Leave Allocation', render: renderLeaveAllocation },
+  'leave-policy-assignment': { title: 'Policy Assignment', render: renderLeavePolicyAssignment },
+  'leave-approval-flow': { title: 'Leave Approval Flow', render: renderLeaveApprovalFlow },
   salary: { title: 'Salary Slips', render: renderSalary },
   expenses: { title: 'Expense Claims', render: renderExpenses },
+  'expense-approval-flow': { title: 'Expense Approval Flow', render: renderExpenseApprovalFlow },
   contract: { title: 'Contract', render: renderContract },
   wallet: { title: 'Wallet', render: renderWallet },
+  organization: { title: 'Organization', render: renderOrganization },
   tickets: { title: 'Support Tickets', render: renderTickets },
+  messages: { title: 'Messages', render: renderMessages },
   profile: { title: 'My Profile', render: renderProfile },
   login: { title: 'Login', render: () => { showLoginScreen(); return ''; } },
   onboarding: { title: 'Onboarding', render: () => { showOnboarding(); return ''; } },

@@ -31,6 +31,14 @@ const ICONS = {
   chevronRight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
   wallet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 010-4h14v4"/><path d="M3 5v14a2 2 0 002 2h16v-5"/><path d="M18 12a2 2 0 100 4h4v-4z"/></svg>',
   layers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',
+  edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>',
+  messageSquare: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>',
+  building: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M8 10h.01M16 10h.01M12 10h.01M8 14h.01M16 14h.01M12 14h.01"/></svg>',
+  gitBranch: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 01-9 9"/></svg>',
+  userPlus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>',
+  clipboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>',
+  checkSquare: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>',
+  mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>',
   logout: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
   copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>',
 };
@@ -225,6 +233,73 @@ const EXPENSE_APPROVAL_FLOWS = {
     { step: 'Manager Approval', actor: 'Li Wei', role: 'Direct Manager', time: '2025-02-11 10:00', status: 'rejected', comment: 'Monthly taxi exceeds policy limit of ¥800. Please resubmit partial amount.' },
   ],
 };
+
+// ── Mock Data: Leave Config, Org, Messages ─────────────────
+
+const LEAVE_TYPE_LIST = [
+  { id: 'LT-001', name: 'Annual Leave', maxDays: 15, isCarryForward: true, maxCarryForward: 5, isWithoutPay: false, allowNegative: false, includeHolidays: false, isCompensatory: false },
+  { id: 'LT-002', name: 'Sick Leave', maxDays: 10, isCarryForward: false, maxCarryForward: 0, isWithoutPay: false, allowNegative: false, includeHolidays: false, isCompensatory: false },
+  { id: 'LT-003', name: 'Personal Leave', maxDays: 5, isCarryForward: false, maxCarryForward: 0, isWithoutPay: false, allowNegative: false, includeHolidays: false, isCompensatory: false },
+  { id: 'LT-004', name: 'Compensatory Leave', maxDays: 3, isCarryForward: false, maxCarryForward: 0, isWithoutPay: false, allowNegative: false, includeHolidays: false, isCompensatory: true },
+  { id: 'LT-005', name: 'Maternity Leave', maxDays: 98, isCarryForward: false, maxCarryForward: 0, isWithoutPay: false, allowNegative: false, includeHolidays: true, isCompensatory: false },
+  { id: 'LT-006', name: 'Unpaid Leave', maxDays: 30, isCarryForward: false, maxCarryForward: 0, isWithoutPay: true, allowNegative: true, includeHolidays: false, isCompensatory: false },
+];
+
+const LEAVE_POLICIES = [
+  { id: 'LP-001', name: 'Standard Employee Policy', description: 'Default policy for full-time employees', leaveTypes: [{type:'Annual Leave',days:15},{type:'Sick Leave',days:10},{type:'Personal Leave',days:5}], status: 'Active' },
+  { id: 'LP-002', name: 'Contractor Policy', description: 'Limited leave for contractors', leaveTypes: [{type:'Annual Leave',days:10},{type:'Sick Leave',days:5}], status: 'Active' },
+  { id: 'LP-003', name: 'Senior Employee Policy', description: 'Enhanced leave for senior staff', leaveTypes: [{type:'Annual Leave',days:20},{type:'Sick Leave',days:15},{type:'Personal Leave',days:7}], status: 'Active' },
+];
+
+const LEAVE_PERIODS = [
+  { id: 'PD-001', name: '2025 Leave Year', from: '2025-01-01', to: '2025-12-31', isActive: true, company: 'RampingUp Technology Ltd.' },
+  { id: 'PD-002', name: '2024 Leave Year', from: '2024-01-01', to: '2024-12-31', isActive: false, company: 'RampingUp Technology Ltd.' },
+];
+
+const LEAVE_ALLOCATIONS = [
+  { id: 'LA-001', employee: 'Zhang Rui', leaveType: 'Annual Leave', period: '2025', totalDays: 15, usedDays: 7, newAllocation: 15, carryForward: 0, status: 'Active' },
+  { id: 'LA-002', employee: 'Zhang Rui', leaveType: 'Sick Leave', period: '2025', totalDays: 10, usedDays: 2, newAllocation: 10, carryForward: 0, status: 'Active' },
+  { id: 'LA-003', employee: 'Li Wei', leaveType: 'Annual Leave', period: '2025', totalDays: 20, usedDays: 3, newAllocation: 20, carryForward: 0, status: 'Active' },
+  { id: 'LA-004', employee: 'Wang Chen', leaveType: 'Annual Leave', period: '2025', totalDays: 15, usedDays: 5, newAllocation: 12, carryForward: 3, status: 'Active' },
+  { id: 'LA-005', employee: 'Sarah Johnson', leaveType: 'Annual Leave', period: '2025', totalDays: 15, usedDays: 0, newAllocation: 15, carryForward: 0, status: 'Active' },
+];
+
+const LEAVE_POLICY_ASSIGNMENTS = [
+  { id: 'PA-001', employee: 'Zhang Rui', policy: 'Standard Employee Policy', period: '2025 Leave Year', assignedDate: '2025-01-01', status: 'Active' },
+  { id: 'PA-002', employee: 'Li Wei', policy: 'Senior Employee Policy', period: '2025 Leave Year', assignedDate: '2025-01-01', status: 'Active' },
+  { id: 'PA-003', employee: 'Wang Chen', policy: 'Standard Employee Policy', period: '2025 Leave Year', assignedDate: '2025-01-01', status: 'Active' },
+  { id: 'PA-004', employee: 'Sarah Johnson', policy: 'Standard Employee Policy', period: '2025 Leave Year', assignedDate: '2025-01-01', status: 'Active' },
+  { id: 'PA-005', employee: 'Alex Kim', policy: 'Contractor Policy', period: '2025 Leave Year', assignedDate: '2025-01-01', status: 'Active' },
+];
+
+const LEAVE_APPROVAL_FLOW_CONFIGS = [
+  { id: 'AF-001', name: 'Standard Leave Approval', leaveType: 'Annual Leave', steps: [{level:1,role:'Direct Manager',approver:'Li Wei'},{level:2,role:'HR Manager',approver:'HR Team'}], status: 'Active' },
+  { id: 'AF-002', name: 'Sick Leave Approval', leaveType: 'Sick Leave', steps: [{level:1,role:'Direct Manager',approver:'Li Wei'}], status: 'Active' },
+  { id: 'AF-003', name: 'Extended Leave Approval', leaveType: 'Annual Leave', steps: [{level:1,role:'Direct Manager',approver:'Li Wei'},{level:2,role:'Department Head',approver:'Wang Chen'},{level:3,role:'HR Director',approver:'HR Team'}], status: 'Active', condition: '> 5 days' },
+];
+
+const EXPENSE_FLOW_CONFIGS = [
+  { id: 'EAF-001', name: 'Standard Expense Approval', condition: '< \u00a55,000', steps: [{level:1,role:'Direct Manager',approver:'Li Wei'}], status: 'Active' },
+  { id: 'EAF-002', name: 'Large Expense Approval', condition: '\u2265 \u00a55,000', steps: [{level:1,role:'Direct Manager',approver:'Li Wei'},{level:2,role:'Finance Manager',approver:'Tanaka Yuki'},{level:3,role:'CFO',approver:'CFO Office'}], status: 'Active' },
+];
+
+const ORG_UNITS = [
+  { id: 'OU-001', name: 'RampingUp Technology Ltd.', type: 'Company', head: 'CEO', members: 8, children: [
+    { id: 'OU-002', name: 'Engineering', type: 'Department', head: 'Li Wei', members: 4 },
+    { id: 'OU-003', name: 'Product', type: 'Department', head: 'Wang Chen', members: 1 },
+    { id: 'OU-004', name: 'Design', type: 'Department', head: 'Sarah Johnson', members: 1 },
+    { id: 'OU-005', name: 'Marketing', type: 'Department', head: 'Maria Santos', members: 1 },
+    { id: 'OU-006', name: 'Finance', type: 'Department', head: 'Tanaka Yuki', members: 1 },
+  ]},
+];
+
+const MESSAGES = [
+  { id: 'MSG-001', subject: 'Leave Request LV-2403 Approved', from: 'System', date: '2025-03-21', read: false, type: 'notification', body: 'Your annual leave request from Apr 5 to Apr 6 has been approved by Li Wei.' },
+  { id: 'MSG-002', subject: 'March Salary Slip Available', from: 'Payroll', date: '2025-03-25', read: false, type: 'notification', body: 'Your salary slip for March 2025 is now available. Net pay: \u00a525,180.' },
+  { id: 'MSG-003', subject: 'Expense EC-2402 Reimbursed', from: 'Finance', date: '2025-03-10', read: true, type: 'notification', body: 'Your expense claim EC-2402 (\u00a52,899) has been reimbursed to your bank account.' },
+  { id: 'MSG-004', subject: 'Welcome to RampingUp', from: 'HR', date: '2025-03-15', read: true, type: 'announcement', body: 'Welcome aboard! Please complete your onboarding checklist.' },
+  { id: 'MSG-005', subject: 'Company Holiday Notice \u2014 Qingming', from: 'HR', date: '2025-03-28', read: false, type: 'announcement', body: 'Please note that April 4 (Qingming Festival) is a company holiday.' },
+];
 
 // ── Helpers ──────────────────────────────────────────────────
 
@@ -602,6 +677,7 @@ function renderLeave() {
         <table class="data-table" id="leaveTable">
           <thead>
             <tr>
+              <th style="width:32px"></th>
               <th>ID</th>
               <th>Type</th>
               <th>From</th>
@@ -610,12 +686,12 @@ function renderLeave() {
               <th>Half Day</th>
               <th>Status</th>
               <th>Approver</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
             ${LEAVE_REQUESTS.map(lr => `
-              <tr data-status="${lr.status}">
+              <tr class="expandable-trigger" data-status="${lr.status}" data-id="${lr.id}" onclick="toggleLeaveDetail('${lr.id}', this)">
+                <td><span class="expand-icon">${ICONS.chevronRight}</span></td>
                 <td class="td-mono" style="color:var(--green-600)">${lr.id}</td>
                 <td class="td-primary">${lr.type}</td>
                 <td class="td-mono">${lr.from}</td>
@@ -624,16 +700,12 @@ function renderLeave() {
                 <td>${lr.halfDay}</td>
                 <td><span class="badge badge--${statusClass(lr.status)}">${lr.status}</span></td>
                 <td>${lr.approver}</td>
-                <td><button class="btn btn--ghost btn--sm" onclick="viewLeaveDetail('${lr.id}')">${icon('eye', 14)} View</button></td>
               </tr>
             `).join('')}
           </tbody>
         </table>
       </div>
     </div>
-
-    <!-- Leave Detail Panel -->
-    <div id="leaveDetailPanel" style="display:none;"></div>
   `;
 }
 
@@ -693,27 +765,34 @@ function renderSalary() {
     </div>
 
     <!-- Summary Cards -->
-    <div class="stats-row" style="grid-template-columns:repeat(3,1fr);">
-      <div class="stat-card animate-in">
-        <div class="stat-card__header">
-          <div class="stat-card__icon stat-card__icon--green">${icon('dollar')}</div>
+    <div class="balance-grid">
+      <div class="metric-card animate-in">
+        <div class="metric-card__icon metric-card__icon--green">${icon('dollar')}</div>
+        <div class="metric-card__info">
+          <div class="metric-card__value">${formatCurrency(24660)}</div>
+          <div class="metric-card__label">Avg Net Pay</div>
         </div>
-        <div class="stat-card__value">${formatCurrency(24660)}</div>
-        <div class="stat-card__label">Avg Net Pay</div>
       </div>
-      <div class="stat-card animate-in">
-        <div class="stat-card__header">
-          <div class="stat-card__icon stat-card__icon--blue">${icon('arrowUp')}</div>
+      <div class="metric-card animate-in">
+        <div class="metric-card__icon metric-card__icon--blue">${icon('arrowUp')}</div>
+        <div class="metric-card__info">
+          <div class="metric-card__value">${formatCurrency(96000)}</div>
+          <div class="metric-card__label">YTD Gross</div>
         </div>
-        <div class="stat-card__value">${formatCurrency(96000)}</div>
-        <div class="stat-card__label">YTD Gross</div>
       </div>
-      <div class="stat-card animate-in">
-        <div class="stat-card__header">
-          <div class="stat-card__icon stat-card__icon--amber">${icon('arrowDown')}</div>
+      <div class="metric-card animate-in">
+        <div class="metric-card__icon metric-card__icon--amber">${icon('arrowDown')}</div>
+        <div class="metric-card__info">
+          <div class="metric-card__value">${formatCurrency(20460)}</div>
+          <div class="metric-card__label">YTD Deductions</div>
         </div>
-        <div class="stat-card__value">${formatCurrency(20460)}</div>
-        <div class="stat-card__label">YTD Deductions</div>
+      </div>
+      <div class="metric-card animate-in">
+        <div class="metric-card__icon metric-card__icon--purple">${icon('wallet')}</div>
+        <div class="metric-card__info">
+          <div class="metric-card__value">${formatCurrency(SALARY_SLIPS[0].net)}</div>
+          <div class="metric-card__label">Latest Net Pay</div>
+        </div>
       </div>
     </div>
 
@@ -723,73 +802,29 @@ function renderSalary() {
         <table class="data-table" id="salaryTable">
           <thead>
             <tr>
+              <th style="width:32px"></th>
               <th>Period</th>
               <th>Pay Date</th>
               <th>Gross</th>
               <th>Deductions</th>
               <th>Net Pay</th>
               <th>Status</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
             ${SALARY_SLIPS.map(ss => `
-              <tr class="salary-row-trigger" data-slip-id="${ss.id}">
+              <tr class="expandable-trigger" data-slip-id="${ss.id}" data-id="${ss.id}" onclick="toggleSalaryDetail('${ss.id}', this)">
+                <td><span class="expand-icon">${ICONS.chevronRight}</span></td>
                 <td class="td-primary">${ss.period}</td>
                 <td class="td-mono">${ss.payDate}</td>
                 <td class="td-mono">${formatCurrency(ss.gross)}</td>
                 <td class="td-mono td-red">${formatCurrency(ss.deductions)}</td>
                 <td class="td-mono td-green" style="font-weight:600">${formatCurrency(ss.net)}</td>
                 <td><span class="badge badge--${statusClass(ss.status)}">${ss.status}</span></td>
-                <td><button class="btn btn--ghost btn--sm" onclick="showSalaryDetail('${ss.id}')">${icon('eye', 14)} Detail</button></td>
               </tr>
             `).join('')}
           </tbody>
         </table>
-      </div>
-    </div>
-
-    <!-- Salary Detail Panel (inline expand) -->
-    <div id="salaryDetailPanel" style="display:none;" class="mt-6">
-      <div class="card">
-        <div class="card__header">
-          <div class="card__title">Salary Breakdown \u2014 <span id="salaryDetailPeriod" style="color:var(--green-600)"></span></div>
-          <button class="btn btn--ghost btn--sm" onclick="document.getElementById('salaryDetailPanel').style.display='none'">${icon('x', 14)} Close</button>
-        </div>
-        <div class="card__body">
-          <div class="grid-2" style="margin-bottom:0;">
-            <div class="salary-section">
-              <div class="salary-section__title">Earnings</div>
-              ${SALARY_DETAIL.earnings.map(e => `
-                <div class="salary-row">
-                  <span class="salary-row__label">${e.component}</span>
-                  <span class="salary-row__value" style="color:var(--green-600)">${formatCurrency(e.amount)}</span>
-                </div>
-              `).join('')}
-              <div class="salary-total">
-                <span class="salary-total__label">Total Earnings</span>
-                <span class="salary-total__value" style="color:var(--green-600)">${formatCurrency(SALARY_DETAIL.earnings.reduce((s, e) => s + e.amount, 0))}</span>
-              </div>
-            </div>
-            <div class="salary-section">
-              <div class="salary-section__title">Deductions</div>
-              ${SALARY_DETAIL.deductions.map(d => `
-                <div class="salary-row">
-                  <span class="salary-row__label">${d.component}</span>
-                  <span class="salary-row__value" style="color:var(--red-500)">${formatCurrency(d.amount)}</span>
-                </div>
-              `).join('')}
-              <div class="salary-total">
-                <span class="salary-total__label">Total Deductions</span>
-                <span class="salary-total__value" style="color:var(--red-500)">${formatCurrency(SALARY_DETAIL.deductions.reduce((s, d) => s + d.amount, 0))}</span>
-              </div>
-            </div>
-          </div>
-          <div class="net-pay-bar">
-            <div class="net-pay-bar__label">Net Pay</div>
-            <div class="net-pay-bar__value">${formatCurrency(25180)}</div>
-          </div>
-        </div>
       </div>
     </div>
   `;
@@ -811,27 +846,34 @@ function renderExpenses() {
     </div>
 
     <!-- Summary -->
-    <div class="stats-row" style="grid-template-columns:repeat(3,1fr);">
-      <div class="stat-card animate-in">
-        <div class="stat-card__header">
-          <div class="stat-card__icon stat-card__icon--amber">${icon('clock')}</div>
+    <div class="balance-grid">
+      <div class="metric-card animate-in">
+        <div class="metric-card__icon metric-card__icon--amber">${icon('clock')}</div>
+        <div class="metric-card__info">
+          <div class="metric-card__value">${formatCurrency(totalPending)}</div>
+          <div class="metric-card__label">Pending Claims</div>
         </div>
-        <div class="stat-card__value">${formatCurrency(totalPending)}</div>
-        <div class="stat-card__label">Pending Claims</div>
       </div>
-      <div class="stat-card animate-in">
-        <div class="stat-card__header">
-          <div class="stat-card__icon stat-card__icon--green">${icon('dollar')}</div>
+      <div class="metric-card animate-in">
+        <div class="metric-card__icon metric-card__icon--green">${icon('dollar')}</div>
+        <div class="metric-card__info">
+          <div class="metric-card__value">${formatCurrency(totalApproved)}</div>
+          <div class="metric-card__label">Approved YTD</div>
         </div>
-        <div class="stat-card__value">${formatCurrency(totalApproved)}</div>
-        <div class="stat-card__label">Approved YTD</div>
       </div>
-      <div class="stat-card animate-in">
-        <div class="stat-card__header">
-          <div class="stat-card__icon stat-card__icon--blue">${icon('receipt')}</div>
+      <div class="metric-card animate-in">
+        <div class="metric-card__icon metric-card__icon--blue">${icon('receipt')}</div>
+        <div class="metric-card__info">
+          <div class="metric-card__value">${EXPENSES.length}</div>
+          <div class="metric-card__label">Total Claims</div>
         </div>
-        <div class="stat-card__value">${EXPENSES.length}</div>
-        <div class="stat-card__label">Total Claims</div>
+      </div>
+      <div class="metric-card animate-in">
+        <div class="metric-card__icon metric-card__icon--purple">${icon('wallet')}</div>
+        <div class="metric-card__info">
+          <div class="metric-card__value">${formatCurrency(5000 - totalApproved)}</div>
+          <div class="metric-card__label">Monthly Budget Left</div>
+        </div>
       </div>
     </div>
 
@@ -850,6 +892,7 @@ function renderExpenses() {
         <table class="data-table" id="expenseTable">
           <thead>
             <tr>
+              <th style="width:32px"></th>
               <th>ID</th>
               <th>Date</th>
               <th>Category</th>
@@ -857,12 +900,12 @@ function renderExpenses() {
               <th>Items</th>
               <th>Amount</th>
               <th>Status</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
             ${EXPENSES.map(e => `
-              <tr data-status="${e.status}">
+              <tr class="expandable-trigger" data-status="${e.status}" data-id="${e.id}" onclick="toggleExpenseDetail('${e.id}', this)">
+                <td><span class="expand-icon">${ICONS.chevronRight}</span></td>
                 <td class="td-mono" style="color:var(--green-600)">${e.id}</td>
                 <td class="td-mono">${e.date}</td>
                 <td><span class="badge-plain badge-plain--gray">${e.category}</span></td>
@@ -870,16 +913,12 @@ function renderExpenses() {
                 <td class="td-mono">${e.items}</td>
                 <td class="td-mono" style="font-weight:600;color:var(--gray-900)">${formatCurrency(e.amount)}</td>
                 <td><span class="badge badge--${statusClass(e.status)}">${e.status}</span></td>
-                <td><button class="btn btn--ghost btn--sm" onclick="viewExpenseDetail('${e.id}')">${icon('eye', 14)} View</button></td>
               </tr>
             `).join('')}
           </tbody>
         </table>
       </div>
     </div>
-
-    <!-- Expense Detail Panel -->
-    <div id="expenseDetailPanel" style="display:none;"></div>
   `;
 }
 
@@ -1166,6 +1205,973 @@ function renderProfileBank() {
   `;
 }
 
+// ── Time Off (Summary) ─────────────────────────────────────
+
+function renderTimeOff() {
+  const approvedLeaves = LEAVE_REQUESTS.filter(l => l.status === 'Approved');
+  const now = new Date();
+  const thisMonth = approvedLeaves.filter(l => {
+    const d = new Date(l.from);
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+  const upcoming = approvedLeaves.filter(l => new Date(l.from) > now);
+  const daysThisMonth = thisMonth.reduce((s, l) => s + l.days, 0);
+
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Time Off</div>
+        <div class="page-subtitle">Overview of approved time off across the team</div>
+      </div>
+    </div>
+
+    <div class="stats-row" style="grid-template-columns:repeat(3,1fr);">
+      <div class="stat-card animate-in">
+        <div class="stat-card__header">
+          <div class="stat-card__icon stat-card__icon--blue">${icon('calendar')}</div>
+        </div>
+        <div class="stat-card__value">${daysThisMonth}</div>
+        <div class="stat-card__label">Days Off This Month</div>
+      </div>
+      <div class="stat-card animate-in">
+        <div class="stat-card__header">
+          <div class="stat-card__icon stat-card__icon--amber">${icon('clock')}</div>
+        </div>
+        <div class="stat-card__value">${upcoming.length}</div>
+        <div class="stat-card__label">Upcoming Leaves</div>
+      </div>
+      <div class="stat-card animate-in">
+        <div class="stat-card__header">
+          <div class="stat-card__icon stat-card__icon--green">${icon('check')}</div>
+        </div>
+        <div class="stat-card__value">${approvedLeaves.length}</div>
+        <div class="stat-card__label">Approved Total</div>
+      </div>
+    </div>
+
+    <div class="card animate-in">
+      <div class="card__header">
+        <div class="card__title">Approved Leaves</div>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Employee</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${approvedLeaves.map(l => `
+              <tr>
+                <td class="td-mono" style="color:var(--green-600)">${l.id}</td>
+                <td class="td-primary">${EMPLOYEE.name}</td>
+                <td>${l.type}</td>
+                <td class="td-mono">${l.from}</td>
+                <td class="td-mono">${l.to}</td>
+                <td class="td-mono">${l.days}</td>
+                <td><span class="badge badge--approved">Approved</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+// ── Leave Type ─────────────────────────────────────────────
+
+function renderLeaveType() {
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Leave Types</div>
+        <div class="page-subtitle">Configure leave categories and their rules</div>
+      </div>
+      <button class="btn btn--primary" onclick="openLeaveTypeForm()">${icon('plus', 16)} New Leave Type</button>
+    </div>
+
+    <div class="card animate-in">
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Max Days</th><th>Carry Forward</th><th>Without Pay</th><th>Compensatory</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${LEAVE_TYPE_LIST.map(lt => `
+              <tr>
+                <td class="td-mono" style="color:var(--green-600)">${lt.id}</td>
+                <td class="td-primary">${lt.name}</td>
+                <td class="td-mono">${lt.maxDays}</td>
+                <td>${lt.isCarryForward ? 'Yes (max ' + lt.maxCarryForward + ')' : 'No'}</td>
+                <td>${lt.isWithoutPay ? 'Yes' : 'No'}</td>
+                <td>${lt.isCompensatory ? 'Yes' : 'No'}</td>
+                <td><span class="badge badge--approved">Active</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+window.openLeaveTypeForm = function() {
+  const body = `
+    <div class="form-group">
+      <label class="form-label">Leave Type Name</label>
+      <input type="text" class="form-input" placeholder="e.g. Annual Leave"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Max Days Allowed</label>
+        <input type="number" class="form-input" placeholder="0"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Max Carry Forward Days</label>
+        <input type="number" class="form-input" placeholder="0"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-checkbox"><input type="checkbox"/> Allow Carry Forward</label>
+    </div>
+    <div class="form-group">
+      <label class="form-checkbox"><input type="checkbox"/> Is Without Pay</label>
+    </div>
+    <div class="form-group">
+      <label class="form-checkbox"><input type="checkbox"/> Is Compensatory</label>
+    </div>
+    <div class="form-group">
+      <label class="form-checkbox"><input type="checkbox"/> Include Holidays in Leave Count</label>
+    </div>
+    <div class="form-group">
+      <label class="form-checkbox"><input type="checkbox"/> Allow Negative Balance</label>
+    </div>
+  `;
+  const footer = `
+    <button class="btn btn--secondary" onclick="closeModal()">Cancel</button>
+    <button class="btn btn--primary" onclick="closeModal()">Create Leave Type</button>
+  `;
+  openModal('New Leave Type', body, footer);
+};
+
+// ── Leave Policy ───────────────────────────────────────────
+
+function renderLeavePolicy() {
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Leave Policies</div>
+        <div class="page-subtitle">Define leave entitlement packages for different employee groups</div>
+      </div>
+      <button class="btn btn--primary" onclick="openLeavePolicyForm()">${icon('plus', 16)} New Policy</button>
+    </div>
+
+    <div class="card animate-in">
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Description</th><th>Leave Types</th><th>Status</th><th></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${LEAVE_POLICIES.map(lp => `
+              <tr>
+                <td class="td-mono" style="color:var(--green-600)">${lp.id}</td>
+                <td class="td-primary">${lp.name}</td>
+                <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;">${lp.description}</td>
+                <td class="td-mono">${lp.leaveTypes.length}</td>
+                <td><span class="badge badge--${statusClass(lp.status)}">${lp.status}</span></td>
+                <td><button class="btn btn--ghost btn--sm" onclick="viewLeavePolicyDetail('${lp.id}')">${icon('eye', 14)} View</button></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="leavePolicyDetailPanel" style="display:none;"></div>
+  `;
+}
+
+window.viewLeavePolicyDetail = function(id) {
+  const policy = LEAVE_POLICIES.find(p => p.id === id);
+  if (!policy) return;
+  const panel = document.getElementById('leavePolicyDetailPanel');
+  panel.innerHTML = `
+    <div class="detail-panel">
+      <div class="card">
+        <div class="card__header">
+          <div class="card__title">${icon('fileText', 18)} &nbsp;Policy \u2014 <span style="color:var(--green-600);font-family:'JetBrains Mono',monospace;">${policy.id}</span></div>
+          <button class="btn btn--ghost btn--sm" onclick="document.getElementById('leavePolicyDetailPanel').style.display='none'">${icon('x', 14)} Close</button>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section__title">Policy Details</div>
+          <div class="detail-info-grid">
+            <div class="detail-info-item">
+              <div class="detail-info-item__label">Name</div>
+              <div class="detail-info-item__value">${policy.name}</div>
+            </div>
+            <div class="detail-info-item">
+              <div class="detail-info-item__label">Description</div>
+              <div class="detail-info-item__value">${policy.description}</div>
+            </div>
+            <div class="detail-info-item">
+              <div class="detail-info-item__label">Status</div>
+              <div class="detail-info-item__value"><span class="badge badge--${statusClass(policy.status)}">${policy.status}</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section__title">Leave Type Allocations</div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Leave Type</th><th>Days Per Year</th></tr></thead>
+              <tbody>
+                ${policy.leaveTypes.map(lt => `
+                  <tr>
+                    <td class="td-primary">${lt.type}</td>
+                    <td class="td-mono">${lt.days}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+};
+
+window.openLeavePolicyForm = function() {
+  const body = `
+    <div class="form-group">
+      <label class="form-label">Policy Name</label>
+      <input type="text" class="form-input" placeholder="e.g. Standard Employee Policy"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" placeholder="Describe the policy..." rows="2"></textarea>
+    </div>
+    <div class="section-title" style="margin-top:12px;margin-bottom:8px">Leave Type Allocations</div>
+    ${LEAVE_TYPE_LIST.map(lt => `
+      <div class="form-row" style="align-items:center">
+        <div class="form-group" style="flex:2">
+          <label class="form-checkbox"><input type="checkbox"/> ${lt.name}</label>
+        </div>
+        <div class="form-group" style="flex:1">
+          <input type="number" class="form-input" placeholder="Days" value="${lt.maxDays}"/>
+        </div>
+      </div>
+    `).join('')}
+  `;
+  const footer = `
+    <button class="btn btn--secondary" onclick="closeModal()">Cancel</button>
+    <button class="btn btn--primary" onclick="closeModal()">Create Policy</button>
+  `;
+  openModal('New Leave Policy', body, footer);
+};
+
+// ── Leave Period ───────────────────────────────────────────
+
+function renderLeavePeriod() {
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Leave Periods</div>
+        <div class="page-subtitle">Define the annual leave accrual periods</div>
+      </div>
+      <button class="btn btn--primary" onclick="openLeavePeriodForm()">${icon('plus', 16)} New Period</button>
+    </div>
+
+    <div class="card animate-in">
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>From</th><th>To</th><th>Active</th><th>Company</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${LEAVE_PERIODS.map(p => `
+              <tr>
+                <td class="td-mono" style="color:var(--green-600)">${p.id}</td>
+                <td class="td-primary">${p.name}</td>
+                <td class="td-mono">${p.from}</td>
+                <td class="td-mono">${p.to}</td>
+                <td>${p.isActive ? '<span class="badge badge--approved">Yes</span>' : '<span class="badge badge--draft">No</span>'}</td>
+                <td>${p.company}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+window.openLeavePeriodForm = function() {
+  const body = `
+    <div class="form-group">
+      <label class="form-label">Period Name</label>
+      <input type="text" class="form-input" placeholder="e.g. 2025 Leave Year"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">From Date</label>
+        <input type="date" class="form-input"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">To Date</label>
+        <input type="date" class="form-input"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Company</label>
+      <select class="form-select">
+        <option>RampingUp Technology Ltd.</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-checkbox"><input type="checkbox" checked/> Is Active</label>
+    </div>
+  `;
+  const footer = `
+    <button class="btn btn--secondary" onclick="closeModal()">Cancel</button>
+    <button class="btn btn--primary" onclick="closeModal()">Create Period</button>
+  `;
+  openModal('New Leave Period', body, footer);
+};
+
+// ── Leave Allocation ───────────────────────────────────────
+
+function renderLeaveAllocation() {
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Leave Allocations</div>
+        <div class="page-subtitle">Track leave days allocated to each employee</div>
+      </div>
+      <button class="btn btn--primary" onclick="openLeaveAllocationForm()">${icon('plus', 16)} New Allocation</button>
+    </div>
+
+    <div class="filters">
+      <span class="filter-chip active" onclick="filterTable(this,'allocTable','all')">All</span>
+      <span class="filter-chip" onclick="filterTable(this,'allocTable','Active')">Active</span>
+    </div>
+
+    <div class="card animate-in">
+      <div class="table-wrap">
+        <table class="data-table" id="allocTable">
+          <thead>
+            <tr>
+              <th>ID</th><th>Employee</th><th>Leave Type</th><th>Period</th><th>New Alloc</th><th>Carry Fwd</th><th>Total</th><th>Used</th><th>Balance</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${LEAVE_ALLOCATIONS.map(a => `
+              <tr data-status="${a.status}">
+                <td class="td-mono" style="color:var(--green-600)">${a.id}</td>
+                <td class="td-primary">${a.employee}</td>
+                <td>${a.leaveType}</td>
+                <td class="td-mono">${a.period}</td>
+                <td class="td-mono">${a.newAllocation}</td>
+                <td class="td-mono">${a.carryForward}</td>
+                <td class="td-mono" style="font-weight:600">${a.totalDays}</td>
+                <td class="td-mono">${a.usedDays}</td>
+                <td class="td-mono" style="font-weight:600;color:var(--green-600)">${a.totalDays - a.usedDays}</td>
+                <td><span class="badge badge--${statusClass(a.status)}">${a.status}</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+window.openLeaveAllocationForm = function() {
+  const body = `
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Employee</label>
+        <select class="form-select">
+          <option value="">Select employee...</option>
+          ${TEAM_MEMBERS.map(m => `<option value="${m.id}">${m.name}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Leave Type</label>
+        <select class="form-select">
+          <option value="">Select type...</option>
+          ${LEAVE_TYPE_LIST.map(lt => `<option value="${lt.id}">${lt.name}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Period</label>
+        <select class="form-select">
+          ${LEAVE_PERIODS.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">New Allocation (Days)</label>
+        <input type="number" class="form-input" placeholder="0"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Carry Forward (Days)</label>
+      <input type="number" class="form-input" placeholder="0"/>
+    </div>
+  `;
+  const footer = `
+    <button class="btn btn--secondary" onclick="closeModal()">Cancel</button>
+    <button class="btn btn--primary" onclick="closeModal()">Create Allocation</button>
+  `;
+  openModal('New Leave Allocation', body, footer);
+};
+
+// ── Leave Policy Assignment ────────────────────────────────
+
+function renderLeavePolicyAssignment() {
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Leave Policy Assignments</div>
+        <div class="page-subtitle">Assign leave policies to employees for specific periods</div>
+      </div>
+      <button class="btn btn--primary" onclick="openLeavePolicyAssignmentForm()">${icon('plus', 16)} New Assignment</button>
+    </div>
+
+    <div class="filters">
+      <span class="filter-chip active" onclick="filterTable(this,'paTable','all')">All</span>
+      <span class="filter-chip" onclick="filterTable(this,'paTable','Active')">Active</span>
+    </div>
+
+    <div class="card animate-in">
+      <div class="table-wrap">
+        <table class="data-table" id="paTable">
+          <thead>
+            <tr>
+              <th>ID</th><th>Employee</th><th>Policy</th><th>Period</th><th>Assigned Date</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${LEAVE_POLICY_ASSIGNMENTS.map(pa => `
+              <tr data-status="${pa.status}">
+                <td class="td-mono" style="color:var(--green-600)">${pa.id}</td>
+                <td class="td-primary">${pa.employee}</td>
+                <td>${pa.policy}</td>
+                <td>${pa.period}</td>
+                <td class="td-mono">${pa.assignedDate}</td>
+                <td><span class="badge badge--${statusClass(pa.status)}">${pa.status}</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+window.openLeavePolicyAssignmentForm = function() {
+  const body = `
+    <div class="form-group">
+      <label class="form-label">Employee</label>
+      <select class="form-select">
+        <option value="">Select employee...</option>
+        ${TEAM_MEMBERS.map(m => `<option value="${m.id}">${m.name}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Leave Policy</label>
+      <select class="form-select">
+        <option value="">Select policy...</option>
+        ${LEAVE_POLICIES.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Leave Period</label>
+      <select class="form-select">
+        ${LEAVE_PERIODS.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Effective Date</label>
+      <input type="date" class="form-input"/>
+    </div>
+  `;
+  const footer = `
+    <button class="btn btn--secondary" onclick="closeModal()">Cancel</button>
+    <button class="btn btn--primary" onclick="closeModal()">Create Assignment</button>
+  `;
+  openModal('New Leave Policy Assignment', body, footer);
+};
+
+// ── Leave Approval Flow ────────────────────────────────────
+
+function renderLeaveApprovalFlow() {
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Leave Approval Flows</div>
+        <div class="page-subtitle">Configure multi-level approval chains for leave requests</div>
+      </div>
+      <button class="btn btn--primary" onclick="openLeaveApprovalFlowForm()">${icon('plus', 16)} New Flow</button>
+    </div>
+
+    <div class="card animate-in">
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Leave Type</th><th>Condition</th><th>Steps</th><th>Status</th><th></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${LEAVE_APPROVAL_FLOW_CONFIGS.map(af => `
+              <tr>
+                <td class="td-mono" style="color:var(--green-600)">${af.id}</td>
+                <td class="td-primary">${af.name}</td>
+                <td>${af.leaveType}</td>
+                <td>${af.condition || '\u2014'}</td>
+                <td class="td-mono">${af.steps.length}</td>
+                <td><span class="badge badge--${statusClass(af.status)}">${af.status}</span></td>
+                <td><button class="btn btn--ghost btn--sm" onclick="viewLeaveApprovalFlowDetail('${af.id}')">${icon('eye', 14)} View</button></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="leaveApprovalFlowDetailPanel" style="display:none;"></div>
+  `;
+}
+
+window.viewLeaveApprovalFlowDetail = function(id) {
+  const af = LEAVE_APPROVAL_FLOW_CONFIGS.find(f => f.id === id);
+  if (!af) return;
+  const panel = document.getElementById('leaveApprovalFlowDetailPanel');
+  panel.innerHTML = `
+    <div class="detail-panel">
+      <div class="card">
+        <div class="card__header">
+          <div class="card__title">${icon('checkSquare', 18)} &nbsp;Approval Flow \u2014 <span style="color:var(--green-600);font-family:'JetBrains Mono',monospace;">${af.id}</span></div>
+          <button class="btn btn--ghost btn--sm" onclick="document.getElementById('leaveApprovalFlowDetailPanel').style.display='none'">${icon('x', 14)} Close</button>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section__title">Flow Details</div>
+          <div class="detail-info-grid">
+            <div class="detail-info-item">
+              <div class="detail-info-item__label">Name</div>
+              <div class="detail-info-item__value">${af.name}</div>
+            </div>
+            <div class="detail-info-item">
+              <div class="detail-info-item__label">Leave Type</div>
+              <div class="detail-info-item__value">${af.leaveType}</div>
+            </div>
+            <div class="detail-info-item">
+              <div class="detail-info-item__label">Condition</div>
+              <div class="detail-info-item__value">${af.condition || 'None (default)'}</div>
+            </div>
+            <div class="detail-info-item">
+              <div class="detail-info-item__label">Status</div>
+              <div class="detail-info-item__value"><span class="badge badge--${statusClass(af.status)}">${af.status}</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section__title">Approval Chain</div>
+          <div class="approval-flow">
+            ${af.steps.map(s => `
+              <div class="approval-step step--done">
+                <div class="approval-step__icon">L${s.level}</div>
+                <div class="approval-step__content">
+                  <div class="approval-step__title">${s.role}</div>
+                  <div class="approval-step__meta">
+                    <span>Approver: ${s.approver}</span>
+                    <span style="color:var(--gray-300)">\u00b7</span>
+                    <span>Level ${s.level}</span>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+};
+
+window.openLeaveApprovalFlowForm = function() {
+  const body = `
+    <div class="form-group">
+      <label class="form-label">Flow Name</label>
+      <input type="text" class="form-input" placeholder="e.g. Standard Leave Approval"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Leave Type</label>
+        <select class="form-select">
+          <option value="">Select type...</option>
+          ${LEAVE_TYPE_LIST.map(lt => `<option value="${lt.id}">${lt.name}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Condition (optional)</label>
+        <input type="text" class="form-input" placeholder="e.g. > 5 days"/>
+      </div>
+    </div>
+    <div class="section-title" style="margin-top:12px;margin-bottom:8px">Approval Steps</div>
+    <div class="form-row">
+      <div class="form-group" style="flex:0 0 60px">
+        <label class="form-label">Level</label>
+        <input type="text" class="form-input" value="1" disabled/>
+      </div>
+      <div class="form-group" style="flex:1">
+        <label class="form-label">Role</label>
+        <input type="text" class="form-input" placeholder="e.g. Direct Manager"/>
+      </div>
+      <div class="form-group" style="flex:1">
+        <label class="form-label">Approver</label>
+        <select class="form-select">
+          <option value="">Select...</option>
+          ${TEAM_MEMBERS.map(m => `<option value="${m.id}">${m.name}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="flex:0 0 60px">
+        <label class="form-label">Level</label>
+        <input type="text" class="form-input" value="2" disabled/>
+      </div>
+      <div class="form-group" style="flex:1">
+        <label class="form-label">Role</label>
+        <input type="text" class="form-input" placeholder="e.g. HR Manager"/>
+      </div>
+      <div class="form-group" style="flex:1">
+        <label class="form-label">Approver</label>
+        <select class="form-select">
+          <option value="">Select...</option>
+          ${TEAM_MEMBERS.map(m => `<option value="${m.id}">${m.name}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--gray-400);margin-top:4px">Add more levels after creation.</div>
+  `;
+  const footer = `
+    <button class="btn btn--secondary" onclick="closeModal()">Cancel</button>
+    <button class="btn btn--primary" onclick="closeModal()">Create Flow</button>
+  `;
+  openModal('New Leave Approval Flow', body, footer, true);
+};
+
+// ── Expense Approval Flow ──────────────────────────────────
+
+function renderExpenseApprovalFlow() {
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Expense Approval Flows</div>
+        <div class="page-subtitle">Configure multi-level approval chains for expense claims</div>
+      </div>
+      <button class="btn btn--primary" onclick="openExpenseApprovalFlowForm()">${icon('plus', 16)} New Flow</button>
+    </div>
+
+    <div class="card animate-in">
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Condition</th><th>Steps</th><th>Status</th><th></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${EXPENSE_FLOW_CONFIGS.map(ef => `
+              <tr>
+                <td class="td-mono" style="color:var(--green-600)">${ef.id}</td>
+                <td class="td-primary">${ef.name}</td>
+                <td>${ef.condition}</td>
+                <td class="td-mono">${ef.steps.length}</td>
+                <td><span class="badge badge--${statusClass(ef.status)}">${ef.status}</span></td>
+                <td><button class="btn btn--ghost btn--sm" onclick="viewExpenseApprovalFlowDetail('${ef.id}')">${icon('eye', 14)} View</button></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="expenseApprovalFlowDetailPanel" style="display:none;"></div>
+  `;
+}
+
+window.viewExpenseApprovalFlowDetail = function(id) {
+  const ef = EXPENSE_FLOW_CONFIGS.find(f => f.id === id);
+  if (!ef) return;
+  const panel = document.getElementById('expenseApprovalFlowDetailPanel');
+  panel.innerHTML = `
+    <div class="detail-panel">
+      <div class="card">
+        <div class="card__header">
+          <div class="card__title">${icon('checkSquare', 18)} &nbsp;Expense Flow \u2014 <span style="color:var(--green-600);font-family:'JetBrains Mono',monospace;">${ef.id}</span></div>
+          <button class="btn btn--ghost btn--sm" onclick="document.getElementById('expenseApprovalFlowDetailPanel').style.display='none'">${icon('x', 14)} Close</button>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section__title">Flow Details</div>
+          <div class="detail-info-grid">
+            <div class="detail-info-item">
+              <div class="detail-info-item__label">Name</div>
+              <div class="detail-info-item__value">${ef.name}</div>
+            </div>
+            <div class="detail-info-item">
+              <div class="detail-info-item__label">Condition</div>
+              <div class="detail-info-item__value">${ef.condition}</div>
+            </div>
+            <div class="detail-info-item">
+              <div class="detail-info-item__label">Status</div>
+              <div class="detail-info-item__value"><span class="badge badge--${statusClass(ef.status)}">${ef.status}</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section__title">Approval Chain</div>
+          <div class="approval-flow">
+            ${ef.steps.map(s => `
+              <div class="approval-step step--done">
+                <div class="approval-step__icon">L${s.level}</div>
+                <div class="approval-step__content">
+                  <div class="approval-step__title">${s.role}</div>
+                  <div class="approval-step__meta">
+                    <span>Approver: ${s.approver}</span>
+                    <span style="color:var(--gray-300)">\u00b7</span>
+                    <span>Level ${s.level}</span>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+};
+
+window.openExpenseApprovalFlowForm = function() {
+  const body = `
+    <div class="form-group">
+      <label class="form-label">Flow Name</label>
+      <input type="text" class="form-input" placeholder="e.g. Standard Expense Approval"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Condition</label>
+      <input type="text" class="form-input" placeholder="e.g. < \u00a55,000"/>
+    </div>
+    <div class="section-title" style="margin-top:12px;margin-bottom:8px">Approval Steps</div>
+    <div class="form-row">
+      <div class="form-group" style="flex:0 0 60px">
+        <label class="form-label">Level</label>
+        <input type="text" class="form-input" value="1" disabled/>
+      </div>
+      <div class="form-group" style="flex:1">
+        <label class="form-label">Role</label>
+        <input type="text" class="form-input" placeholder="e.g. Direct Manager"/>
+      </div>
+      <div class="form-group" style="flex:1">
+        <label class="form-label">Approver</label>
+        <select class="form-select">
+          <option value="">Select...</option>
+          ${TEAM_MEMBERS.map(m => `<option value="${m.id}">${m.name}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="flex:0 0 60px">
+        <label class="form-label">Level</label>
+        <input type="text" class="form-input" value="2" disabled/>
+      </div>
+      <div class="form-group" style="flex:1">
+        <label class="form-label">Role</label>
+        <input type="text" class="form-input" placeholder="e.g. Finance Manager"/>
+      </div>
+      <div class="form-group" style="flex:1">
+        <label class="form-label">Approver</label>
+        <select class="form-select">
+          <option value="">Select...</option>
+          ${TEAM_MEMBERS.map(m => `<option value="${m.id}">${m.name}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--gray-400);margin-top:4px">Add more levels after creation.</div>
+  `;
+  const footer = `
+    <button class="btn btn--secondary" onclick="closeModal()">Cancel</button>
+    <button class="btn btn--primary" onclick="closeModal()">Create Flow</button>
+  `;
+  openModal('New Expense Approval Flow', body, footer, true);
+};
+
+// ── Organization ───────────────────────────────────────────
+
+function renderOrganization() {
+  const company = ORG_UNITS[0];
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Organization</div>
+        <div class="page-subtitle">Company structure and department overview</div>
+      </div>
+    </div>
+
+    <!-- Company Card -->
+    <div class="card animate-in mb-6" style="border-left:3px solid var(--green-500);">
+      <div class="card__body" style="display:flex;align-items:center;gap:16px;padding:20px 24px;">
+        <div style="width:48px;height:48px;border-radius:12px;background:var(--green-50);display:flex;align-items:center;justify-content:center;color:var(--green-600);">
+          ${icon('building', 24)}
+        </div>
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:1.05rem;color:var(--gray-900)">${company.name}</div>
+          <div style="font-size:0.8rem;color:var(--gray-400);margin-top:2px;">
+            <span class="badge-plain badge-plain--green">${company.type}</span>
+            <span style="margin-left:8px">Head: ${company.head}</span>
+            <span style="margin-left:8px">\u00b7</span>
+            <span style="margin-left:8px">${company.members} members</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Department Grid -->
+    <div class="section-title animate-in" style="margin-bottom:12px">Departments</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
+      ${company.children.map(dept => `
+        <div class="card animate-in" style="cursor:default;">
+          <div class="card__body" style="padding:20px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+              <div style="width:40px;height:40px;border-radius:10px;background:var(--gray-50);display:flex;align-items:center;justify-content:center;color:var(--gray-500);">
+                ${icon('users', 20)}
+              </div>
+              <div>
+                <div style="font-weight:600;color:var(--gray-900)">${dept.name}</div>
+                <span class="badge-plain badge-plain--gray" style="font-size:11px">${dept.type}</span>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.8rem;color:var(--gray-400);">
+              <span>Head: <strong style="color:var(--gray-700)">${dept.head}</strong></span>
+              <span>${dept.members} member${dept.members !== 1 ? 's' : ''}</span>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ── Messages ───────────────────────────────────────────────
+
+let messagesFilter = 'all';
+
+function renderMessages() {
+  const unreadCount = MESSAGES.filter(m => !m.read).length;
+
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Messages</div>
+        <div class="page-subtitle">Notifications and announcements</div>
+      </div>
+    </div>
+
+    <div class="stats-row" style="grid-template-columns:repeat(3,1fr);">
+      <div class="stat-card animate-in">
+        <div class="stat-card__header">
+          <div class="stat-card__icon stat-card__icon--amber">${icon('mail')}</div>
+        </div>
+        <div class="stat-card__value">${unreadCount}</div>
+        <div class="stat-card__label">Unread</div>
+      </div>
+      <div class="stat-card animate-in">
+        <div class="stat-card__header">
+          <div class="stat-card__icon stat-card__icon--blue">${icon('bell')}</div>
+        </div>
+        <div class="stat-card__value">${MESSAGES.filter(m => m.type === 'notification').length}</div>
+        <div class="stat-card__label">Notifications</div>
+      </div>
+      <div class="stat-card animate-in">
+        <div class="stat-card__header">
+          <div class="stat-card__icon stat-card__icon--green">${icon('messageSquare')}</div>
+        </div>
+        <div class="stat-card__value">${MESSAGES.filter(m => m.type === 'announcement').length}</div>
+        <div class="stat-card__label">Announcements</div>
+      </div>
+    </div>
+
+    <div class="filters">
+      <span class="filter-chip active" onclick="filterMessages(this,'all')">All</span>
+      <span class="filter-chip" onclick="filterMessages(this,'unread')">Unread</span>
+      <span class="filter-chip" onclick="filterMessages(this,'notification')">Notifications</span>
+      <span class="filter-chip" onclick="filterMessages(this,'announcement')">Announcements</span>
+    </div>
+
+    <div class="card animate-in">
+      <div id="messagesList">
+        ${MESSAGES.map(msg => `
+          <div class="message-item" data-msg-id="${msg.id}" data-msg-type="${msg.type}" data-msg-read="${msg.read}" onclick="toggleMessage('${msg.id}')" style="padding:16px 20px;border-bottom:1px solid var(--gray-100);cursor:pointer;transition:background 0.15s;">
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+              ${!msg.read ? '<div style="width:8px;height:8px;border-radius:50%;background:var(--green-500);margin-top:6px;flex-shrink:0;"></div>' : '<div style="width:8px;height:8px;margin-top:6px;flex-shrink:0;"></div>'}
+              <div style="flex:1;min-width:0;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                  <div style="font-weight:${msg.read ? '400' : '600'};color:var(--gray-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${msg.subject}</div>
+                  <div style="font-size:0.72rem;color:var(--gray-400);flex-shrink:0;margin-left:12px;font-family:'JetBrains Mono',monospace;">${msg.date}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--gray-400);">
+                  <span>${msg.from}</span>
+                  <span class="badge-plain badge-plain--${msg.type === 'notification' ? 'blue' : 'green'}" style="font-size:11px">${msg.type === 'notification' ? 'Notification' : 'Announcement'}</span>
+                </div>
+                <div class="message-body" id="msgBody-${msg.id}" style="display:none;margin-top:10px;padding:12px;background:var(--gray-25);border-radius:8px;font-size:0.82rem;color:var(--gray-600);line-height:1.6;">
+                  ${msg.body}
+                </div>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+window.toggleMessage = function(id) {
+  const body = document.getElementById('msgBody-' + id);
+  if (body) {
+    body.style.display = body.style.display === 'none' ? 'block' : 'none';
+  }
+};
+
+window.filterMessages = function(el, filter) {
+  el.parentElement.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.message-item').forEach(item => {
+    const type = item.dataset.msgType;
+    const read = item.dataset.msgRead === 'true';
+    let show = true;
+    if (filter === 'unread') show = !read;
+    else if (filter === 'notification') show = type === 'notification';
+    else if (filter === 'announcement') show = type === 'announcement';
+    item.style.display = show ? '' : 'none';
+  });
+};
+
 // ── Modal System ────────────────────────────────────────────
 
 function openModal(title, bodyHTML, footerHTML, wide) {
@@ -1305,166 +2311,203 @@ window.showServiceDetail = function(id) {
   openModal('Service \u2014 ' + s.id, body, footer, true);
 };
 
-// ── Salary Detail (inline expand) ───────────────────────────
+// ── Expandable Row Toggle Helper ────────────────────────────
 
-window.showSalaryDetail = function(id) {
-  const slip = SALARY_SLIPS.find(s => s.id === id);
-  if (!slip) return;
-  document.getElementById('salaryDetailPeriod').textContent = slip.period;
-  const panel = document.getElementById('salaryDetailPanel');
-  panel.style.display = 'block';
-  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-};
+function toggleExpandRow(triggerRow, id, colSpan, contentHtml) {
+  const existing = triggerRow.nextElementSibling;
+  if (existing && existing.classList.contains('expand-detail-row') && existing.dataset.detailId === id) {
+    existing.remove();
+    triggerRow.classList.remove('expanded');
+    return;
+  }
+  triggerRow.classList.add('expanded');
+  const detailRow = document.createElement('tr');
+  detailRow.className = 'expand-detail-row';
+  detailRow.dataset.detailId = id;
+  detailRow.dataset.status = triggerRow.dataset.status || '';
+  detailRow.innerHTML = `<td colspan="${colSpan}"><div class="expand-detail-content">${contentHtml}</div></td>`;
+  triggerRow.after(detailRow);
+}
 
-// ── Leave Detail View with Approval Flow ────────────────────
+// ── Leave Detail (inline expand) ────────────────────────────
 
-window.viewLeaveDetail = function(id) {
+window.toggleLeaveDetail = function(id, triggerRow) {
   const lr = LEAVE_REQUESTS.find(l => l.id === id);
   if (!lr) return;
+  if (triggerRow.classList.contains('expanded')) {
+    const next = triggerRow.nextElementSibling;
+    if (next && next.classList.contains('expand-detail-row')) next.remove();
+    triggerRow.classList.remove('expanded');
+    return;
+  }
   const flow = APPROVAL_FLOWS[id] || [
     { step: 'Submitted', actor: EMPLOYEE.name, role: 'Employee', time: lr.from, status: 'done', comment: '' },
     { step: 'Manager Approval', actor: lr.approver, role: 'Direct Manager', time: '', status: lr.status === 'Approved' ? 'done' : (lr.status === 'Pending' ? 'current' : 'pending'), comment: '' },
   ];
-
   const canRevoke = lr.status === 'Pending';
   const canCancel = lr.status === 'Draft';
 
-  const panel = document.getElementById('leaveDetailPanel');
-  panel.innerHTML = `
-    <div class="detail-panel">
-      <div class="card">
-        <div class="card__header">
-          <div class="card__title">${icon('calendar', 18)} &nbsp;Leave Request \u2014 <span style="color:var(--green-600);font-family:'JetBrains Mono',monospace;">${lr.id}</span></div>
-          <button class="btn btn--ghost btn--sm" onclick="document.getElementById('leaveDetailPanel').style.display='none'">${icon('x', 14)} Close</button>
+  const content = `
+    <div class="detail-section">
+      <div class="detail-section__title">Request Details</div>
+      <div class="detail-info-grid">
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Leave Type</div>
+          <div class="detail-info-item__value">${lr.type}</div>
         </div>
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">From</div>
+          <div class="detail-info-item__value" style="font-family:'JetBrains Mono',monospace;">${lr.from}</div>
+        </div>
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">To</div>
+          <div class="detail-info-item__value" style="font-family:'JetBrains Mono',monospace;">${lr.to}</div>
+        </div>
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Duration</div>
+          <div class="detail-info-item__value">${lr.days} day${lr.days > 1 ? 's' : ''}</div>
+        </div>
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Half Day</div>
+          <div class="detail-info-item__value">${lr.halfDay}</div>
+        </div>
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Status</div>
+          <div class="detail-info-item__value"><span class="badge badge--${statusClass(lr.status)}">${lr.status}</span></div>
+        </div>
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Approver</div>
+          <div class="detail-info-item__value">${lr.approver}</div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section__title">Approval Flow</div>
+      ${renderApprovalFlow(flow)}
+    </div>
+    ${(canRevoke || canCancel) ? `
+    <div class="action-bar">
+      <div class="action-bar__spacer"></div>
+      ${canCancel ? `<button class="btn btn--secondary">Delete Draft</button>
+      <button class="btn btn--primary">Submit for Approval</button>` : ''}
+      ${canRevoke ? `<button class="btn btn--secondary" style="color:var(--red-500);border-color:var(--red-500);">Revoke Request</button>` : ''}
+    </div>` : ''}
+  `;
+  toggleExpandRow(triggerRow, id, 9, content);
+};
 
-        <!-- Info Grid -->
-        <div class="detail-section">
-          <div class="detail-section__title">Request Details</div>
-          <div class="detail-info-grid">
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Leave Type</div>
-              <div class="detail-info-item__value">${lr.type}</div>
+// ── Salary Detail (inline expand) ───────────────────────────
+
+window.toggleSalaryDetail = function(id, triggerRow) {
+  const slip = SALARY_SLIPS.find(s => s.id === id);
+  if (!slip) return;
+  if (triggerRow.classList.contains('expanded')) {
+    const next = triggerRow.nextElementSibling;
+    if (next && next.classList.contains('expand-detail-row')) next.remove();
+    triggerRow.classList.remove('expanded');
+    return;
+  }
+
+  const content = `
+    <div class="detail-section">
+      <div class="detail-section__title">Salary Breakdown — ${slip.period}</div>
+      <div class="grid-2">
+        <div class="salary-section">
+          <div class="salary-section__title">Earnings</div>
+          ${SALARY_DETAIL.earnings.map(e => `
+            <div class="salary-row">
+              <span class="salary-row__label">${e.component}</span>
+              <span class="salary-row__value" style="color:var(--green-600)">${formatCurrency(e.amount)}</span>
             </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">From</div>
-              <div class="detail-info-item__value" style="font-family:'JetBrains Mono',monospace;">${lr.from}</div>
-            </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">To</div>
-              <div class="detail-info-item__value" style="font-family:'JetBrains Mono',monospace;">${lr.to}</div>
-            </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Duration</div>
-              <div class="detail-info-item__value">${lr.days} day${lr.days > 1 ? 's' : ''}</div>
-            </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Half Day</div>
-              <div class="detail-info-item__value">${lr.halfDay}</div>
-            </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Status</div>
-              <div class="detail-info-item__value"><span class="badge badge--${statusClass(lr.status)}">${lr.status}</span></div>
-            </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Approver</div>
-              <div class="detail-info-item__value">${lr.approver}</div>
-            </div>
+          `).join('')}
+          <div class="salary-total">
+            <span class="salary-total__label">Total Earnings</span>
+            <span class="salary-total__value" style="color:var(--green-600)">${formatCurrency(SALARY_DETAIL.earnings.reduce((s, e) => s + e.amount, 0))}</span>
           </div>
         </div>
-
-        <!-- Approval Flow -->
-        <div class="detail-section">
-          <div class="detail-section__title">Approval Flow</div>
-          ${renderApprovalFlow(flow)}
+        <div class="salary-section">
+          <div class="salary-section__title">Deductions</div>
+          ${SALARY_DETAIL.deductions.map(d => `
+            <div class="salary-row">
+              <span class="salary-row__label">${d.component}</span>
+              <span class="salary-row__value" style="color:var(--red-500)">${formatCurrency(d.amount)}</span>
+            </div>
+          `).join('')}
+          <div class="salary-total">
+            <span class="salary-total__label">Total Deductions</span>
+            <span class="salary-total__value" style="color:var(--red-500)">${formatCurrency(SALARY_DETAIL.deductions.reduce((s, d) => s + d.amount, 0))}</span>
+          </div>
         </div>
-
-        <!-- Actions -->
-        ${(canRevoke || canCancel) ? `
-        <div class="action-bar">
-          <div class="action-bar__spacer"></div>
-          ${canCancel ? `<button class="btn btn--secondary" onclick="document.getElementById('leaveDetailPanel').style.display='none'">Delete Draft</button>
-          <button class="btn btn--primary">Submit for Approval</button>` : ''}
-          ${canRevoke ? `<button class="btn btn--secondary" style="color:var(--red-500);border-color:var(--red-500);">Revoke Request</button>` : ''}
-        </div>` : ''}
+      </div>
+      <div class="net-pay-bar">
+        <div class="net-pay-bar__label">Net Pay</div>
+        <div class="net-pay-bar__value">${formatCurrency(slip.net)}</div>
       </div>
     </div>
   `;
-  panel.style.display = 'block';
-  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  toggleExpandRow(triggerRow, id, 7, content);
 };
 
-// ── Expense Detail View with Approval Flow ──────────────────
+// ── Expense Detail (inline expand) ──────────────────────────
 
-window.viewExpenseDetail = function(id) {
+window.toggleExpenseDetail = function(id, triggerRow) {
   const ex = EXPENSES.find(e => e.id === id);
   if (!ex) return;
+  if (triggerRow.classList.contains('expanded')) {
+    const next = triggerRow.nextElementSibling;
+    if (next && next.classList.contains('expand-detail-row')) next.remove();
+    triggerRow.classList.remove('expanded');
+    return;
+  }
   const flow = EXPENSE_APPROVAL_FLOWS[id] || [
     { step: 'Submitted', actor: EMPLOYEE.name, role: 'Employee', time: ex.date, status: 'done', comment: '' },
     { step: 'Manager Approval', actor: 'Li Wei', role: 'Direct Manager', time: '', status: ex.status === 'Approved' ? 'done' : (ex.status === 'Pending' ? 'current' : 'pending'), comment: '' },
     { step: 'Finance Review', actor: 'Chen Fang', role: 'Finance', time: '', status: 'pending', comment: '' },
   ];
-
   const canCancel = ex.status === 'Draft';
 
-  const panel = document.getElementById('expenseDetailPanel');
-  panel.innerHTML = `
-    <div class="detail-panel">
-      <div class="card">
-        <div class="card__header">
-          <div class="card__title">${icon('receipt', 18)} &nbsp;Expense Claim \u2014 <span style="color:var(--green-600);font-family:'JetBrains Mono',monospace;">${ex.id}</span></div>
-          <button class="btn btn--ghost btn--sm" onclick="document.getElementById('expenseDetailPanel').style.display='none'">${icon('x', 14)} Close</button>
+  const content = `
+    <div class="detail-section">
+      <div class="detail-section__title">Claim Details</div>
+      <div class="detail-info-grid">
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Category</div>
+          <div class="detail-info-item__value">${ex.category}</div>
         </div>
-
-        <!-- Info Grid -->
-        <div class="detail-section">
-          <div class="detail-section__title">Claim Details</div>
-          <div class="detail-info-grid">
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Category</div>
-              <div class="detail-info-item__value">${ex.category}</div>
-            </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Date</div>
-              <div class="detail-info-item__value" style="font-family:'JetBrains Mono',monospace;">${ex.date}</div>
-            </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Items</div>
-              <div class="detail-info-item__value">${ex.items} item${ex.items > 1 ? 's' : ''}</div>
-            </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Amount</div>
-              <div class="detail-info-item__value" style="font-weight:700;color:var(--gray-900);font-family:'JetBrains Mono',monospace;">${formatCurrency(ex.amount)}</div>
-            </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Status</div>
-              <div class="detail-info-item__value"><span class="badge badge--${statusClass(ex.status)}">${ex.status}</span></div>
-            </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Description</div>
-              <div class="detail-info-item__value">${ex.description}</div>
-            </div>
-          </div>
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Date</div>
+          <div class="detail-info-item__value" style="font-family:'JetBrains Mono',monospace;">${ex.date}</div>
         </div>
-
-        <!-- Approval Flow -->
-        <div class="detail-section">
-          <div class="detail-section__title">Approval Flow</div>
-          ${renderApprovalFlow(flow)}
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Items</div>
+          <div class="detail-info-item__value">${ex.items} item${ex.items > 1 ? 's' : ''}</div>
         </div>
-
-        <!-- Actions -->
-        ${canCancel ? `
-        <div class="action-bar">
-          <div class="action-bar__spacer"></div>
-          <button class="btn btn--secondary" onclick="document.getElementById('expenseDetailPanel').style.display='none'">Delete Draft</button>
-          <button class="btn btn--primary">Submit for Approval</button>
-        </div>` : ''}
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Amount</div>
+          <div class="detail-info-item__value" style="font-weight:700;color:var(--gray-900);font-family:'JetBrains Mono',monospace;">${formatCurrency(ex.amount)}</div>
+        </div>
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Status</div>
+          <div class="detail-info-item__value"><span class="badge badge--${statusClass(ex.status)}">${ex.status}</span></div>
+        </div>
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Description</div>
+          <div class="detail-info-item__value">${ex.description}</div>
+        </div>
       </div>
     </div>
+    <div class="detail-section">
+      <div class="detail-section__title">Approval Flow</div>
+      ${renderApprovalFlow(flow)}
+    </div>
+    ${canCancel ? `
+    <div class="action-bar">
+      <div class="action-bar__spacer"></div>
+      <button class="btn btn--secondary">Delete Draft</button>
+      <button class="btn btn--primary">Submit for Approval</button>
+    </div>` : ''}
   `;
-  panel.style.display = 'block';
-  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  toggleExpandRow(triggerRow, id, 8, content);
 };
 
 // ── Ticket Detail View ──────────────────────────────────────
@@ -1565,7 +2608,19 @@ window.filterTable = function(el, tableId, status) {
   el.parentElement.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   document.querySelectorAll(`#${tableId} tbody tr`).forEach(tr => {
-    tr.style.display = (status === 'all' || tr.dataset.status === status) ? '' : 'none';
+    if (tr.classList.contains('expand-detail-row')) {
+      // Detail rows follow their parent trigger row's visibility
+      tr.style.display = (status === 'all' || tr.dataset.status === status) ? '' : 'none';
+    } else {
+      const show = status === 'all' || tr.dataset.status === status;
+      tr.style.display = show ? '' : 'none';
+      // Collapse hidden rows' expanded details
+      if (!show && tr.classList.contains('expanded')) {
+        tr.classList.remove('expanded');
+        const next = tr.nextElementSibling;
+        if (next && next.classList.contains('expand-detail-row')) next.remove();
+      }
+    }
   });
 };
 
@@ -2212,9 +3267,19 @@ const ROUTES = {
   '/services': { render: renderServices, title: 'Service Progress', crumb: 'Service Progress' },
   '/leave': { render: renderLeave, title: 'Leave', crumb: 'Leave Management' },
   '/holidays': { render: renderHolidays, title: 'Holidays', crumb: 'Holiday List' },
+  '/time-off': { render: renderTimeOff, title: 'Time Off', crumb: 'Time Off' },
+  '/leave-type': { render: renderLeaveType, title: 'Leave Types', crumb: 'Leave Types' },
+  '/leave-policy': { render: renderLeavePolicy, title: 'Leave Policies', crumb: 'Leave Policies' },
+  '/leave-period': { render: renderLeavePeriod, title: 'Leave Periods', crumb: 'Leave Periods' },
+  '/leave-allocation': { render: renderLeaveAllocation, title: 'Leave Allocations', crumb: 'Leave Allocations' },
+  '/leave-policy-assignment': { render: renderLeavePolicyAssignment, title: 'Policy Assignments', crumb: 'Leave Policy Assignments' },
+  '/leave-approval-flow': { render: renderLeaveApprovalFlow, title: 'Leave Approval', crumb: 'Leave Approval Flows' },
   '/salary': { render: renderSalary, title: 'Salary', crumb: 'Salary Slips' },
   '/expenses': { render: renderExpenses, title: 'Expenses', crumb: 'Expenses' },
+  '/expense-approval-flow': { render: renderExpenseApprovalFlow, title: 'Expense Approval', crumb: 'Expense Approval Flows' },
   '/tickets': { render: renderTickets, title: 'Tickets', crumb: 'Support Tickets' },
+  '/messages': { render: renderMessages, title: 'Messages', crumb: 'Messages' },
+  '/organization': { render: renderOrganization, title: 'Organization', crumb: 'Organization' },
   '/contract': { render: renderContract, title: 'Contract', crumb: 'Contract' },
   '/wallet': { render: renderWallet, title: 'Wallet', crumb: 'E-Wallet' },
   '/profile': { render: renderProfile, title: 'Profile', crumb: 'My Profile' },
