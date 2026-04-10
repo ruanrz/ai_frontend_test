@@ -306,10 +306,10 @@ function renderApprovalFlow(steps) {
               <span style="color:var(--gray-300)">\u00b7</span>
               <span>${s.role}</span>
               ${s.time ? `<span style="color:var(--gray-300)">\u00b7</span><span>${s.time}</span>` : ''}
-              ${s.status === 'current' ? '<span class="badge badge--pending">Awaiting</span>' : ''}
-              ${s.status === 'rejected' ? '<span class="badge badge--rejected">Rejected</span>' : ''}
-              ${s.status === 'done' ? '<span class="badge badge--approved">Done</span>' : ''}
-              ${s.status === 'pending' ? '<span class="badge badge--draft">Pending</span>' : ''}
+              ${s.status === 'current' ? '<span class="badge--ghost badge--ghost-amber">Awaiting</span>' : ''}
+              ${s.status === 'rejected' ? '<span class="badge--ghost badge--ghost-red">Rejected</span>' : ''}
+              ${s.status === 'done' ? '<span class="badge--ghost badge--ghost-green">Approved</span>' : ''}
+              ${s.status === 'pending' ? '<span class="badge--ghost badge--ghost-gray">Pending</span>' : ''}
             </div>
             ${s.comment ? `<div class="approval-step__comment">${s.comment}</div>` : ''}
           </div>

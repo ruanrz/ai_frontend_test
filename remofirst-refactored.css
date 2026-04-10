@@ -813,6 +813,26 @@ button { font-family: inherit; }
 .badge-plain--gray   { background: var(--gray-100);  color: var(--gray-600); }
 .badge-plain--purple { background: var(--purple-50); color: var(--purple-700); }
 
+/* Ghost variant — border-only, no background fill */
+.badge--ghost {
+  background: transparent;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.6;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+}
+
+.badge--ghost::before { display: none; }
+
+.badge--ghost-green  { color: var(--green-600); border: 1px solid var(--green-300); }
+.badge--ghost-amber  { color: var(--amber-700); border: 1px solid var(--amber-300, #fcd34d); }
+.badge--ghost-red    { color: var(--red-500);   border: 1px solid var(--red-300, #fca5a5); }
+.badge--ghost-gray   { color: var(--gray-500);  border: 1px solid var(--gray-300); }
+
 
 /* ══════════════════════════════════════════════════════════════
    15. BUTTONS
@@ -1887,9 +1907,9 @@ button { font-family: inherit; }
 
 .approval-step {
   display: flex;
-  gap: 14px;
+  gap: 12px;
   position: relative;
-  padding-bottom: 20px;
+  padding-bottom: 16px;
 }
 
 .approval-step:last-child { padding-bottom: 0; }
@@ -1898,10 +1918,10 @@ button { font-family: inherit; }
 .approval-step:not(:last-child)::after {
   content: '';
   position: absolute;
-  left: 15px;
-  top: 32px;
+  left: 11px;
+  top: 24px;
   bottom: 0;
-  width: 2px;
+  width: 1px;
   background: var(--gray-200);
 }
 
@@ -1911,40 +1931,40 @@ button { font-family: inherit; }
 
 /* Step circle */
 .approval-step__icon {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-size: 14px;
+  font-size: 11px;
   z-index: 1;
 }
 
 .step--done .approval-step__icon {
-  background: var(--green-100);
+  background: var(--green-50);
   color: var(--green-600);
-  border: 2px solid var(--green-200);
+  border: 1.5px solid var(--green-300);
 }
 
 .step--current .approval-step__icon {
   background: var(--amber-50);
   color: var(--amber-500);
-  border: 2px solid rgba(247,144,9,.3);
+  border: 1.5px solid rgba(247,144,9,.25);
   animation: pulseDot 2s ease-in-out infinite;
 }
 
 .step--rejected .approval-step__icon {
   background: var(--red-50);
   color: var(--red-500);
-  border: 2px solid rgba(240,68,56,.3);
+  border: 1.5px solid rgba(240,68,56,.25);
 }
 
 .step--pending .approval-step__icon {
-  background: var(--gray-100);
+  background: var(--gray-50);
   color: var(--gray-400);
-  border: 2px solid var(--gray-200);
+  border: 1.5px solid var(--gray-200);
 }
 
 /* Step content */
@@ -1970,18 +1990,17 @@ button { font-family: inherit; }
 }
 
 .approval-step__comment {
-  margin-top: 8px;
-  padding: 10px 14px;
-  background: var(--gray-50);
-  border-radius: var(--radius);
-  border-left: 3px solid var(--gray-200);
+  margin-top: 6px;
+  padding: 4px 0 4px 12px;
+  background: transparent;
+  border-left: 2px solid var(--gray-200);
   font-size: 13px;
-  color: var(--gray-600);
+  color: var(--gray-500);
   line-height: 1.5;
 }
 
-.step--done .approval-step__comment     { border-left-color: var(--green-300); }
-.step--rejected .approval-step__comment { border-left-color: var(--red-300); }
+.step--done .approval-step__comment     { border-left-color: var(--green-300); color: var(--gray-600); }
+.step--rejected .approval-step__comment { border-left-color: var(--red-300); color: var(--gray-600); }
 
 
 /* ══════════════════════════════════════════════════════════════
