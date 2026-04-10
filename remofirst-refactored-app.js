@@ -1190,6 +1190,973 @@ function renderProfileBank() {
   `;
 }
 
+// ── Time Off (Summary) ─────────────────────────────────────
+
+function renderTimeOff() {
+  const approvedLeaves = LEAVE_REQUESTS.filter(l => l.status === 'Approved');
+  const now = new Date();
+  const thisMonth = approvedLeaves.filter(l => {
+    const d = new Date(l.from);
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+  const upcoming = approvedLeaves.filter(l => new Date(l.from) > now);
+  const daysThisMonth = thisMonth.reduce((s, l) => s + l.days, 0);
+
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Time Off</div>
+        <div class="page-subtitle">Overview of approved time off across the team</div>
+      </div>
+    </div>
+
+    <div class="stats-row" style="grid-template-columns:repeat(3,1fr);">
+      <div class="stat-card animate-in">
+        <div class="stat-card__header">
+          <div class="stat-card__icon stat-card__icon--blue">${icon('calendar')}</div>
+        </div>
+        <div class="stat-card__value">${daysThisMonth}</div>
+        <div class="stat-card__label">Days Off This Month</div>
+      </div>
+      <div class="stat-card animate-in">
+        <div class="stat-card__header">
+          <div class="stat-card__icon stat-card__icon--amber">${icon('clock')}</div>
+        </div>
+        <div class="stat-card__value">${upcoming.length}</div>
+        <div class="stat-card__label">Upcoming Leaves</div>
+      </div>
+      <div class="stat-card animate-in">
+        <div class="stat-card__header">
+          <div class="stat-card__icon stat-card__icon--green">${icon('check')}</div>
+        </div>
+        <div class="stat-card__value">${approvedLeaves.length}</div>
+        <div class="stat-card__label">Approved Total</div>
+      </div>
+    </div>
+
+    <div class="card animate-in">
+      <div class="card__header">
+        <div class="card__title">Approved Leaves</div>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Employee</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${approvedLeaves.map(l => `
+              <tr>
+                <td class="td-mono" style="color:var(--green-600)">${l.id}</td>
+                <td class="td-primary">${EMPLOYEE.name}</td>
+                <td>${l.type}</td>
+                <td class="td-mono">${l.from}</td>
+                <td class="td-mono">${l.to}</td>
+                <td class="td-mono">${l.days}</td>
+                <td><span class="badge badge--approved">Approved</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+// ── Leave Type ─────────────────────────────────────────────
+
+function renderLeaveType() {
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Leave Types</div>
+        <div class="page-subtitle">Configure leave categories and their rules</div>
+      </div>
+      <button class="btn btn--primary" onclick="openLeaveTypeForm()">${icon('plus', 16)} New Leave Type</button>
+    </div>
+
+    <div class="card animate-in">
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Max Days</th><th>Carry Forward</th><th>Without Pay</th><th>Compensatory</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${LEAVE_TYPE_LIST.map(lt => `
+              <tr>
+                <td class="td-mono" style="color:var(--green-600)">${lt.id}</td>
+                <td class="td-primary">${lt.name}</td>
+                <td class="td-mono">${lt.maxDays}</td>
+                <td>${lt.isCarryForward ? 'Yes (max ' + lt.maxCarryForward + ')' : 'No'}</td>
+                <td>${lt.isWithoutPay ? 'Yes' : 'No'}</td>
+                <td>${lt.isCompensatory ? 'Yes' : 'No'}</td>
+                <td><span class="badge badge--approved">Active</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+window.openLeaveTypeForm = function() {
+  const body = `
+    <div class="form-group">
+      <label class="form-label">Leave Type Name</label>
+      <input type="text" class="form-input" placeholder="e.g. Annual Leave"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Max Days Allowed</label>
+        <input type="number" class="form-input" placeholder="0"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Max Carry Forward Days</label>
+        <input type="number" class="form-input" placeholder="0"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-checkbox"><input type="checkbox"/> Allow Carry Forward</label>
+    </div>
+    <div class="form-group">
+      <label class="form-checkbox"><input type="checkbox"/> Is Without Pay</label>
+    </div>
+    <div class="form-group">
+      <label class="form-checkbox"><input type="checkbox"/> Is Compensatory</label>
+    </div>
+    <div class="form-group">
+      <label class="form-checkbox"><input type="checkbox"/> Include Holidays in Leave Count</label>
+    </div>
+    <div class="form-group">
+      <label class="form-checkbox"><input type="checkbox"/> Allow Negative Balance</label>
+    </div>
+  `;
+  const footer = `
+    <button class="btn btn--secondary" onclick="closeModal()">Cancel</button>
+    <button class="btn btn--primary" onclick="closeModal()">Create Leave Type</button>
+  `;
+  openModal('New Leave Type', body, footer);
+};
+
+// ── Leave Policy ───────────────────────────────────────────
+
+function renderLeavePolicy() {
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Leave Policies</div>
+        <div class="page-subtitle">Define leave entitlement packages for different employee groups</div>
+      </div>
+      <button class="btn btn--primary" onclick="openLeavePolicyForm()">${icon('plus', 16)} New Policy</button>
+    </div>
+
+    <div class="card animate-in">
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Description</th><th>Leave Types</th><th>Status</th><th></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${LEAVE_POLICIES.map(lp => `
+              <tr>
+                <td class="td-mono" style="color:var(--green-600)">${lp.id}</td>
+                <td class="td-primary">${lp.name}</td>
+                <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;">${lp.description}</td>
+                <td class="td-mono">${lp.leaveTypes.length}</td>
+                <td><span class="badge badge--${statusClass(lp.status)}">${lp.status}</span></td>
+                <td><button class="btn btn--ghost btn--sm" onclick="viewLeavePolicyDetail('${lp.id}')">${icon('eye', 14)} View</button></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="leavePolicyDetailPanel" style="display:none;"></div>
+  `;
+}
+
+window.viewLeavePolicyDetail = function(id) {
+  const policy = LEAVE_POLICIES.find(p => p.id === id);
+  if (!policy) return;
+  const panel = document.getElementById('leavePolicyDetailPanel');
+  panel.innerHTML = `
+    <div class="detail-panel">
+      <div class="card">
+        <div class="card__header">
+          <div class="card__title">${icon('fileText', 18)} &nbsp;Policy \u2014 <span style="color:var(--green-600);font-family:'JetBrains Mono',monospace;">${policy.id}</span></div>
+          <button class="btn btn--ghost btn--sm" onclick="document.getElementById('leavePolicyDetailPanel').style.display='none'">${icon('x', 14)} Close</button>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section__title">Policy Details</div>
+          <div class="detail-info-grid">
+            <div class="detail-info-item">
+              <div class="detail-info-item__label">Name</div>
+              <div class="detail-info-item__value">${policy.name}</div>
+            </div>
+            <div class="detail-info-item">
+              <div class="detail-info-item__label">Description</div>
+              <div class="detail-info-item__value">${policy.description}</div>
+            </div>
+            <div class="detail-info-item">
+              <div class="detail-info-item__label">Status</div>
+              <div class="detail-info-item__value"><span class="badge badge--${statusClass(policy.status)}">${policy.status}</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section__title">Leave Type Allocations</div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Leave Type</th><th>Days Per Year</th></tr></thead>
+              <tbody>
+                ${policy.leaveTypes.map(lt => `
+                  <tr>
+                    <td class="td-primary">${lt.type}</td>
+                    <td class="td-mono">${lt.days}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+};
+
+window.openLeavePolicyForm = function() {
+  const body = `
+    <div class="form-group">
+      <label class="form-label">Policy Name</label>
+      <input type="text" class="form-input" placeholder="e.g. Standard Employee Policy"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" placeholder="Describe the policy..." rows="2"></textarea>
+    </div>
+    <div class="section-title" style="margin-top:12px;margin-bottom:8px">Leave Type Allocations</div>
+    ${LEAVE_TYPE_LIST.map(lt => `
+      <div class="form-row" style="align-items:center">
+        <div class="form-group" style="flex:2">
+          <label class="form-checkbox"><input type="checkbox"/> ${lt.name}</label>
+        </div>
+        <div class="form-group" style="flex:1">
+          <input type="number" class="form-input" placeholder="Days" value="${lt.maxDays}"/>
+        </div>
+      </div>
+    `).join('')}
+  `;
+  const footer = `
+    <button class="btn btn--secondary" onclick="closeModal()">Cancel</button>
+    <button class="btn btn--primary" onclick="closeModal()">Create Policy</button>
+  `;
+  openModal('New Leave Policy', body, footer);
+};
+
+// ── Leave Period ───────────────────────────────────────────
+
+function renderLeavePeriod() {
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Leave Periods</div>
+        <div class="page-subtitle">Define the annual leave accrual periods</div>
+      </div>
+      <button class="btn btn--primary" onclick="openLeavePeriodForm()">${icon('plus', 16)} New Period</button>
+    </div>
+
+    <div class="card animate-in">
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>From</th><th>To</th><th>Active</th><th>Company</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${LEAVE_PERIODS.map(p => `
+              <tr>
+                <td class="td-mono" style="color:var(--green-600)">${p.id}</td>
+                <td class="td-primary">${p.name}</td>
+                <td class="td-mono">${p.from}</td>
+                <td class="td-mono">${p.to}</td>
+                <td>${p.isActive ? '<span class="badge badge--approved">Yes</span>' : '<span class="badge badge--draft">No</span>'}</td>
+                <td>${p.company}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+window.openLeavePeriodForm = function() {
+  const body = `
+    <div class="form-group">
+      <label class="form-label">Period Name</label>
+      <input type="text" class="form-input" placeholder="e.g. 2025 Leave Year"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">From Date</label>
+        <input type="date" class="form-input"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">To Date</label>
+        <input type="date" class="form-input"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Company</label>
+      <select class="form-select">
+        <option>RampingUp Technology Ltd.</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-checkbox"><input type="checkbox" checked/> Is Active</label>
+    </div>
+  `;
+  const footer = `
+    <button class="btn btn--secondary" onclick="closeModal()">Cancel</button>
+    <button class="btn btn--primary" onclick="closeModal()">Create Period</button>
+  `;
+  openModal('New Leave Period', body, footer);
+};
+
+// ── Leave Allocation ───────────────────────────────────────
+
+function renderLeaveAllocation() {
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Leave Allocations</div>
+        <div class="page-subtitle">Track leave days allocated to each employee</div>
+      </div>
+      <button class="btn btn--primary" onclick="openLeaveAllocationForm()">${icon('plus', 16)} New Allocation</button>
+    </div>
+
+    <div class="filters">
+      <span class="filter-chip active" onclick="filterTable(this,'allocTable','all')">All</span>
+      <span class="filter-chip" onclick="filterTable(this,'allocTable','Active')">Active</span>
+    </div>
+
+    <div class="card animate-in">
+      <div class="table-wrap">
+        <table class="data-table" id="allocTable">
+          <thead>
+            <tr>
+              <th>ID</th><th>Employee</th><th>Leave Type</th><th>Period</th><th>New Alloc</th><th>Carry Fwd</th><th>Total</th><th>Used</th><th>Balance</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${LEAVE_ALLOCATIONS.map(a => `
+              <tr data-status="${a.status}">
+                <td class="td-mono" style="color:var(--green-600)">${a.id}</td>
+                <td class="td-primary">${a.employee}</td>
+                <td>${a.leaveType}</td>
+                <td class="td-mono">${a.period}</td>
+                <td class="td-mono">${a.newAllocation}</td>
+                <td class="td-mono">${a.carryForward}</td>
+                <td class="td-mono" style="font-weight:600">${a.totalDays}</td>
+                <td class="td-mono">${a.usedDays}</td>
+                <td class="td-mono" style="font-weight:600;color:var(--green-600)">${a.totalDays - a.usedDays}</td>
+                <td><span class="badge badge--${statusClass(a.status)}">${a.status}</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+window.openLeaveAllocationForm = function() {
+  const body = `
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Employee</label>
+        <select class="form-select">
+          <option value="">Select employee...</option>
+          ${TEAM_MEMBERS.map(m => `<option value="${m.id}">${m.name}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Leave Type</label>
+        <select class="form-select">
+          <option value="">Select type...</option>
+          ${LEAVE_TYPE_LIST.map(lt => `<option value="${lt.id}">${lt.name}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Period</label>
+        <select class="form-select">
+          ${LEAVE_PERIODS.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">New Allocation (Days)</label>
+        <input type="number" class="form-input" placeholder="0"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Carry Forward (Days)</label>
+      <input type="number" class="form-input" placeholder="0"/>
+    </div>
+  `;
+  const footer = `
+    <button class="btn btn--secondary" onclick="closeModal()">Cancel</button>
+    <button class="btn btn--primary" onclick="closeModal()">Create Allocation</button>
+  `;
+  openModal('New Leave Allocation', body, footer);
+};
+
+// ── Leave Policy Assignment ────────────────────────────────
+
+function renderLeavePolicyAssignment() {
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Leave Policy Assignments</div>
+        <div class="page-subtitle">Assign leave policies to employees for specific periods</div>
+      </div>
+      <button class="btn btn--primary" onclick="openLeavePolicyAssignmentForm()">${icon('plus', 16)} New Assignment</button>
+    </div>
+
+    <div class="filters">
+      <span class="filter-chip active" onclick="filterTable(this,'paTable','all')">All</span>
+      <span class="filter-chip" onclick="filterTable(this,'paTable','Active')">Active</span>
+    </div>
+
+    <div class="card animate-in">
+      <div class="table-wrap">
+        <table class="data-table" id="paTable">
+          <thead>
+            <tr>
+              <th>ID</th><th>Employee</th><th>Policy</th><th>Period</th><th>Assigned Date</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${LEAVE_POLICY_ASSIGNMENTS.map(pa => `
+              <tr data-status="${pa.status}">
+                <td class="td-mono" style="color:var(--green-600)">${pa.id}</td>
+                <td class="td-primary">${pa.employee}</td>
+                <td>${pa.policy}</td>
+                <td>${pa.period}</td>
+                <td class="td-mono">${pa.assignedDate}</td>
+                <td><span class="badge badge--${statusClass(pa.status)}">${pa.status}</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+window.openLeavePolicyAssignmentForm = function() {
+  const body = `
+    <div class="form-group">
+      <label class="form-label">Employee</label>
+      <select class="form-select">
+        <option value="">Select employee...</option>
+        ${TEAM_MEMBERS.map(m => `<option value="${m.id}">${m.name}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Leave Policy</label>
+      <select class="form-select">
+        <option value="">Select policy...</option>
+        ${LEAVE_POLICIES.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Leave Period</label>
+      <select class="form-select">
+        ${LEAVE_PERIODS.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Effective Date</label>
+      <input type="date" class="form-input"/>
+    </div>
+  `;
+  const footer = `
+    <button class="btn btn--secondary" onclick="closeModal()">Cancel</button>
+    <button class="btn btn--primary" onclick="closeModal()">Create Assignment</button>
+  `;
+  openModal('New Leave Policy Assignment', body, footer);
+};
+
+// ── Leave Approval Flow ────────────────────────────────────
+
+function renderLeaveApprovalFlow() {
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Leave Approval Flows</div>
+        <div class="page-subtitle">Configure multi-level approval chains for leave requests</div>
+      </div>
+      <button class="btn btn--primary" onclick="openLeaveApprovalFlowForm()">${icon('plus', 16)} New Flow</button>
+    </div>
+
+    <div class="card animate-in">
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Leave Type</th><th>Condition</th><th>Steps</th><th>Status</th><th></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${LEAVE_APPROVAL_FLOW_CONFIGS.map(af => `
+              <tr>
+                <td class="td-mono" style="color:var(--green-600)">${af.id}</td>
+                <td class="td-primary">${af.name}</td>
+                <td>${af.leaveType}</td>
+                <td>${af.condition || '\u2014'}</td>
+                <td class="td-mono">${af.steps.length}</td>
+                <td><span class="badge badge--${statusClass(af.status)}">${af.status}</span></td>
+                <td><button class="btn btn--ghost btn--sm" onclick="viewLeaveApprovalFlowDetail('${af.id}')">${icon('eye', 14)} View</button></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="leaveApprovalFlowDetailPanel" style="display:none;"></div>
+  `;
+}
+
+window.viewLeaveApprovalFlowDetail = function(id) {
+  const af = LEAVE_APPROVAL_FLOW_CONFIGS.find(f => f.id === id);
+  if (!af) return;
+  const panel = document.getElementById('leaveApprovalFlowDetailPanel');
+  panel.innerHTML = `
+    <div class="detail-panel">
+      <div class="card">
+        <div class="card__header">
+          <div class="card__title">${icon('checkSquare', 18)} &nbsp;Approval Flow \u2014 <span style="color:var(--green-600);font-family:'JetBrains Mono',monospace;">${af.id}</span></div>
+          <button class="btn btn--ghost btn--sm" onclick="document.getElementById('leaveApprovalFlowDetailPanel').style.display='none'">${icon('x', 14)} Close</button>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section__title">Flow Details</div>
+          <div class="detail-info-grid">
+            <div class="detail-info-item">
+              <div class="detail-info-item__label">Name</div>
+              <div class="detail-info-item__value">${af.name}</div>
+            </div>
+            <div class="detail-info-item">
+              <div class="detail-info-item__label">Leave Type</div>
+              <div class="detail-info-item__value">${af.leaveType}</div>
+            </div>
+            <div class="detail-info-item">
+              <div class="detail-info-item__label">Condition</div>
+              <div class="detail-info-item__value">${af.condition || 'None (default)'}</div>
+            </div>
+            <div class="detail-info-item">
+              <div class="detail-info-item__label">Status</div>
+              <div class="detail-info-item__value"><span class="badge badge--${statusClass(af.status)}">${af.status}</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section__title">Approval Chain</div>
+          <div class="approval-flow">
+            ${af.steps.map(s => `
+              <div class="approval-step step--done">
+                <div class="approval-step__icon">L${s.level}</div>
+                <div class="approval-step__content">
+                  <div class="approval-step__title">${s.role}</div>
+                  <div class="approval-step__meta">
+                    <span>Approver: ${s.approver}</span>
+                    <span style="color:var(--gray-300)">\u00b7</span>
+                    <span>Level ${s.level}</span>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+};
+
+window.openLeaveApprovalFlowForm = function() {
+  const body = `
+    <div class="form-group">
+      <label class="form-label">Flow Name</label>
+      <input type="text" class="form-input" placeholder="e.g. Standard Leave Approval"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Leave Type</label>
+        <select class="form-select">
+          <option value="">Select type...</option>
+          ${LEAVE_TYPE_LIST.map(lt => `<option value="${lt.id}">${lt.name}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Condition (optional)</label>
+        <input type="text" class="form-input" placeholder="e.g. > 5 days"/>
+      </div>
+    </div>
+    <div class="section-title" style="margin-top:12px;margin-bottom:8px">Approval Steps</div>
+    <div class="form-row">
+      <div class="form-group" style="flex:0 0 60px">
+        <label class="form-label">Level</label>
+        <input type="text" class="form-input" value="1" disabled/>
+      </div>
+      <div class="form-group" style="flex:1">
+        <label class="form-label">Role</label>
+        <input type="text" class="form-input" placeholder="e.g. Direct Manager"/>
+      </div>
+      <div class="form-group" style="flex:1">
+        <label class="form-label">Approver</label>
+        <select class="form-select">
+          <option value="">Select...</option>
+          ${TEAM_MEMBERS.map(m => `<option value="${m.id}">${m.name}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="flex:0 0 60px">
+        <label class="form-label">Level</label>
+        <input type="text" class="form-input" value="2" disabled/>
+      </div>
+      <div class="form-group" style="flex:1">
+        <label class="form-label">Role</label>
+        <input type="text" class="form-input" placeholder="e.g. HR Manager"/>
+      </div>
+      <div class="form-group" style="flex:1">
+        <label class="form-label">Approver</label>
+        <select class="form-select">
+          <option value="">Select...</option>
+          ${TEAM_MEMBERS.map(m => `<option value="${m.id}">${m.name}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--gray-400);margin-top:4px">Add more levels after creation.</div>
+  `;
+  const footer = `
+    <button class="btn btn--secondary" onclick="closeModal()">Cancel</button>
+    <button class="btn btn--primary" onclick="closeModal()">Create Flow</button>
+  `;
+  openModal('New Leave Approval Flow', body, footer, true);
+};
+
+// ── Expense Approval Flow ──────────────────────────────────
+
+function renderExpenseApprovalFlow() {
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Expense Approval Flows</div>
+        <div class="page-subtitle">Configure multi-level approval chains for expense claims</div>
+      </div>
+      <button class="btn btn--primary" onclick="openExpenseApprovalFlowForm()">${icon('plus', 16)} New Flow</button>
+    </div>
+
+    <div class="card animate-in">
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Condition</th><th>Steps</th><th>Status</th><th></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${EXPENSE_FLOW_CONFIGS.map(ef => `
+              <tr>
+                <td class="td-mono" style="color:var(--green-600)">${ef.id}</td>
+                <td class="td-primary">${ef.name}</td>
+                <td>${ef.condition}</td>
+                <td class="td-mono">${ef.steps.length}</td>
+                <td><span class="badge badge--${statusClass(ef.status)}">${ef.status}</span></td>
+                <td><button class="btn btn--ghost btn--sm" onclick="viewExpenseApprovalFlowDetail('${ef.id}')">${icon('eye', 14)} View</button></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="expenseApprovalFlowDetailPanel" style="display:none;"></div>
+  `;
+}
+
+window.viewExpenseApprovalFlowDetail = function(id) {
+  const ef = EXPENSE_FLOW_CONFIGS.find(f => f.id === id);
+  if (!ef) return;
+  const panel = document.getElementById('expenseApprovalFlowDetailPanel');
+  panel.innerHTML = `
+    <div class="detail-panel">
+      <div class="card">
+        <div class="card__header">
+          <div class="card__title">${icon('checkSquare', 18)} &nbsp;Expense Flow \u2014 <span style="color:var(--green-600);font-family:'JetBrains Mono',monospace;">${ef.id}</span></div>
+          <button class="btn btn--ghost btn--sm" onclick="document.getElementById('expenseApprovalFlowDetailPanel').style.display='none'">${icon('x', 14)} Close</button>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section__title">Flow Details</div>
+          <div class="detail-info-grid">
+            <div class="detail-info-item">
+              <div class="detail-info-item__label">Name</div>
+              <div class="detail-info-item__value">${ef.name}</div>
+            </div>
+            <div class="detail-info-item">
+              <div class="detail-info-item__label">Condition</div>
+              <div class="detail-info-item__value">${ef.condition}</div>
+            </div>
+            <div class="detail-info-item">
+              <div class="detail-info-item__label">Status</div>
+              <div class="detail-info-item__value"><span class="badge badge--${statusClass(ef.status)}">${ef.status}</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-section__title">Approval Chain</div>
+          <div class="approval-flow">
+            ${ef.steps.map(s => `
+              <div class="approval-step step--done">
+                <div class="approval-step__icon">L${s.level}</div>
+                <div class="approval-step__content">
+                  <div class="approval-step__title">${s.role}</div>
+                  <div class="approval-step__meta">
+                    <span>Approver: ${s.approver}</span>
+                    <span style="color:var(--gray-300)">\u00b7</span>
+                    <span>Level ${s.level}</span>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+};
+
+window.openExpenseApprovalFlowForm = function() {
+  const body = `
+    <div class="form-group">
+      <label class="form-label">Flow Name</label>
+      <input type="text" class="form-input" placeholder="e.g. Standard Expense Approval"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Condition</label>
+      <input type="text" class="form-input" placeholder="e.g. < \u00a55,000"/>
+    </div>
+    <div class="section-title" style="margin-top:12px;margin-bottom:8px">Approval Steps</div>
+    <div class="form-row">
+      <div class="form-group" style="flex:0 0 60px">
+        <label class="form-label">Level</label>
+        <input type="text" class="form-input" value="1" disabled/>
+      </div>
+      <div class="form-group" style="flex:1">
+        <label class="form-label">Role</label>
+        <input type="text" class="form-input" placeholder="e.g. Direct Manager"/>
+      </div>
+      <div class="form-group" style="flex:1">
+        <label class="form-label">Approver</label>
+        <select class="form-select">
+          <option value="">Select...</option>
+          ${TEAM_MEMBERS.map(m => `<option value="${m.id}">${m.name}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="flex:0 0 60px">
+        <label class="form-label">Level</label>
+        <input type="text" class="form-input" value="2" disabled/>
+      </div>
+      <div class="form-group" style="flex:1">
+        <label class="form-label">Role</label>
+        <input type="text" class="form-input" placeholder="e.g. Finance Manager"/>
+      </div>
+      <div class="form-group" style="flex:1">
+        <label class="form-label">Approver</label>
+        <select class="form-select">
+          <option value="">Select...</option>
+          ${TEAM_MEMBERS.map(m => `<option value="${m.id}">${m.name}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--gray-400);margin-top:4px">Add more levels after creation.</div>
+  `;
+  const footer = `
+    <button class="btn btn--secondary" onclick="closeModal()">Cancel</button>
+    <button class="btn btn--primary" onclick="closeModal()">Create Flow</button>
+  `;
+  openModal('New Expense Approval Flow', body, footer, true);
+};
+
+// ── Organization ───────────────────────────────────────────
+
+function renderOrganization() {
+  const company = ORG_UNITS[0];
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Organization</div>
+        <div class="page-subtitle">Company structure and department overview</div>
+      </div>
+    </div>
+
+    <!-- Company Card -->
+    <div class="card animate-in mb-6" style="border-left:3px solid var(--green-500);">
+      <div class="card__body" style="display:flex;align-items:center;gap:16px;padding:20px 24px;">
+        <div style="width:48px;height:48px;border-radius:12px;background:var(--green-50);display:flex;align-items:center;justify-content:center;color:var(--green-600);">
+          ${icon('building', 24)}
+        </div>
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:1.05rem;color:var(--gray-900)">${company.name}</div>
+          <div style="font-size:0.8rem;color:var(--gray-400);margin-top:2px;">
+            <span class="badge-plain badge-plain--green">${company.type}</span>
+            <span style="margin-left:8px">Head: ${company.head}</span>
+            <span style="margin-left:8px">\u00b7</span>
+            <span style="margin-left:8px">${company.members} members</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Department Grid -->
+    <div class="section-title animate-in" style="margin-bottom:12px">Departments</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
+      ${company.children.map(dept => `
+        <div class="card animate-in" style="cursor:default;">
+          <div class="card__body" style="padding:20px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+              <div style="width:40px;height:40px;border-radius:10px;background:var(--gray-50);display:flex;align-items:center;justify-content:center;color:var(--gray-500);">
+                ${icon('users', 20)}
+              </div>
+              <div>
+                <div style="font-weight:600;color:var(--gray-900)">${dept.name}</div>
+                <span class="badge-plain badge-plain--gray" style="font-size:11px">${dept.type}</span>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.8rem;color:var(--gray-400);">
+              <span>Head: <strong style="color:var(--gray-700)">${dept.head}</strong></span>
+              <span>${dept.members} member${dept.members !== 1 ? 's' : ''}</span>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ── Messages ───────────────────────────────────────────────
+
+let messagesFilter = 'all';
+
+function renderMessages() {
+  const unreadCount = MESSAGES.filter(m => !m.read).length;
+
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">Messages</div>
+        <div class="page-subtitle">Notifications and announcements</div>
+      </div>
+    </div>
+
+    <div class="stats-row" style="grid-template-columns:repeat(3,1fr);">
+      <div class="stat-card animate-in">
+        <div class="stat-card__header">
+          <div class="stat-card__icon stat-card__icon--amber">${icon('mail')}</div>
+        </div>
+        <div class="stat-card__value">${unreadCount}</div>
+        <div class="stat-card__label">Unread</div>
+      </div>
+      <div class="stat-card animate-in">
+        <div class="stat-card__header">
+          <div class="stat-card__icon stat-card__icon--blue">${icon('bell')}</div>
+        </div>
+        <div class="stat-card__value">${MESSAGES.filter(m => m.type === 'notification').length}</div>
+        <div class="stat-card__label">Notifications</div>
+      </div>
+      <div class="stat-card animate-in">
+        <div class="stat-card__header">
+          <div class="stat-card__icon stat-card__icon--green">${icon('messageSquare')}</div>
+        </div>
+        <div class="stat-card__value">${MESSAGES.filter(m => m.type === 'announcement').length}</div>
+        <div class="stat-card__label">Announcements</div>
+      </div>
+    </div>
+
+    <div class="filters">
+      <span class="filter-chip active" onclick="filterMessages(this,'all')">All</span>
+      <span class="filter-chip" onclick="filterMessages(this,'unread')">Unread</span>
+      <span class="filter-chip" onclick="filterMessages(this,'notification')">Notifications</span>
+      <span class="filter-chip" onclick="filterMessages(this,'announcement')">Announcements</span>
+    </div>
+
+    <div class="card animate-in">
+      <div id="messagesList">
+        ${MESSAGES.map(msg => `
+          <div class="message-item" data-msg-id="${msg.id}" data-msg-type="${msg.type}" data-msg-read="${msg.read}" onclick="toggleMessage('${msg.id}')" style="padding:16px 20px;border-bottom:1px solid var(--gray-100);cursor:pointer;transition:background 0.15s;">
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+              ${!msg.read ? '<div style="width:8px;height:8px;border-radius:50%;background:var(--green-500);margin-top:6px;flex-shrink:0;"></div>' : '<div style="width:8px;height:8px;margin-top:6px;flex-shrink:0;"></div>'}
+              <div style="flex:1;min-width:0;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                  <div style="font-weight:${msg.read ? '400' : '600'};color:var(--gray-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${msg.subject}</div>
+                  <div style="font-size:0.72rem;color:var(--gray-400);flex-shrink:0;margin-left:12px;font-family:'JetBrains Mono',monospace;">${msg.date}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--gray-400);">
+                  <span>${msg.from}</span>
+                  <span class="badge-plain badge-plain--${msg.type === 'notification' ? 'blue' : 'green'}" style="font-size:11px">${msg.type === 'notification' ? 'Notification' : 'Announcement'}</span>
+                </div>
+                <div class="message-body" id="msgBody-${msg.id}" style="display:none;margin-top:10px;padding:12px;background:var(--gray-25);border-radius:8px;font-size:0.82rem;color:var(--gray-600);line-height:1.6;">
+                  ${msg.body}
+                </div>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+window.toggleMessage = function(id) {
+  const body = document.getElementById('msgBody-' + id);
+  if (body) {
+    body.style.display = body.style.display === 'none' ? 'block' : 'none';
+  }
+};
+
+window.filterMessages = function(el, filter) {
+  el.parentElement.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.message-item').forEach(item => {
+    const type = item.dataset.msgType;
+    const read = item.dataset.msgRead === 'true';
+    let show = true;
+    if (filter === 'unread') show = !read;
+    else if (filter === 'notification') show = type === 'notification';
+    else if (filter === 'announcement') show = type === 'announcement';
+    item.style.display = show ? '' : 'none';
+  });
+};
+
 // ── Modal System ────────────────────────────────────────────
 
 function openModal(title, bodyHTML, footerHTML, wide) {
@@ -2170,9 +3137,19 @@ const ROUTES = {
   '/services': { render: renderServices, title: 'Service Progress', crumb: 'Service Progress' },
   '/leave': { render: renderLeave, title: 'Leave', crumb: 'Leave Management' },
   '/holidays': { render: renderHolidays, title: 'Holidays', crumb: 'Holiday List' },
+  '/time-off': { render: renderTimeOff, title: 'Time Off', crumb: 'Time Off' },
+  '/leave-type': { render: renderLeaveType, title: 'Leave Types', crumb: 'Leave Types' },
+  '/leave-policy': { render: renderLeavePolicy, title: 'Leave Policies', crumb: 'Leave Policies' },
+  '/leave-period': { render: renderLeavePeriod, title: 'Leave Periods', crumb: 'Leave Periods' },
+  '/leave-allocation': { render: renderLeaveAllocation, title: 'Leave Allocations', crumb: 'Leave Allocations' },
+  '/leave-policy-assignment': { render: renderLeavePolicyAssignment, title: 'Policy Assignments', crumb: 'Leave Policy Assignments' },
+  '/leave-approval-flow': { render: renderLeaveApprovalFlow, title: 'Leave Approval', crumb: 'Leave Approval Flows' },
   '/salary': { render: renderSalary, title: 'Salary', crumb: 'Salary Slips' },
   '/expenses': { render: renderExpenses, title: 'Expenses', crumb: 'Expenses' },
+  '/expense-approval-flow': { render: renderExpenseApprovalFlow, title: 'Expense Approval', crumb: 'Expense Approval Flows' },
   '/tickets': { render: renderTickets, title: 'Tickets', crumb: 'Support Tickets' },
+  '/messages': { render: renderMessages, title: 'Messages', crumb: 'Messages' },
+  '/organization': { render: renderOrganization, title: 'Organization', crumb: 'Organization' },
   '/contract': { render: renderContract, title: 'Contract', crumb: 'Contract' },
   '/wallet': { render: renderWallet, title: 'Wallet', crumb: 'E-Wallet' },
   '/profile': { render: renderProfile, title: 'Profile', crumb: 'My Profile' },
