@@ -31,6 +31,14 @@ const ICONS = {
   chevronRight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
   wallet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 010-4h14v4"/><path d="M3 5v14a2 2 0 002 2h16v-5"/><path d="M18 12a2 2 0 100 4h4v-4z"/></svg>',
   layers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',
+  edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>',
+  messageSquare: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>',
+  building: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M8 10h.01M16 10h.01M12 10h.01M8 14h.01M16 14h.01M12 14h.01"/></svg>',
+  gitBranch: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 01-9 9"/></svg>',
+  userPlus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>',
+  clipboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>',
+  checkSquare: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>',
+  mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>',
   logout: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
 };
 
@@ -224,6 +232,73 @@ const EXPENSE_APPROVAL_FLOWS = {
     { step: 'Manager Approval', actor: 'Li Wei', role: 'Direct Manager', time: '2025-02-11 10:00', status: 'rejected', comment: 'Monthly taxi exceeds policy limit of ¥800. Please resubmit partial amount.' },
   ],
 };
+
+// ── Mock Data: Leave Config, Org, Messages ─────────────────
+
+const LEAVE_TYPE_LIST = [
+  { id: 'LT-001', name: 'Annual Leave', maxDays: 15, isCarryForward: true, maxCarryForward: 5, isWithoutPay: false, allowNegative: false, includeHolidays: false, isCompensatory: false },
+  { id: 'LT-002', name: 'Sick Leave', maxDays: 10, isCarryForward: false, maxCarryForward: 0, isWithoutPay: false, allowNegative: false, includeHolidays: false, isCompensatory: false },
+  { id: 'LT-003', name: 'Personal Leave', maxDays: 5, isCarryForward: false, maxCarryForward: 0, isWithoutPay: false, allowNegative: false, includeHolidays: false, isCompensatory: false },
+  { id: 'LT-004', name: 'Compensatory Leave', maxDays: 3, isCarryForward: false, maxCarryForward: 0, isWithoutPay: false, allowNegative: false, includeHolidays: false, isCompensatory: true },
+  { id: 'LT-005', name: 'Maternity Leave', maxDays: 98, isCarryForward: false, maxCarryForward: 0, isWithoutPay: false, allowNegative: false, includeHolidays: true, isCompensatory: false },
+  { id: 'LT-006', name: 'Unpaid Leave', maxDays: 30, isCarryForward: false, maxCarryForward: 0, isWithoutPay: true, allowNegative: true, includeHolidays: false, isCompensatory: false },
+];
+
+const LEAVE_POLICIES = [
+  { id: 'LP-001', name: 'Standard Employee Policy', description: 'Default policy for full-time employees', leaveTypes: [{type:'Annual Leave',days:15},{type:'Sick Leave',days:10},{type:'Personal Leave',days:5}], status: 'Active' },
+  { id: 'LP-002', name: 'Contractor Policy', description: 'Limited leave for contractors', leaveTypes: [{type:'Annual Leave',days:10},{type:'Sick Leave',days:5}], status: 'Active' },
+  { id: 'LP-003', name: 'Senior Employee Policy', description: 'Enhanced leave for senior staff', leaveTypes: [{type:'Annual Leave',days:20},{type:'Sick Leave',days:15},{type:'Personal Leave',days:7}], status: 'Active' },
+];
+
+const LEAVE_PERIODS = [
+  { id: 'PD-001', name: '2025 Leave Year', from: '2025-01-01', to: '2025-12-31', isActive: true, company: 'RampingUp Technology Ltd.' },
+  { id: 'PD-002', name: '2024 Leave Year', from: '2024-01-01', to: '2024-12-31', isActive: false, company: 'RampingUp Technology Ltd.' },
+];
+
+const LEAVE_ALLOCATIONS = [
+  { id: 'LA-001', employee: 'Zhang Rui', leaveType: 'Annual Leave', period: '2025', totalDays: 15, usedDays: 7, newAllocation: 15, carryForward: 0, status: 'Active' },
+  { id: 'LA-002', employee: 'Zhang Rui', leaveType: 'Sick Leave', period: '2025', totalDays: 10, usedDays: 2, newAllocation: 10, carryForward: 0, status: 'Active' },
+  { id: 'LA-003', employee: 'Li Wei', leaveType: 'Annual Leave', period: '2025', totalDays: 20, usedDays: 3, newAllocation: 20, carryForward: 0, status: 'Active' },
+  { id: 'LA-004', employee: 'Wang Chen', leaveType: 'Annual Leave', period: '2025', totalDays: 15, usedDays: 5, newAllocation: 12, carryForward: 3, status: 'Active' },
+  { id: 'LA-005', employee: 'Sarah Johnson', leaveType: 'Annual Leave', period: '2025', totalDays: 15, usedDays: 0, newAllocation: 15, carryForward: 0, status: 'Active' },
+];
+
+const LEAVE_POLICY_ASSIGNMENTS = [
+  { id: 'PA-001', employee: 'Zhang Rui', policy: 'Standard Employee Policy', period: '2025 Leave Year', assignedDate: '2025-01-01', status: 'Active' },
+  { id: 'PA-002', employee: 'Li Wei', policy: 'Senior Employee Policy', period: '2025 Leave Year', assignedDate: '2025-01-01', status: 'Active' },
+  { id: 'PA-003', employee: 'Wang Chen', policy: 'Standard Employee Policy', period: '2025 Leave Year', assignedDate: '2025-01-01', status: 'Active' },
+  { id: 'PA-004', employee: 'Sarah Johnson', policy: 'Standard Employee Policy', period: '2025 Leave Year', assignedDate: '2025-01-01', status: 'Active' },
+  { id: 'PA-005', employee: 'Alex Kim', policy: 'Contractor Policy', period: '2025 Leave Year', assignedDate: '2025-01-01', status: 'Active' },
+];
+
+const LEAVE_APPROVAL_FLOW_CONFIGS = [
+  { id: 'AF-001', name: 'Standard Leave Approval', leaveType: 'Annual Leave', steps: [{level:1,role:'Direct Manager',approver:'Li Wei'},{level:2,role:'HR Manager',approver:'HR Team'}], status: 'Active' },
+  { id: 'AF-002', name: 'Sick Leave Approval', leaveType: 'Sick Leave', steps: [{level:1,role:'Direct Manager',approver:'Li Wei'}], status: 'Active' },
+  { id: 'AF-003', name: 'Extended Leave Approval', leaveType: 'Annual Leave', steps: [{level:1,role:'Direct Manager',approver:'Li Wei'},{level:2,role:'Department Head',approver:'Wang Chen'},{level:3,role:'HR Director',approver:'HR Team'}], status: 'Active', condition: '> 5 days' },
+];
+
+const EXPENSE_FLOW_CONFIGS = [
+  { id: 'EAF-001', name: 'Standard Expense Approval', condition: '< \u00a55,000', steps: [{level:1,role:'Direct Manager',approver:'Li Wei'}], status: 'Active' },
+  { id: 'EAF-002', name: 'Large Expense Approval', condition: '\u2265 \u00a55,000', steps: [{level:1,role:'Direct Manager',approver:'Li Wei'},{level:2,role:'Finance Manager',approver:'Tanaka Yuki'},{level:3,role:'CFO',approver:'CFO Office'}], status: 'Active' },
+];
+
+const ORG_UNITS = [
+  { id: 'OU-001', name: 'RampingUp Technology Ltd.', type: 'Company', head: 'CEO', members: 8, children: [
+    { id: 'OU-002', name: 'Engineering', type: 'Department', head: 'Li Wei', members: 4 },
+    { id: 'OU-003', name: 'Product', type: 'Department', head: 'Wang Chen', members: 1 },
+    { id: 'OU-004', name: 'Design', type: 'Department', head: 'Sarah Johnson', members: 1 },
+    { id: 'OU-005', name: 'Marketing', type: 'Department', head: 'Maria Santos', members: 1 },
+    { id: 'OU-006', name: 'Finance', type: 'Department', head: 'Tanaka Yuki', members: 1 },
+  ]},
+];
+
+const MESSAGES = [
+  { id: 'MSG-001', subject: 'Leave Request LV-2403 Approved', from: 'System', date: '2025-03-21', read: false, type: 'notification', body: 'Your annual leave request from Apr 5 to Apr 6 has been approved by Li Wei.' },
+  { id: 'MSG-002', subject: 'March Salary Slip Available', from: 'Payroll', date: '2025-03-25', read: false, type: 'notification', body: 'Your salary slip for March 2025 is now available. Net pay: \u00a525,180.' },
+  { id: 'MSG-003', subject: 'Expense EC-2402 Reimbursed', from: 'Finance', date: '2025-03-10', read: true, type: 'notification', body: 'Your expense claim EC-2402 (\u00a52,899) has been reimbursed to your bank account.' },
+  { id: 'MSG-004', subject: 'Welcome to RampingUp', from: 'HR', date: '2025-03-15', read: true, type: 'announcement', body: 'Welcome aboard! Please complete your onboarding checklist.' },
+  { id: 'MSG-005', subject: 'Company Holiday Notice \u2014 Qingming', from: 'HR', date: '2025-03-28', read: false, type: 'announcement', body: 'Please note that April 4 (Qingming Festival) is a company holiday.' },
+];
 
 // ── Helpers ──────────────────────────────────────────────────
 
@@ -601,6 +676,7 @@ function renderLeave() {
         <table class="data-table" id="leaveTable">
           <thead>
             <tr>
+              <th style="width:32px"></th>
               <th>ID</th>
               <th>Type</th>
               <th>From</th>
@@ -609,12 +685,12 @@ function renderLeave() {
               <th>Half Day</th>
               <th>Status</th>
               <th>Approver</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
             ${LEAVE_REQUESTS.map(lr => `
-              <tr data-status="${lr.status}">
+              <tr class="expandable-trigger" data-status="${lr.status}" data-id="${lr.id}" onclick="toggleLeaveDetail('${lr.id}', this)">
+                <td><span class="expand-icon">${ICONS.chevronRight}</span></td>
                 <td class="td-mono" style="color:var(--green-600)">${lr.id}</td>
                 <td class="td-primary">${lr.type}</td>
                 <td class="td-mono">${lr.from}</td>
@@ -623,16 +699,12 @@ function renderLeave() {
                 <td>${lr.halfDay}</td>
                 <td><span class="badge badge--${statusClass(lr.status)}">${lr.status}</span></td>
                 <td>${lr.approver}</td>
-                <td><button class="btn btn--ghost btn--sm" onclick="viewLeaveDetail('${lr.id}')">${icon('eye', 14)} View</button></td>
               </tr>
             `).join('')}
           </tbody>
         </table>
       </div>
     </div>
-
-    <!-- Leave Detail Panel -->
-    <div id="leaveDetailPanel" style="display:none;"></div>
   `;
 }
 
@@ -722,73 +794,29 @@ function renderSalary() {
         <table class="data-table" id="salaryTable">
           <thead>
             <tr>
+              <th style="width:32px"></th>
               <th>Period</th>
               <th>Pay Date</th>
               <th>Gross</th>
               <th>Deductions</th>
               <th>Net Pay</th>
               <th>Status</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
             ${SALARY_SLIPS.map(ss => `
-              <tr class="salary-row-trigger" data-slip-id="${ss.id}">
+              <tr class="expandable-trigger" data-slip-id="${ss.id}" data-id="${ss.id}" onclick="toggleSalaryDetail('${ss.id}', this)">
+                <td><span class="expand-icon">${ICONS.chevronRight}</span></td>
                 <td class="td-primary">${ss.period}</td>
                 <td class="td-mono">${ss.payDate}</td>
                 <td class="td-mono">${formatCurrency(ss.gross)}</td>
                 <td class="td-mono td-red">${formatCurrency(ss.deductions)}</td>
                 <td class="td-mono td-green" style="font-weight:600">${formatCurrency(ss.net)}</td>
                 <td><span class="badge badge--${statusClass(ss.status)}">${ss.status}</span></td>
-                <td><button class="btn btn--ghost btn--sm" onclick="showSalaryDetail('${ss.id}')">${icon('eye', 14)} Detail</button></td>
               </tr>
             `).join('')}
           </tbody>
         </table>
-      </div>
-    </div>
-
-    <!-- Salary Detail Panel (inline expand) -->
-    <div id="salaryDetailPanel" style="display:none;" class="mt-6">
-      <div class="card">
-        <div class="card__header">
-          <div class="card__title">Salary Breakdown \u2014 <span id="salaryDetailPeriod" style="color:var(--green-600)"></span></div>
-          <button class="btn btn--ghost btn--sm" onclick="document.getElementById('salaryDetailPanel').style.display='none'">${icon('x', 14)} Close</button>
-        </div>
-        <div class="card__body">
-          <div class="grid-2" style="margin-bottom:0;">
-            <div class="salary-section">
-              <div class="salary-section__title">Earnings</div>
-              ${SALARY_DETAIL.earnings.map(e => `
-                <div class="salary-row">
-                  <span class="salary-row__label">${e.component}</span>
-                  <span class="salary-row__value" style="color:var(--green-600)">${formatCurrency(e.amount)}</span>
-                </div>
-              `).join('')}
-              <div class="salary-total">
-                <span class="salary-total__label">Total Earnings</span>
-                <span class="salary-total__value" style="color:var(--green-600)">${formatCurrency(SALARY_DETAIL.earnings.reduce((s, e) => s + e.amount, 0))}</span>
-              </div>
-            </div>
-            <div class="salary-section">
-              <div class="salary-section__title">Deductions</div>
-              ${SALARY_DETAIL.deductions.map(d => `
-                <div class="salary-row">
-                  <span class="salary-row__label">${d.component}</span>
-                  <span class="salary-row__value" style="color:var(--red-500)">${formatCurrency(d.amount)}</span>
-                </div>
-              `).join('')}
-              <div class="salary-total">
-                <span class="salary-total__label">Total Deductions</span>
-                <span class="salary-total__value" style="color:var(--red-500)">${formatCurrency(SALARY_DETAIL.deductions.reduce((s, d) => s + d.amount, 0))}</span>
-              </div>
-            </div>
-          </div>
-          <div class="net-pay-bar">
-            <div class="net-pay-bar__label">Net Pay</div>
-            <div class="net-pay-bar__value">${formatCurrency(25180)}</div>
-          </div>
-        </div>
       </div>
     </div>
   `;
@@ -849,6 +877,7 @@ function renderExpenses() {
         <table class="data-table" id="expenseTable">
           <thead>
             <tr>
+              <th style="width:32px"></th>
               <th>ID</th>
               <th>Date</th>
               <th>Category</th>
@@ -856,12 +885,12 @@ function renderExpenses() {
               <th>Items</th>
               <th>Amount</th>
               <th>Status</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
             ${EXPENSES.map(e => `
-              <tr data-status="${e.status}">
+              <tr class="expandable-trigger" data-status="${e.status}" data-id="${e.id}" onclick="toggleExpenseDetail('${e.id}', this)">
+                <td><span class="expand-icon">${ICONS.chevronRight}</span></td>
                 <td class="td-mono" style="color:var(--green-600)">${e.id}</td>
                 <td class="td-mono">${e.date}</td>
                 <td><span class="badge-plain badge-plain--gray">${e.category}</span></td>
@@ -869,16 +898,12 @@ function renderExpenses() {
                 <td class="td-mono">${e.items}</td>
                 <td class="td-mono" style="font-weight:600;color:var(--gray-900)">${formatCurrency(e.amount)}</td>
                 <td><span class="badge badge--${statusClass(e.status)}">${e.status}</span></td>
-                <td><button class="btn btn--ghost btn--sm" onclick="viewExpenseDetail('${e.id}')">${icon('eye', 14)} View</button></td>
               </tr>
             `).join('')}
           </tbody>
         </table>
       </div>
     </div>
-
-    <!-- Expense Detail Panel -->
-    <div id="expenseDetailPanel" style="display:none;"></div>
   `;
 }
 
@@ -1304,166 +1329,203 @@ window.showServiceDetail = function(id) {
   openModal('Service \u2014 ' + s.id, body, footer, true);
 };
 
-// ── Salary Detail (inline expand) ───────────────────────────
+// ── Expandable Row Toggle Helper ────────────────────────────
 
-window.showSalaryDetail = function(id) {
-  const slip = SALARY_SLIPS.find(s => s.id === id);
-  if (!slip) return;
-  document.getElementById('salaryDetailPeriod').textContent = slip.period;
-  const panel = document.getElementById('salaryDetailPanel');
-  panel.style.display = 'block';
-  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-};
+function toggleExpandRow(triggerRow, id, colSpan, contentHtml) {
+  const existing = triggerRow.nextElementSibling;
+  if (existing && existing.classList.contains('expand-detail-row') && existing.dataset.detailId === id) {
+    existing.remove();
+    triggerRow.classList.remove('expanded');
+    return;
+  }
+  triggerRow.classList.add('expanded');
+  const detailRow = document.createElement('tr');
+  detailRow.className = 'expand-detail-row';
+  detailRow.dataset.detailId = id;
+  detailRow.dataset.status = triggerRow.dataset.status || '';
+  detailRow.innerHTML = `<td colspan="${colSpan}"><div class="expand-detail-content">${contentHtml}</div></td>`;
+  triggerRow.after(detailRow);
+}
 
-// ── Leave Detail View with Approval Flow ────────────────────
+// ── Leave Detail (inline expand) ────────────────────────────
 
-window.viewLeaveDetail = function(id) {
+window.toggleLeaveDetail = function(id, triggerRow) {
   const lr = LEAVE_REQUESTS.find(l => l.id === id);
   if (!lr) return;
+  if (triggerRow.classList.contains('expanded')) {
+    const next = triggerRow.nextElementSibling;
+    if (next && next.classList.contains('expand-detail-row')) next.remove();
+    triggerRow.classList.remove('expanded');
+    return;
+  }
   const flow = APPROVAL_FLOWS[id] || [
     { step: 'Submitted', actor: EMPLOYEE.name, role: 'Employee', time: lr.from, status: 'done', comment: '' },
     { step: 'Manager Approval', actor: lr.approver, role: 'Direct Manager', time: '', status: lr.status === 'Approved' ? 'done' : (lr.status === 'Pending' ? 'current' : 'pending'), comment: '' },
   ];
-
   const canRevoke = lr.status === 'Pending';
   const canCancel = lr.status === 'Draft';
 
-  const panel = document.getElementById('leaveDetailPanel');
-  panel.innerHTML = `
-    <div class="detail-panel">
-      <div class="card">
-        <div class="card__header">
-          <div class="card__title">${icon('calendar', 18)} &nbsp;Leave Request \u2014 <span style="color:var(--green-600);font-family:'JetBrains Mono',monospace;">${lr.id}</span></div>
-          <button class="btn btn--ghost btn--sm" onclick="document.getElementById('leaveDetailPanel').style.display='none'">${icon('x', 14)} Close</button>
+  const content = `
+    <div class="detail-section">
+      <div class="detail-section__title">Request Details</div>
+      <div class="detail-info-grid">
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Leave Type</div>
+          <div class="detail-info-item__value">${lr.type}</div>
         </div>
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">From</div>
+          <div class="detail-info-item__value" style="font-family:'JetBrains Mono',monospace;">${lr.from}</div>
+        </div>
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">To</div>
+          <div class="detail-info-item__value" style="font-family:'JetBrains Mono',monospace;">${lr.to}</div>
+        </div>
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Duration</div>
+          <div class="detail-info-item__value">${lr.days} day${lr.days > 1 ? 's' : ''}</div>
+        </div>
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Half Day</div>
+          <div class="detail-info-item__value">${lr.halfDay}</div>
+        </div>
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Status</div>
+          <div class="detail-info-item__value"><span class="badge badge--${statusClass(lr.status)}">${lr.status}</span></div>
+        </div>
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Approver</div>
+          <div class="detail-info-item__value">${lr.approver}</div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section__title">Approval Flow</div>
+      ${renderApprovalFlow(flow)}
+    </div>
+    ${(canRevoke || canCancel) ? `
+    <div class="action-bar">
+      <div class="action-bar__spacer"></div>
+      ${canCancel ? `<button class="btn btn--secondary">Delete Draft</button>
+      <button class="btn btn--primary">Submit for Approval</button>` : ''}
+      ${canRevoke ? `<button class="btn btn--secondary" style="color:var(--red-500);border-color:var(--red-500);">Revoke Request</button>` : ''}
+    </div>` : ''}
+  `;
+  toggleExpandRow(triggerRow, id, 9, content);
+};
 
-        <!-- Info Grid -->
-        <div class="detail-section">
-          <div class="detail-section__title">Request Details</div>
-          <div class="detail-info-grid">
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Leave Type</div>
-              <div class="detail-info-item__value">${lr.type}</div>
+// ── Salary Detail (inline expand) ───────────────────────────
+
+window.toggleSalaryDetail = function(id, triggerRow) {
+  const slip = SALARY_SLIPS.find(s => s.id === id);
+  if (!slip) return;
+  if (triggerRow.classList.contains('expanded')) {
+    const next = triggerRow.nextElementSibling;
+    if (next && next.classList.contains('expand-detail-row')) next.remove();
+    triggerRow.classList.remove('expanded');
+    return;
+  }
+
+  const content = `
+    <div class="detail-section">
+      <div class="detail-section__title">Salary Breakdown — ${slip.period}</div>
+      <div class="grid-2">
+        <div class="salary-section">
+          <div class="salary-section__title">Earnings</div>
+          ${SALARY_DETAIL.earnings.map(e => `
+            <div class="salary-row">
+              <span class="salary-row__label">${e.component}</span>
+              <span class="salary-row__value" style="color:var(--green-600)">${formatCurrency(e.amount)}</span>
             </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">From</div>
-              <div class="detail-info-item__value" style="font-family:'JetBrains Mono',monospace;">${lr.from}</div>
-            </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">To</div>
-              <div class="detail-info-item__value" style="font-family:'JetBrains Mono',monospace;">${lr.to}</div>
-            </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Duration</div>
-              <div class="detail-info-item__value">${lr.days} day${lr.days > 1 ? 's' : ''}</div>
-            </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Half Day</div>
-              <div class="detail-info-item__value">${lr.halfDay}</div>
-            </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Status</div>
-              <div class="detail-info-item__value"><span class="badge badge--${statusClass(lr.status)}">${lr.status}</span></div>
-            </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Approver</div>
-              <div class="detail-info-item__value">${lr.approver}</div>
-            </div>
+          `).join('')}
+          <div class="salary-total">
+            <span class="salary-total__label">Total Earnings</span>
+            <span class="salary-total__value" style="color:var(--green-600)">${formatCurrency(SALARY_DETAIL.earnings.reduce((s, e) => s + e.amount, 0))}</span>
           </div>
         </div>
-
-        <!-- Approval Flow -->
-        <div class="detail-section">
-          <div class="detail-section__title">Approval Flow</div>
-          ${renderApprovalFlow(flow)}
+        <div class="salary-section">
+          <div class="salary-section__title">Deductions</div>
+          ${SALARY_DETAIL.deductions.map(d => `
+            <div class="salary-row">
+              <span class="salary-row__label">${d.component}</span>
+              <span class="salary-row__value" style="color:var(--red-500)">${formatCurrency(d.amount)}</span>
+            </div>
+          `).join('')}
+          <div class="salary-total">
+            <span class="salary-total__label">Total Deductions</span>
+            <span class="salary-total__value" style="color:var(--red-500)">${formatCurrency(SALARY_DETAIL.deductions.reduce((s, d) => s + d.amount, 0))}</span>
+          </div>
         </div>
-
-        <!-- Actions -->
-        ${(canRevoke || canCancel) ? `
-        <div class="action-bar">
-          <div class="action-bar__spacer"></div>
-          ${canCancel ? `<button class="btn btn--secondary" onclick="document.getElementById('leaveDetailPanel').style.display='none'">Delete Draft</button>
-          <button class="btn btn--primary">Submit for Approval</button>` : ''}
-          ${canRevoke ? `<button class="btn btn--secondary" style="color:var(--red-500);border-color:var(--red-500);">Revoke Request</button>` : ''}
-        </div>` : ''}
+      </div>
+      <div class="net-pay-bar">
+        <div class="net-pay-bar__label">Net Pay</div>
+        <div class="net-pay-bar__value">${formatCurrency(slip.net)}</div>
       </div>
     </div>
   `;
-  panel.style.display = 'block';
-  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  toggleExpandRow(triggerRow, id, 7, content);
 };
 
-// ── Expense Detail View with Approval Flow ──────────────────
+// ── Expense Detail (inline expand) ──────────────────────────
 
-window.viewExpenseDetail = function(id) {
+window.toggleExpenseDetail = function(id, triggerRow) {
   const ex = EXPENSES.find(e => e.id === id);
   if (!ex) return;
+  if (triggerRow.classList.contains('expanded')) {
+    const next = triggerRow.nextElementSibling;
+    if (next && next.classList.contains('expand-detail-row')) next.remove();
+    triggerRow.classList.remove('expanded');
+    return;
+  }
   const flow = EXPENSE_APPROVAL_FLOWS[id] || [
     { step: 'Submitted', actor: EMPLOYEE.name, role: 'Employee', time: ex.date, status: 'done', comment: '' },
     { step: 'Manager Approval', actor: 'Li Wei', role: 'Direct Manager', time: '', status: ex.status === 'Approved' ? 'done' : (ex.status === 'Pending' ? 'current' : 'pending'), comment: '' },
     { step: 'Finance Review', actor: 'Chen Fang', role: 'Finance', time: '', status: 'pending', comment: '' },
   ];
-
   const canCancel = ex.status === 'Draft';
 
-  const panel = document.getElementById('expenseDetailPanel');
-  panel.innerHTML = `
-    <div class="detail-panel">
-      <div class="card">
-        <div class="card__header">
-          <div class="card__title">${icon('receipt', 18)} &nbsp;Expense Claim \u2014 <span style="color:var(--green-600);font-family:'JetBrains Mono',monospace;">${ex.id}</span></div>
-          <button class="btn btn--ghost btn--sm" onclick="document.getElementById('expenseDetailPanel').style.display='none'">${icon('x', 14)} Close</button>
+  const content = `
+    <div class="detail-section">
+      <div class="detail-section__title">Claim Details</div>
+      <div class="detail-info-grid">
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Category</div>
+          <div class="detail-info-item__value">${ex.category}</div>
         </div>
-
-        <!-- Info Grid -->
-        <div class="detail-section">
-          <div class="detail-section__title">Claim Details</div>
-          <div class="detail-info-grid">
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Category</div>
-              <div class="detail-info-item__value">${ex.category}</div>
-            </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Date</div>
-              <div class="detail-info-item__value" style="font-family:'JetBrains Mono',monospace;">${ex.date}</div>
-            </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Items</div>
-              <div class="detail-info-item__value">${ex.items} item${ex.items > 1 ? 's' : ''}</div>
-            </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Amount</div>
-              <div class="detail-info-item__value" style="font-weight:700;color:var(--gray-900);font-family:'JetBrains Mono',monospace;">${formatCurrency(ex.amount)}</div>
-            </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Status</div>
-              <div class="detail-info-item__value"><span class="badge badge--${statusClass(ex.status)}">${ex.status}</span></div>
-            </div>
-            <div class="detail-info-item">
-              <div class="detail-info-item__label">Description</div>
-              <div class="detail-info-item__value">${ex.description}</div>
-            </div>
-          </div>
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Date</div>
+          <div class="detail-info-item__value" style="font-family:'JetBrains Mono',monospace;">${ex.date}</div>
         </div>
-
-        <!-- Approval Flow -->
-        <div class="detail-section">
-          <div class="detail-section__title">Approval Flow</div>
-          ${renderApprovalFlow(flow)}
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Items</div>
+          <div class="detail-info-item__value">${ex.items} item${ex.items > 1 ? 's' : ''}</div>
         </div>
-
-        <!-- Actions -->
-        ${canCancel ? `
-        <div class="action-bar">
-          <div class="action-bar__spacer"></div>
-          <button class="btn btn--secondary" onclick="document.getElementById('expenseDetailPanel').style.display='none'">Delete Draft</button>
-          <button class="btn btn--primary">Submit for Approval</button>
-        </div>` : ''}
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Amount</div>
+          <div class="detail-info-item__value" style="font-weight:700;color:var(--gray-900);font-family:'JetBrains Mono',monospace;">${formatCurrency(ex.amount)}</div>
+        </div>
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Status</div>
+          <div class="detail-info-item__value"><span class="badge badge--${statusClass(ex.status)}">${ex.status}</span></div>
+        </div>
+        <div class="detail-info-item">
+          <div class="detail-info-item__label">Description</div>
+          <div class="detail-info-item__value">${ex.description}</div>
+        </div>
       </div>
     </div>
+    <div class="detail-section">
+      <div class="detail-section__title">Approval Flow</div>
+      ${renderApprovalFlow(flow)}
+    </div>
+    ${canCancel ? `
+    <div class="action-bar">
+      <div class="action-bar__spacer"></div>
+      <button class="btn btn--secondary">Delete Draft</button>
+      <button class="btn btn--primary">Submit for Approval</button>
+    </div>` : ''}
   `;
-  panel.style.display = 'block';
-  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  toggleExpandRow(triggerRow, id, 8, content);
 };
 
 // ── Ticket Detail View ──────────────────────────────────────
@@ -1564,7 +1626,19 @@ window.filterTable = function(el, tableId, status) {
   el.parentElement.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   document.querySelectorAll(`#${tableId} tbody tr`).forEach(tr => {
-    tr.style.display = (status === 'all' || tr.dataset.status === status) ? '' : 'none';
+    if (tr.classList.contains('expand-detail-row')) {
+      // Detail rows follow their parent trigger row's visibility
+      tr.style.display = (status === 'all' || tr.dataset.status === status) ? '' : 'none';
+    } else {
+      const show = status === 'all' || tr.dataset.status === status;
+      tr.style.display = show ? '' : 'none';
+      // Collapse hidden rows' expanded details
+      if (!show && tr.classList.contains('expanded')) {
+        tr.classList.remove('expanded');
+        const next = tr.nextElementSibling;
+        if (next && next.classList.contains('expand-detail-row')) next.remove();
+      }
+    }
   });
 };
 

@@ -1486,6 +1486,81 @@ button { font-family: inherit; }
   background: var(--gray-50);
 }
 
+/* ── Expandable Detail Row (inline expand within table) ──── */
+
+.data-table tbody tr.expandable-trigger {
+  cursor: pointer;
+}
+
+.data-table tbody tr.expandable-trigger:hover {
+  background: var(--green-50);
+}
+
+.data-table tbody tr.expandable-trigger.expanded {
+  background: var(--green-50);
+  border-bottom-color: transparent;
+}
+
+.data-table tbody tr.expandable-trigger .expand-icon {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  transition: transform .2s var(--ease);
+  color: var(--gray-400);
+  margin-right: 6px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.data-table tbody tr.expandable-trigger.expanded .expand-icon {
+  transform: rotate(90deg);
+  color: var(--green-600);
+}
+
+.expand-detail-row td {
+  padding: 0 !important;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.expand-detail-content {
+  padding: 0 20px 20px;
+  background: var(--gray-25);
+  border-top: 1px solid var(--green-200);
+  animation: expandIn .25s var(--ease) both;
+}
+
+@keyframes expandIn {
+  from { opacity: 0; max-height: 0; padding-top: 0; padding-bottom: 0; overflow: hidden; }
+  to   { opacity: 1; max-height: 600px; padding-top: 0; padding-bottom: 20px; overflow: visible; }
+}
+
+.expand-detail-content .detail-section {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.expand-detail-content .detail-section:last-child {
+  border-bottom: none;
+}
+
+.expand-detail-content .detail-info-grid {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.expand-detail-content .action-bar {
+  padding: 12px 0 0;
+  border-top: none;
+}
+
+/* Salary breakdown inside expandable row */
+.expand-detail-content .grid-2 {
+  margin-bottom: 0;
+}
+
+.expand-detail-content .net-pay-bar {
+  margin-top: 12px;
+}
+
 .detail-section {
   padding: 20px;
   border-bottom: 1px solid var(--gray-100);
