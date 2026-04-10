@@ -32,6 +32,7 @@ const ICONS = {
   wallet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 010-4h14v4"/><path d="M3 5v14a2 2 0 002 2h16v-5"/><path d="M18 12a2 2 0 100 4h4v-4z"/></svg>',
   layers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',
   logout: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
+  copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>',
 };
 
 function icon(name, size) {
@@ -1094,7 +1095,7 @@ function renderProfile() {
         <div class="page-title">My Profile</div>
         <div class="page-subtitle">View and manage your personal information</div>
       </div>
-      <button class="btn btn--secondary">${icon('settings', 16)} Edit Profile</button>
+      <button class="btn btn--secondary" onclick="openEditProfileModal()">${icon('settings', 16)} Edit Profile</button>
     </div>
 
     <!-- Profile Header -->
@@ -1130,8 +1131,8 @@ function renderProfilePersonal() {
         <div class="detail-item"><div class="detail-item__label">Gender</div><div class="detail-item__value">${EMPLOYEE.gender}</div></div>
         <div class="detail-item"><div class="detail-item__label">Date of Birth</div><div class="detail-item__value">${EMPLOYEE.dob}</div></div>
         <div class="detail-item"><div class="detail-item__label">Nationality</div><div class="detail-item__value">${EMPLOYEE.nationality}</div></div>
-        <div class="detail-item"><div class="detail-item__label">Email</div><div class="detail-item__value" style="color:var(--green-600)">${EMPLOYEE.email}</div></div>
-        <div class="detail-item"><div class="detail-item__label">Phone</div><div class="detail-item__value">${EMPLOYEE.phone}</div></div>
+        <div class="detail-item detail-item--copyable" onclick="copyToClipboard('${EMPLOYEE.email}', this)" title="Click to copy"><div class="detail-item__label">Email</div><div class="detail-item__value" style="color:var(--green-600)">${EMPLOYEE.email} <span class="copy-icon">${icon('copy', 14)}</span></div></div>
+        <div class="detail-item detail-item--copyable" onclick="copyToClipboard('${EMPLOYEE.phone}', this)" title="Click to copy"><div class="detail-item__label">Phone</div><div class="detail-item__value">${EMPLOYEE.phone} <span class="copy-icon">${icon('copy', 14)}</span></div></div>
         <div class="detail-item"><div class="detail-item__label">Location</div><div class="detail-item__value">${EMPLOYEE.location}</div></div>
         <div class="detail-item"><div class="detail-item__label">ID Type</div><div class="detail-item__value">${EMPLOYEE.idType}</div></div>
       </div>
@@ -1578,6 +1579,121 @@ window.switchProfileTab = function(el, tab) {
 };
 
 window.filterSalaryYear = function() {};
+
+// ── Edit Profile Modal ─────────────────────────────────────
+
+window.openEditProfileModal = function() {
+  const body = `
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input class="form-input" id="editName" value="${EMPLOYEE.name}" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Gender</label>
+        <select class="form-select" id="editGender">
+          <option ${EMPLOYEE.gender === 'Male' ? 'selected' : ''}>Male</option>
+          <option ${EMPLOYEE.gender === 'Female' ? 'selected' : ''}>Female</option>
+          <option ${EMPLOYEE.gender === 'Other' ? 'selected' : ''}>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Date of Birth</label>
+        <input class="form-input" type="date" id="editDob" value="${EMPLOYEE.dob}" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nationality</label>
+        <input class="form-input" id="editNationality" value="${EMPLOYEE.nationality}" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="editEmail" value="${EMPLOYEE.email}" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone</label>
+        <input class="form-input" id="editPhone" value="${EMPLOYEE.phone}" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Location</label>
+        <input class="form-input" id="editLocation" value="${EMPLOYEE.location}" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">ID Type</label>
+        <input class="form-input" id="editIdType" value="${EMPLOYEE.idType}" />
+      </div>
+    </div>
+  `;
+  const footer = `
+    <button class="btn btn--secondary" onclick="closeModal()">Cancel</button>
+    <button class="btn btn--primary" onclick="saveProfileEdits()">Save Changes</button>
+  `;
+  openModal('Edit Profile', body, footer);
+};
+
+window.saveProfileEdits = function() {
+  EMPLOYEE.name = document.getElementById('editName').value.trim() || EMPLOYEE.name;
+  EMPLOYEE.gender = document.getElementById('editGender').value;
+  EMPLOYEE.dob = document.getElementById('editDob').value || EMPLOYEE.dob;
+  EMPLOYEE.nationality = document.getElementById('editNationality').value.trim() || EMPLOYEE.nationality;
+  EMPLOYEE.email = document.getElementById('editEmail').value.trim() || EMPLOYEE.email;
+  EMPLOYEE.phone = document.getElementById('editPhone').value.trim() || EMPLOYEE.phone;
+  EMPLOYEE.location = document.getElementById('editLocation').value.trim() || EMPLOYEE.location;
+  EMPLOYEE.idType = document.getElementById('editIdType').value.trim() || EMPLOYEE.idType;
+
+  // Update initials from name
+  const parts = EMPLOYEE.name.split(' ');
+  EMPLOYEE.initials = parts.map(function(p) { return p[0]; }).join('').toUpperCase().slice(0, 2);
+
+  closeModal();
+
+  // Re-render profile page
+  var content = document.getElementById('appContent');
+  if (content) {
+    content.innerHTML = renderProfile();
+  }
+
+  showToast('Profile updated successfully');
+};
+
+// ── Copy to Clipboard ──────────────────────────────────────
+
+window.copyToClipboard = function(text, el) {
+  navigator.clipboard.writeText(text).then(function() {
+    showToast('Copied to clipboard');
+    if (el) {
+      el.classList.add('copied');
+      setTimeout(function() { el.classList.remove('copied'); }, 1500);
+    }
+  });
+};
+
+// ── Toast Notification ─────────────────────────────────────
+
+function showToast(message) {
+  var existing = document.getElementById('appToast');
+  if (existing) existing.remove();
+
+  var toast = document.createElement('div');
+  toast.id = 'appToast';
+  toast.className = 'toast';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  // Trigger reflow then show
+  toast.offsetHeight;
+  toast.classList.add('show');
+
+  setTimeout(function() {
+    toast.classList.remove('show');
+    setTimeout(function() { toast.remove(); }, 300);
+  }, 2000);
+}
 
 // ── Onboard Type Select ─────────────────────────────────────
 
